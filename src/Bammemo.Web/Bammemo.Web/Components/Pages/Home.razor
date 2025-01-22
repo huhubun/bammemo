@@ -1,0 +1,44 @@
+﻿@page "/"
+@using Bammemo.Data
+@using Bammemo.Data.Entities
+@using Microsoft.EntityFrameworkCore
+@inject BammemoDbContext DbContext
+
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world! @(slips.Count) </h1>
+
+<ul>
+    @foreach (var i in slips)
+    {
+        <li>
+            <FluentEmoji Value="@(new Emojis.PeopleBody.Color.Default.Artist())" />
+            @i.Content
+        </li>
+    }
+</ul>
+
+
+Welcome to your new Fluent Blazor app.
+
+
+@code {
+    private List<Slip> slips = new List<Slip>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var ticks = DateTime.UtcNow.Ticks.ToString();
+
+        await DbContext.Slips.AddAsync(new Slip
+            {
+                Id = ticks,
+                Content = ticks
+            });
+
+        await DbContext.SaveChangesAsync();
+
+        slips = await DbContext.Slips.ToListAsync();
+    }
+
+}
