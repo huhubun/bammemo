@@ -1,11 +1,11 @@
 ﻿@rendermode InteractiveAuto
+@inject IDialogService DialogService
 
 <div class="navmenu">
-    <input type="checkbox" title="Menu expand/collapse toggle" id="navmenu-toggle" class="navmenu-icon" />
-    <label for="navmenu-toggle" class="navmenu-icon"><FluentIcon Value="@(new Icons.Regular.Size20.Navigation())" Color="Color.Fill" /></label>
     <nav class="sitenav" aria-labelledby="main-menu">
-        <FluentNavMenu Id="main-menu" Width="250" Collapsible="true" Title="Navigation menu" @bind-Expanded="expanded" CustomToggle="true">
+        <FluentNavMenu Id="main-menu" Width="250" Collapsible="Collapsible" Title="Navigation menu" @bind-Expanded="expanded" CustomToggle="CustomToggle">
             <FluentNavLink Href="/" Match="NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.Home())" IconColor="Color.Accent">Home</FluentNavLink>
+            <FluentNavLink Href="admin" Icon="@(new Icons.Regular.Size20.NumberSymbolSquare())" IconColor="Color.Accent">Admin</FluentNavLink>
             <FluentNavLink Href="counter" Icon="@(new Icons.Regular.Size20.NumberSymbolSquare())" IconColor="Color.Accent">Counter</FluentNavLink>
             <FluentNavLink Href="weather" Icon="@(new Icons.Regular.Size20.WeatherPartlyCloudyDay())" IconColor="Color.Accent">Weather</FluentNavLink>
         </FluentNavMenu>
@@ -15,4 +15,9 @@
 @code {
     private bool expanded = true;
 
+    [Parameter]
+    public bool Collapsible { get; set; }
+
+    [Parameter]
+    public bool CustomToggle { get; set; }
 }

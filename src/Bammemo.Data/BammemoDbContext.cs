@@ -3,11 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bammemo.Data;
 
-public class BammemoDbContext : DbContext
+public class BammemoDbContext(DbContextOptions<BammemoDbContext> options) : DbContext(options)
 {
-    public BammemoDbContext(DbContextOptions<BammemoDbContext> options)
-        : base(options)
-    { }
-
     public DbSet<Slip> Slips { get; set; }
+    public DbSet<SlipTag> SlipTags { get; set; }
 }

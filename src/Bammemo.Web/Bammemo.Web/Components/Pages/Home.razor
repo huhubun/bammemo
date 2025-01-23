@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/home2"
 @using Bammemo.Data
 @using Bammemo.Data.Entities
 @using Microsoft.EntityFrameworkCore
@@ -28,17 +28,17 @@ Welcome to your new Fluent Blazor app.
 
     protected override async Task OnInitializedAsync()
     {
-        var ticks = DateTime.UtcNow.Ticks.ToString();
+        // var ticks = DateTime.UtcNow.Ticks.ToString();
 
-        await DbContext.Slips.AddAsync(new Slip
-            {
-                Id = ticks,
-                Content = ticks
-            });
+        // await DbContext.Slips.AddAsync(new Slip
+        //     {
+        //         Id = ticks,
+        //         Content = ticks
+        //     });
 
-        await DbContext.SaveChangesAsync();
+        // await DbContext.SaveChangesAsync();
 
-        slips = await DbContext.Slips.ToListAsync();
+        // slips = await DbContext.Slips.ToListAsync();
     }
 
 }

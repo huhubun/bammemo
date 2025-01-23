@@ -1,5 +1,5 @@
 ﻿@page "/weather"
-@attribute [StreamRendering]
+@rendermode InteractiveAuto
 
 <PageTitle>Weather</PageTitle>
 
@@ -15,11 +15,29 @@
     <PropertyColumn Title="Summary" Property="@(c => c!.Summary)" Align="Align.End"/>
 </FluentDataGrid>
 
+
+
+<div role="status" style="padding-bottom: 1em;">
+    Current count: <FluentBadge Appearance="Appearance.Neutral">@currentCount</FluentBadge>
+</div>
+
+<FluentButton Appearance="Appearance.Accent" @onclick="IncrementCount">Click me</FluentButton>
+
+
 @code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
     private IQueryable<WeatherForecast>? forecasts;
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine("page!!");
+
         // Simulate asynchronous loading to demonstrate streaming rendering
         await Task.Delay(500);
 
@@ -40,4 +58,5 @@
         public string? Summary { get; set; }
         public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
     }
+
 }

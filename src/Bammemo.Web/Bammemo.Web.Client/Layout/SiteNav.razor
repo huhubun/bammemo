@@ -1,0 +1,34 @@
+﻿@rendermode InteractiveAuto
+@inject IDialogService DialogService
+
+<div class="site-nav">
+    <nav class="site-nav-default">
+        <NavMenu Collapsible="true"  />
+    </nav>
+
+    <nav class="site-nav-mobile">
+        <FluentButton @onclick="@OpenPanelRightAsync" Appearance="Appearance.Accent">
+            Open panel (&lt;&lt;)
+        </FluentButton>
+    </nav>
+
+    <FluentDialogProvider />
+</div>
+
+@code {
+    private bool expanded = true;
+    private IDialogReference? _dialog;
+
+    private async Task OpenPanelRightAsync()
+    {
+        _dialog = await DialogService.ShowPanelAsync<NavPanel>(new DialogParameters
+            {
+                Alignment = HorizontalAlignment.Left,
+                ShowTitle = false,
+                PrimaryActionEnabled = false,
+                SecondaryActionEnabled = false,
+                DialogType = DialogType.Panel
+            });
+        DialogResult result = await _dialog.Result;
+    }
+}

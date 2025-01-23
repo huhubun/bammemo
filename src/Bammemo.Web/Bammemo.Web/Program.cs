@@ -1,4 +1,5 @@
 using Bammemo.Data;
+using Bammemo.Service;
 using Bammemo.Web.Client.Pages;
 using Bammemo.Web.Components;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,9 @@ builder.Services.AddDbContext<BammemoDbContext>(options =>
     options.UseSqlite("Data Source=bammemo.db")
 );
 
+builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
+
+builder.Services.AddScoped<ISlipService, ServerSlipService>();
 
 var app = builder.Build();
 

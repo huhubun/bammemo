@@ -1,0 +1,26 @@
+﻿@implements IDialogContentComponent<string>
+@rendermode InteractiveAuto
+
+<FluentDialogHeader ShowDismiss="true">
+    <FluentStack VerticalAlignment="VerticalAlignment.Center">
+        <FluentLabel Typo="Typography.PaneHeader">
+            Bammemo
+        </FluentLabel>
+    </FluentStack>
+</FluentDialogHeader>
+
+
+<FluentDialogBody >
+    <NavMenu />
+</FluentDialogBody>
+
+<FluentDialogFooter>
+    &nbsp;
+</FluentDialogFooter>
+
+
+
+@code {
+    public string Content { get; set; } = default!;
+    private bool expanded = true;
+}

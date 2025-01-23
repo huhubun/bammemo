@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Bammemo.Data.Configurations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bammemo.Data.Entities;
 
+[EntityTypeConfiguration(typeof(SlipConfiguration))]
 public class Slip
 {
-    public string Id { get; set; }
+    public required uint Id { get; set; }
+    public required string Content { get; set; }
+    public long CreatedAt { get; set; }
+    public long? UpdateAt { get; set; }
+    public string? FriendlyUrl { get; set; }
+    public int Status { get; set; }
 
-    public string Content { get; set; }
+    public ICollection<SlipTag>? Tags { get; set; }
 }
