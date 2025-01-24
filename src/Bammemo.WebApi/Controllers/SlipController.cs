@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Abstractions.WebApiModels.Slips;
 using Bammemo.Service.Server.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +11,14 @@ namespace Bammemo.WebApi.Controllers;
 [ApiController]
 public class SlipController(
     IMapper mapper,
-    ISlipService slipService,
-    IIdService idService) : BammemoControllerBase
+    IIdService idService,
+    ISlipService slipService) : BammemoControllerBase
 {
     [HttpGet("")]
-    public async Task<IActionResult> ListAsync()
+    public async Task<IActionResult> ListAsync([FromQuery] CursorPagingRequest<string>? paging)
     {
-        var result = await slipService.ListAsync();
+        var a = idService.DecodeAsync;
+        var result = await slipService.ListAsync(await paging.DecodeAsync(idService.DecodeAsync) ?? null);
 
         return Ok(new ListSlipResponse
         {
@@ -40,7 +42,7 @@ public class SlipController(
         return Created(
             nameof(GetByIdAsync),
             nameof(SlipController),
-            result.Id.ToString(),
+            await idService.EncodeAsync(result.Id),
             mapper.Map<CreateSlipResponse>(result));
     }
 }

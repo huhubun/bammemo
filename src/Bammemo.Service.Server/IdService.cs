@@ -1,31 +1,32 @@
 ﻿using Bammemo.Service.Abstractions;
 using Bammemo.Service.Server.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
 using Sqids;
 
 namespace Bammemo.Service.Server;
 
-public class IdService : IIdService
+public class IdService(
+    ISettingService settingService,
+    IMemoryCache memoryCache) : IIdService
 {
-    private readonly Lazy<Task<SqidsEncoder<int>>> sqids;
-
-    public IdService(IServiceProvider serviceProvider)
+    public async Task<string> EncodeAsync(int number) => (await SqidsTask)?.Encode(number) ?? throw new NullReferenceException(nameof(SqidsTask));
+    public async Task<int> DecodeAsync(string str)
     {
-        sqids = new Lazy<Task<SqidsEncoder<int>>>(async () =>
-        {
-            var settingService = serviceProvider.GetRequiredService<ISettingService>();
-            var idAlphabetSetting = await settingService.GetByKeyAsync(SettingKeys.IdAlphabet);
+        ArgumentNullException.ThrowIfNull(str);
 
-            ArgumentNullException.ThrowIfNull(idAlphabetSetting);
-
-            return new SqidsEncoder<int>(new SqidsOptions
-            {
-                Alphabet = idAlphabetSetting.Value,
-                MinLength = 6
-            });
-        });
+        return (await SqidsTask)?.Decode(str).Single() ?? throw new NullReferenceException(nameof(SqidsTask));
     }
 
-    public async Task<string> EncodeAsync(int number) => (await sqids.Value).Encode(number);
-    public async Task<int> DecodeAsync(string str) => (await sqids.Value).Decode(str).Single();
+    private Task<SqidsEncoder<int>?> SqidsTask => memoryCache.GetOrCreateAsync(nameof(Sqids), async _ =>
+    {
+        var idAlphabetSetting = await settingService.GetByKeyAsync(SettingKeys.IdAlphabet);
+
+        ArgumentNullException.ThrowIfNull(idAlphabetSetting);
+
+        return new SqidsEncoder<int>(new SqidsOptions
+        {
+            Alphabet = idAlphabetSetting.Value,
+            MinLength = 6
+        });
+    });
 }

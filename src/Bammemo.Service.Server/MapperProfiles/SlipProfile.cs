@@ -1,20 +1,27 @@
 ﻿using AutoMapper;
 using Bammemo.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Bammemo.Service.Abstractions.Dtos;
+using Bammemo.Service.Abstractions.WebApiModels.Slips;
+using Bammemo.Service.Server.Interfaces;
 
 namespace Bammemo.Service.Server.MapperProfiles;
 
 public class SlipProfile : Profile
 {
-    public SlipProfile()
+    public SlipProfile(IIdService idService)
     {
-        CreateMap<Slip, Dtos.SlipDto>();
+        CreateMap<Slip, ListSlipResponse.SlipModel>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .AfterMap(async (src, dest, _) =>
+            {
+                dest.Id = await idService.EncodeAsync(src.Id);
+            });
 
-        CreateMap<Dtos.SlipDto, Slip>();
-
+        CreateMap<Slip, ListSlipDto>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .AfterMap(async (src, dest, _) =>
+            {
+                dest.Id = await idService.EncodeAsync(src.Id);
+            });
     }
 }

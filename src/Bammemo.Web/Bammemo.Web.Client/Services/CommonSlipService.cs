@@ -1,11 +1,15 @@
-﻿using Bammemo.Service.Abstractions.Dtos;
+﻿using AutoMapper;
+using Bammemo.Service.Abstractions.Paginations;
 
 namespace Bammemo.Web.Client.Services;
 
-public class CommonSlipService : ICommonSlipService
+public class CommonSlipService(
+    IMapper mapper,
+    WebApiClient client) : ICommonSlipService
 {
-    public Task<SlipDto[]> ListAsync()
+    public async Task<ListSlipDto[]> ListAsync(CursorPagingRequest<string>? paging)
     {
-        throw new NotImplementedException();
+        var result = await client.Slips.ListAsync(paging);
+        return mapper.Map<ListSlipDto[]>(result?.Data);
     }
 }

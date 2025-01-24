@@ -1,8 +1,8 @@
+using AutoMapper;
 using Bammemo.Data;
 using Bammemo.Service.Server;
 using Bammemo.Service.Server.Interfaces;
 using Bammemo.Service.Server.MapperProfiles;
-using Bammemo.Web.Client.Pages;
 using Bammemo.Web.Components;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
@@ -14,6 +14,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
 builder.Services.AddFluentUIComponents();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddDbContext<BammemoDbContext>(options =>
     options.UseSqlite("Data Source=/bammemo/bammemo.db")
@@ -21,9 +22,19 @@ builder.Services.AddDbContext<BammemoDbContext>(options =>
 
 builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 
-builder.Services.AddAutoMapper(typeof(SlipProfile).Assembly);
+builder.Services.AddAutoMapper(
+    typeof(Program).Assembly, 
+    typeof(Bammemo.Service.Server.MapperProfiles.SlipProfile).Assembly);
+builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
+{
+    var scope = provider.CreateScope();
+    cfg.AddProfile(new Bammemo.Service.Server.MapperProfiles.SlipProfile(scope.ServiceProvider.GetRequiredService<IIdService>()));
+}).CreateMapper());
 
+builder.Services.AddScoped<ISettingService, SettingService>();
+builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ISlipService, SlipService>();
+builder.Services.AddScoped<IIdService, IdService>();
 
 var app = builder.Build();
 

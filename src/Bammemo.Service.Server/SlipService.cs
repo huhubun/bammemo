@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bammemo.Data;
 using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,9 +14,18 @@ namespace Bammemo.Service.Server;
 
 public class SlipService(BammemoDbContext dbContext, IMapper mapper) : ISlipService
 {
-    public async Task<Slip[]> ListAsync()
+    public async Task<Slip[]> ListAsync(CursorPagingRequest<int>? paging)
     {
-        return await dbContext.Slips.ToArrayAsync();
+        IQueryable<Slip> slips = dbContext.Slips.OrderByDescending(s => s.Id);
+        var take = paging?.Take ?? 5;
+
+        if (paging != null)
+        {
+            slips = slips.Where(s => s.Id < paging.Cursor);
+        }
+
+        return await slips.Take(take).ToArrayAsync();
+
     }
 
     //public async Task<Dtos.SlipDto?> GetByIdAsync(int id)

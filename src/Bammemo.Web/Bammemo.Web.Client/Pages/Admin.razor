@@ -1,18 +1,36 @@
 ﻿@page "/admin"
 @rendermode InteractiveWebAssembly
-@inject ISlipService SlipService
+@inject ICommonSlipService commonSlipService
 
 <PageTitle>Admin 123</PageTitle>
 
 <FluentGrid Justify="JustifyContent.Center">
-    <FluentGridItem xs="12" sm="6">
-        <FluentTextArea></FluentTextArea>
-        <div>asdfasdf</div>
-        <div>asdfasdf</div>
-        <div>asdfasdf</div>
+    <FluentGridItem xs="12" lg="8" xl="6">
+        <FluentStack Orientation="Orientation.Vertical">
+            <FluentCard>
+                <FluentStack Orientation="Orientation.Vertical">
+                    <FluentTextArea Rows="5" style="width: 100%;" />
+                    <FluentToolbar Style="width: 100%;">
+                        <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
+                        <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
+                        <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
+                    </FluentToolbar>
+                </FluentStack>
+            </FluentCard>
 
+            <div>
+                @foreach(var s in slips)
+                {
+                    <div>
+                        @s.Id | @s.Content
+                    </div>
+                }
+            </div>
+
+        </FluentStack>
     </FluentGridItem>
-    <FluentGridItem sm="2" HiddenWhen="GridItemHidden.Xs">
+
+    <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
         <div>asdfasdf</div>
         <div>asdfasdf</div>
         <div>asdfasdf</div>
@@ -21,10 +39,11 @@
 </FluentGrid>
 
 @code {
+    private List<ListSlipDto> slips = new List<ListSlipDto>();
 
-    // protected override async Task OnInitializedAsync()
-    // {
-
-    // }
+    protected override async Task OnInitializedAsync()
+    {
+        slips.AddRange(await commonSlipService.ListAsync(null));
+    }
 
 }
