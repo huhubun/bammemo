@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bammemo.Service.Abstractions\Bammemo.Service.Abstractions.csproj" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
   </ItemGroup>
 
 </Project>

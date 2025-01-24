@@ -1,1 +1,1 @@
-﻿global using Bammemo.Service.Interfaces;
+﻿global using Bammemo.Service.Abstractions;

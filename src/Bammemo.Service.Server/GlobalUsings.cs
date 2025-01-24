@@ -1,1 +1,1 @@
-﻿
+﻿global using Dtos = Bammemo.Service.Abstractions.Dtos;

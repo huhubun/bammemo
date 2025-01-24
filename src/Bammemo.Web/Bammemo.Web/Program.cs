@@ -1,5 +1,7 @@
 using Bammemo.Data;
-using Bammemo.Service;
+using Bammemo.Service.Server;
+using Bammemo.Service.Server.Interfaces;
+using Bammemo.Service.Server.MapperProfiles;
 using Bammemo.Web.Client.Pages;
 using Bammemo.Web.Components;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +16,14 @@ builder.Services.AddRazorComponents()
 builder.Services.AddFluentUIComponents();
 
 builder.Services.AddDbContext<BammemoDbContext>(options =>
-    options.UseSqlite("Data Source=bammemo.db")
+    options.UseSqlite("Data Source=/bammemo/bammemo.db")
 );
 
 builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 
-builder.Services.AddScoped<ISlipService, ServerSlipService>();
+builder.Services.AddAutoMapper(typeof(SlipProfile).Assembly);
+
+builder.Services.AddScoped<ISlipService, SlipService>();
 
 var app = builder.Build();
 

@@ -7,4 +7,5 @@ public class BammemoDbContext(DbContextOptions<BammemoDbContext> options) : DbCo
 {
     public DbSet<Slip> Slips { get; set; }
     public DbSet<SlipTag> SlipTags { get; set; }
+    public DbSet<Setting> Settings{ get; set; }
 }

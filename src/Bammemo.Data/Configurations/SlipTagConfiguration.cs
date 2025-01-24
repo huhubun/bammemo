@@ -10,7 +10,8 @@ public class SlipTagConfiguration : IEntityTypeConfiguration<SlipTag>
     {
         builder.HasKey(st => st.Id);
 
+        builder.HasOne(st => st.Slip).WithMany(s => s.Tags).HasForeignKey(st => st.SlipId);
+
         builder.HasIndex(st => new {st.Tag, st.SlipId});
-        builder.HasIndex(st => new {st.SlipId, st.Tag});
     }
 }

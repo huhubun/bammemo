@@ -16,7 +16,7 @@ public class SlipConfiguration : IEntityTypeConfiguration<Slip>
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.Id).ValueGeneratedOnAdd();
-
+        
         builder.HasIndex(s => s.CreatedAt);
     }
 }

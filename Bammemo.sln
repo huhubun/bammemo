@@ -11,11 +11,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bammemo.Data", "src\Bammemo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bammemo.WebApi", "src\Bammemo.WebApi\Bammemo.WebApi.csproj", "{4A5C517E-D7A3-4A71-BCB9-F1B9FB0F6597}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bammemo.Service.Interface", "src\Bammemo.Service.Interface\Bammemo.Service.Interface.csproj", "{159CBCC1-E932-4CF5-BAB1-816BA9B73D9C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bammemo.Service.Server", "src\Bammemo.Service.Server\Bammemo.Service.Server.csproj", "{D101BDFC-0166-432A-9551-8558DFECCD2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bammemo.Service.Client", "src\Bammemo.Service.Client\Bammemo.Service.Client.csproj", "{E11ACBDE-026C-4F05-86FD-5BF214FEF1AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bammemo.Service.Abstractions", "src\Bammemo.Service.Abstractions\Bammemo.Service.Abstractions.csproj", "{851428D3-9171-4A8D-9F11-D00E8FAFF424}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{55EBD505-6DE8-4D2A-B1BA-18B2A848961D}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{12579B5A-9330-4303-B8A5-17BFE9AC29C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bammemo.Service.Server.Test", "src\tests\Bammemo.Service.Server.Test\Bammemo.Service.Server.Test.csproj", "{B9DE34CA-ABB7-49F7-B7F7-7C979EAABBCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,20 +46,23 @@ Global
 		{4A5C517E-D7A3-4A71-BCB9-F1B9FB0F6597}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A5C517E-D7A3-4A71-BCB9-F1B9FB0F6597}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A5C517E-D7A3-4A71-BCB9-F1B9FB0F6597}.Release|Any CPU.Build.0 = Release|Any CPU
-		{159CBCC1-E932-4CF5-BAB1-816BA9B73D9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{159CBCC1-E932-4CF5-BAB1-816BA9B73D9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{159CBCC1-E932-4CF5-BAB1-816BA9B73D9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{159CBCC1-E932-4CF5-BAB1-816BA9B73D9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D101BDFC-0166-432A-9551-8558DFECCD2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D101BDFC-0166-432A-9551-8558DFECCD2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D101BDFC-0166-432A-9551-8558DFECCD2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D101BDFC-0166-432A-9551-8558DFECCD2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E11ACBDE-026C-4F05-86FD-5BF214FEF1AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E11ACBDE-026C-4F05-86FD-5BF214FEF1AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E11ACBDE-026C-4F05-86FD-5BF214FEF1AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E11ACBDE-026C-4F05-86FD-5BF214FEF1AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{851428D3-9171-4A8D-9F11-D00E8FAFF424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{851428D3-9171-4A8D-9F11-D00E8FAFF424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{851428D3-9171-4A8D-9F11-D00E8FAFF424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{851428D3-9171-4A8D-9F11-D00E8FAFF424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9DE34CA-ABB7-49F7-B7F7-7C979EAABBCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9DE34CA-ABB7-49F7-B7F7-7C979EAABBCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9DE34CA-ABB7-49F7-B7F7-7C979EAABBCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9DE34CA-ABB7-49F7-B7F7-7C979EAABBCC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B9DE34CA-ABB7-49F7-B7F7-7C979EAABBCC} = {12579B5A-9330-4303-B8A5-17BFE9AC29C0}
 	EndGlobalSection
 EndGlobal
