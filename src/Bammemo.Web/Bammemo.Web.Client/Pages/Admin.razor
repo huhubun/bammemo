@@ -1,4 +1,5 @@
 ﻿@page "/admin"
+@using Bammemo.Service.Abstractions.Paginations
 @rendermode InteractiveWebAssembly
 @inject ICommonSlipService commonSlipService
 
@@ -7,24 +8,16 @@
 <FluentGrid Justify="JustifyContent.Center">
     <FluentGridItem xs="12" lg="8" xl="6">
         <FluentStack Orientation="Orientation.Vertical">
-            <FluentCard>
-                <FluentStack Orientation="Orientation.Vertical">
-                    <FluentTextArea Rows="5" style="width: 100%;" />
-                    <FluentToolbar Style="width: 100%;">
-                        <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
-                        <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
-                        <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
-                    </FluentToolbar>
-                </FluentStack>
-            </FluentCard>
+
+            <Bammemo.Web.Client.Layout.SlipEditor />
+
+            @foreach (var s in slipList)
+            {
+                <Bammemo.Web.Client.Layout.SlipCard Data="s" @key="s.Id" />
+            }
 
             <div>
-                @foreach(var s in slips)
-                {
-                    <div>
-                        @s.Id | @s.Content
-                    </div>
-                }
+                <FluentButton OnClick="LoadMore">Load more</FluentButton>
             </div>
 
         </FluentStack>
@@ -38,12 +31,36 @@
     </FluentGridItem>
 </FluentGrid>
 
+
 @code {
-    private List<ListSlipDto> slips = new List<ListSlipDto>();
+
+    private List<ListSlipDto> slipList = new List<ListSlipDto>();
+    string? cursorSlipId = null;
 
     protected override async Task OnInitializedAsync()
     {
-        slips.AddRange(await commonSlipService.ListAsync(null));
+        var slips = await commonSlipService.ListAsync(null);
+
+        RenderSlips(slips);
     }
 
+    private void RenderSlips(ListSlipDto[] slips)
+    {
+        if (slips.Length > 0)
+        {
+            slipList.AddRange(slips);
+            cursorSlipId = slips.Last().Id;
+        }
+    }
+
+    private async Task LoadMore()
+    {
+        var slips = await commonSlipService.ListAsync(new CursorPagingRequest<string>
+            {
+                Cursor = cursorSlipId,
+                Take = 5
+            });
+
+        RenderSlips(slips);
+    }
 }

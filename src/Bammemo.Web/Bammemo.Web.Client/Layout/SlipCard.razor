@@ -1,0 +1,40 @@
+﻿@rendermode InteractiveAuto
+
+<div style="width: 100%">
+    <FluentToolbar style="width:100%">
+        <div>
+            @Data.CreatedAt
+        </div>
+
+        <FluentSpacer />
+
+        <div>
+            <FluentButton Id="@("slip-card-action-button-" + Data.Id)"
+                          Appearance="Appearance.Accent"
+                          OnClick="@(() => open2 = !open2)">
+                Open menu
+            </FluentButton>
+
+            <FluentMenu UseMenuService="false"
+                        Anchor="@("slip-card-action-button-" + Data.Id)"
+                        @bind-Open="open2"
+                        VerticalThreshold="170">
+                <FluentMenuItem>Menu item 1</FluentMenuItem>
+                <FluentMenuItem>Menu item 2</FluentMenuItem>
+            </FluentMenu>
+        </div>
+    </FluentToolbar>
+
+    <div style="width:100%;">
+        @Data.Content
+
+    </div>
+
+</div>
+
+@code {
+    bool open2 = false;
+
+    [Parameter]
+    public required ListSlipDto Data { get; set; }
+}

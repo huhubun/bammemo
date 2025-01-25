@@ -1,0 +1,39 @@
+﻿@using Bammemo.Service.Abstractions.Enums
+@rendermode InteractiveAuto
+
+<div style="width: 100%">
+    <FluentStack Orientation="Orientation.Vertical">
+        <FluentTextArea Rows="5" style="width: 100%;" />
+
+        <FluentToolbar Style="width: 100%;">
+            <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
+            <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
+            <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
+        </FluentToolbar>
+
+        <FluentDivider />
+
+        <FluentToolbar Style="width: 100%;">
+            <FluentSelect TOption="SlipStatus"
+                          Items="Enum.GetValues<SlipStatus>()"
+                          OptionText="@(s => s.ToString())"
+                          OptionValue="@(s => ((int)s).ToString())" />
+
+            <FluentSpacer />
+
+            @if (IsEdit)
+            {
+                <FluentButton Appearance="Appearance.Accent">Save</FluentButton>
+            }
+            else
+            {
+                <FluentButton Appearance="Appearance.Accent">Send</FluentButton>
+            }
+        </FluentToolbar>
+    </FluentStack>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsEdit { get; set; }
+}

@@ -3,7 +3,6 @@ using Bammemo.Data;
 using Bammemo.Service.Server;
 using Bammemo.Service.Server.Helpers;
 using Bammemo.Service.Server.Interfaces;
-using Bammemo.WebApi.MapperProfiles;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -15,7 +14,7 @@ builder.Services.AddCors(
             [
                 builder.Configuration["ApiUrl"] ?? throw new ArgumentNullException("ApiUrl"),
                 builder.Configuration["WebUrl"] ?? throw new ArgumentNullException("WebUrl")
-            ]            )
+            ])
             .AllowAnyMethod()
             .AllowAnyHeader()));
 
