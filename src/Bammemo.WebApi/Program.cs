@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bammemo.Data;
 using Bammemo.Service.Server;
 using Bammemo.Service.Server.Helpers;
@@ -29,14 +28,9 @@ builder.Services.AddMemoryCache();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddAutoMapper(
+builder.Services.AddBammemoAutoMapper(
     typeof(Program).Assembly,
     typeof(Bammemo.Service.Server.MapperProfiles.SlipProfile).Assembly);
-builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
-{
-    var scope = provider.CreateScope();
-    cfg.AddProfile(new Bammemo.Service.Server.MapperProfiles.SlipProfile(scope.ServiceProvider.GetRequiredService<IIdService>()));
-}).CreateMapper());
 
 builder.Services.AddScoped<ISlipService, SlipService>();
 builder.Services.AddScoped<ISettingService, SettingService>();

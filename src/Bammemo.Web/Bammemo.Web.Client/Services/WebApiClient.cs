@@ -11,12 +11,20 @@ public class WebApiClient(HttpClient httpClient)
 
     public class SlipClient(HttpClient httpClient)
     {
-        public async Task<ListSlipResponse?> ListAsync(CursorPagingRequest<string>? paging)
+        public async Task<ListSlipResponse?> ListAsync(CursorPagingRequest<string>? request)
         {
-            var query = QueryHelpers.AddQueryString(String.Empty, paging.ToDictionary());
-            var result = await httpClient.GetFromJsonAsync<ListSlipResponse>("slips" + query);
+            var query = QueryHelpers.AddQueryString(String.Empty, request.ToDictionary());
+            var response = await httpClient.GetFromJsonAsync<ListSlipResponse>("slips" + query);
 
-            return result;
+            return response;
+        }
+
+        public async Task<CreateSlipResponse?> CreateAsync(CreateSlipRequest request)
+        {
+            var responseMessage = await httpClient.PostAsJsonAsync("slips", request);
+            var response = await responseMessage.Content.ReadFromJsonAsync<CreateSlipResponse>();
+
+            return response;
         }
     }
 }

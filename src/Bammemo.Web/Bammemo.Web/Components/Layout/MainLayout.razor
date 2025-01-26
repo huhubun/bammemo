@@ -28,10 +28,17 @@
 <FluentDialogProvider />
 <FluentMenuProvider />
 
+<script type="text/javascript">
+    document.addEventListener('input', function(event){
+        if(event.target instanceof HTMLTextAreaElement
+            && event.target.classList.contains('slip-editor-input')) {
+            event.target.style.height = 'auto';
+            event.target.style.height = event.target.scrollHeight + 'px';
+        }
+    })
+</script>
+
 @code {
-
-
-
 
 
 }

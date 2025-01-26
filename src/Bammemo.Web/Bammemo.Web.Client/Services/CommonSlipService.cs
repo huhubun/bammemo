@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Bammemo.Service.Abstractions.Dtos;
 using Bammemo.Service.Abstractions.Paginations;
 
 namespace Bammemo.Web.Client.Services;

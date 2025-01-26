@@ -8,7 +8,7 @@ namespace Bammemo.Web.MapperProfiles;
 
 public class SlipProfile : Profile
 {
-    public SlipProfile(IIdService idService)
+    public SlipProfile()
     {
     }
 }

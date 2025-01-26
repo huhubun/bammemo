@@ -7,12 +7,7 @@ builder.Services.AddFluentUIComponents();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
-//builder.Services.AddScoped(sp =>
-//    new HttpClient
-//    {
-//        BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? throw new NullReferenceException("ApiUrl"))
-//    });
-builder.Services.AddHttpClient<WebApiClient>(   client => client.BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? throw new NullReferenceException("Please config ApiUrl first")));
+builder.Services.AddHttpClient<WebApiClient>(client => client.BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? throw new NullReferenceException("Please config ApiUrl first")));
 
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 

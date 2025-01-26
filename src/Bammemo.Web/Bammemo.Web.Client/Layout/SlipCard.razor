@@ -10,17 +10,20 @@
 
         <div>
             <FluentButton Id="@("slip-card-action-button-" + Data.Id)"
-                          Appearance="Appearance.Accent"
-                          OnClick="@(() => open2 = !open2)">
-                Open menu
-            </FluentButton>
+                          IconEnd="@(new Icons.Regular.Size16.MoreVertical())"
+                          Title="更多操作"
+                          Appearance="Appearance.Stealth"
+                          OnClick="@(() => open2 = !open2)" />
 
             <FluentMenu UseMenuService="false"
                         Anchor="@("slip-card-action-button-" + Data.Id)"
                         @bind-Open="open2"
                         VerticalThreshold="170">
-                <FluentMenuItem>Menu item 1</FluentMenuItem>
-                <FluentMenuItem>Menu item 2</FluentMenuItem>
+                <FluentMenuItem>修改</FluentMenuItem>
+                <FluentMenuItem>复制链接</FluentMenuItem>
+                <FluentMenuItem>归档</FluentMenuItem>
+                <FluentDivider />
+                <FluentMenuItem>删除</FluentMenuItem>
             </FluentMenu>
         </div>
     </FluentToolbar>
