@@ -1,39 +1,66 @@
 ﻿@using Bammemo.Service.Abstractions.Enums
-@rendermode InteractiveAuto
+@using Bammemo.Service.Abstractions.WebApiModels.Slips
+@using Bammemo.Web.Client.Services
+@rendermode InteractiveWebAssembly
+@inject WebApiClient webApiClient
 
 <div style="width: 100%">
     <FluentStack Orientation="Orientation.Vertical">
-        <FluentTextArea Rows="5" style="width: 100%;" />
+        <textarea style="width: 100%; height: auto; resize: none; overflow: hidden;" class="slip-editor-input" @bind="content" @bind:event="oninput" />
 
         <FluentToolbar Style="width: 100%;">
-            <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
-            <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
-            <FluentButton Appearance="Appearance.Accent">Accent Button</FluentButton>
+            <FluentButton Appearance="Appearance.Stealth"
+                          IconEnd="@(new Icons.Regular.Size16.NumberSymbol())"
+                          Title="Tags" />
+            <FluentButton Appearance="Appearance.Stealth"
+                          IconEnd="@(new Icons.Regular.Size16.Attach())"
+                          Title="更多操作" />
+            <FluentButton Appearance="Appearance.Stealth"
+                          IconEnd="@(new Icons.Regular.Size16.LinkMultiple())"
+                          Title="更多操作" />
         </FluentToolbar>
 
-        <FluentDivider />
+        <FluentDivider Style="width: 100%;" />
 
         <FluentToolbar Style="width: 100%;">
-            <FluentSelect TOption="SlipStatus"
+            <FluentSelect @bind-Value="status"
+                          TOption="SlipStatus"
                           Items="Enum.GetValues<SlipStatus>()"
                           OptionText="@(s => s.ToString())"
                           OptionValue="@(s => ((int)s).ToString())" />
 
             <FluentSpacer />
 
-            @if (IsEdit)
-            {
-                <FluentButton Appearance="Appearance.Accent">Save</FluentButton>
-            }
-            else
-            {
-                <FluentButton Appearance="Appearance.Accent">Send</FluentButton>
-            }
+            <FluentButton Appearance="Appearance.Accent"
+                          OnClick="OnSaveClickAsync"
+                          Disabled="content == null || content.Length == 0"
+                          Loading="isSaveButtonLoading">Save</FluentButton>
         </FluentToolbar>
     </FluentStack>
 </div>
 
 @code {
+    private string? content = null;
+    private string status = ((int)SlipStatus.Public).ToString();
+    private bool isSaveButtonLoading = false;
+
     [Parameter]
     public bool IsEdit { get; set; }
+
+    private async Task OnSaveClickAsync()
+    {
+
+        var createdSlip = await webApiClient.Slips.CreateAsync(new CreateSlipRequest
+            {
+                Content = content,
+                Status = Enum.Parse<SlipStatus>(status)
+            });
+
+        content = null;
+    }
+
+    private void AA(string sss)
+    {
+        Console.WriteLine(sss);
+    }
 }

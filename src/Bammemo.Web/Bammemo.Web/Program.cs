@@ -1,4 +1,3 @@
-using AutoMapper;
 using Bammemo.Data;
 using Bammemo.Service.Server;
 using Bammemo.Service.Server.Interfaces;
@@ -23,14 +22,12 @@ builder.Services.AddDbContext<BammemoDbContext>(options =>
 
 builder.Services.AddServerSideBlazor().AddCircuitOptions(option => { option.DetailedErrors = true; });
 
-builder.Services.AddAutoMapper(
-    typeof(Program).Assembly, 
-    typeof(Bammemo.Service.Server.MapperProfiles.SlipProfile).Assembly);
-builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
-{
-    var scope = provider.CreateScope();
-    cfg.AddProfile(new Bammemo.Service.Server.MapperProfiles.SlipProfile(scope.ServiceProvider.GetRequiredService<IIdService>()));
-}).CreateMapper());
+builder.Services.AddBammemoAutoMapper(
+    typeof(Program).Assembly,
+    typeof(Bammemo.Service.Server.MapperProfiles.SlipProfile).Assembly); 
+
+// ‘§≥ œ÷–Ë“™
+builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client => client.BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? throw new NullReferenceException("Please config ApiUrl first")));
 
 builder.Services.AddScoped<IAppVersionService, AppVersionService>();
 builder.Services.AddScoped<CacheStorageAccessor>();

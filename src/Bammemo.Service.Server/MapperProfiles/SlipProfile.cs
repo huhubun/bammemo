@@ -2,10 +2,12 @@
 using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Dtos;
 using Bammemo.Service.Abstractions.WebApiModels.Slips;
+using Bammemo.Service.Server.Attributes;
 using Bammemo.Service.Server.Interfaces;
 
 namespace Bammemo.Service.Server.MapperProfiles;
 
+[NeedIdService]
 public class SlipProfile : Profile
 {
     public SlipProfile(IIdService idService)
