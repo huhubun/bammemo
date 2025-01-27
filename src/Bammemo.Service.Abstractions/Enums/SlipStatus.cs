@@ -13,9 +13,9 @@ public enum SlipStatus
     Public,
 
     /// <summary>
-    /// 进行中（仅自己可见）
+    /// 草稿（仅自己可见）
     /// </summary>
-    Workspace,
+    Draft,
 
     /// <summary>
     /// 归档（仅自己可见）

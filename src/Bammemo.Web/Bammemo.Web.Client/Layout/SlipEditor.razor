@@ -47,9 +47,12 @@
     [Parameter]
     public bool IsEdit { get; set; }
 
+    [Parameter]
+    public EventCallback<CreateSlipResponse> OnSlipSaved { get; set; }
+
+
     private async Task OnSaveClickAsync()
     {
-
         var createdSlip = await webApiClient.Slips.CreateAsync(new CreateSlipRequest
             {
                 Content = content,
@@ -57,6 +60,8 @@
             });
 
         content = null;
+
+        await OnSlipSaved.InvokeAsync(createdSlip);
     }
 
     private void AA(string sss)

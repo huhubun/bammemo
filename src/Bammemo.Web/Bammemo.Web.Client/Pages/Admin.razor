@@ -1,7 +1,9 @@
 ﻿@page "/admin"
 @using Bammemo.Service.Abstractions.Paginations
+@using Bammemo.Service.Abstractions.WebApiModels.Slips
 @rendermode InteractiveWebAssembly
 @inject ICommonSlipService commonSlipService
+@inject IMapper mapper
 
 <PageTitle>Admin 123</PageTitle>
 
@@ -9,16 +11,24 @@
     <FluentGridItem xs="12" lg="8" xl="6">
         <FluentStack Orientation="Orientation.Vertical">
 
-            <Bammemo.Web.Client.Layout.SlipEditor />
+            <Bammemo.Web.Client.Layout.SlipEditor OnSlipSaved="OnNewSlipSaved" />
+
+            @foreach (var s in newSlipList.OrderByDescending(s => s.Id))
+            {
+                <Bammemo.Web.Client.Layout.SlipCard Data="s" @key="s.Id" />
+            }
 
             @foreach (var s in slipList)
             {
                 <Bammemo.Web.Client.Layout.SlipCard Data="s" @key="s.Id" />
             }
 
-            <div>
-                <FluentButton OnClick="LoadMore">Load more</FluentButton>
-            </div>
+            @if (cursorSlipId != null)
+            {
+                <div>
+                    <FluentButton OnClick="LoadMore">Load more</FluentButton>
+                </div>
+            }
 
         </FluentStack>
     </FluentGridItem>
@@ -35,6 +45,7 @@
 @code {
 
     private List<ListSlipDto> slipList = new List<ListSlipDto>();
+    private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
     string? cursorSlipId = null;
 
     protected override async Task OnInitializedAsync()
@@ -62,5 +73,15 @@
             });
 
         RenderSlips(slips);
+    }
+
+    private void OnNewSlipSaved(CreateSlipResponse response)
+    {
+        if (newSlipList.Count == 0 && slipList.Count == 0)
+        {
+            cursorSlipId = response.Id;
+        }
+
+        newSlipList.Add(mapper.Map<ListSlipDto>(response));
     }
 }

@@ -8,5 +8,8 @@ public class SlipProfile : Profile
     public SlipProfile()
     {
         CreateMap<ListSlipResponse.SlipModel, ListSlipDto>();
+
+        CreateMap<CreateSlipResponse, ListSlipDto>()
+            .IncludeBase<ListSlipResponse.SlipModel, ListSlipDto>();
     }
 }
