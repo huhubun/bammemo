@@ -1,13 +1,11 @@
 ﻿using Bammemo.Service.Abstractions.Paginations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Bammemo.Service.Abstractions.WebApiModels.Slips;
 
 namespace Bammemo.Service.Abstractions;
 
 public interface ICommonSlipService
 {
-    Task<Dtos.ListSlipDto[]> ListAsync(CursorPagingRequest<string>? paging);
+    Task<Dtos.ListSlipDto[]> ListAsync(
+        ListSlipQueryRequest? query,
+        CursorPagingRequest<string>? paging = null);
 }

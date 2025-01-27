@@ -2,21 +2,29 @@
 using Bammemo.Data;
 using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Paginations;
+using Bammemo.Service.Abstractions.WebApiModels.Slips;
 using Bammemo.Service.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Bammemo.Service.Server;
 
 public class SlipService(BammemoDbContext dbContext, IMapper mapper) : ISlipService
 {
-    public async Task<Slip[]> ListAsync(CursorPagingRequest<int>? paging)
+    public async Task<Slip[]> ListAsync(
+        ListSlipQueryRequest? query,
+        CursorPagingRequest<int>? paging)
     {
         IQueryable<Slip> slips = dbContext.Slips.OrderByDescending(s => s.Id);
+
+        if (query != null)
+        {
+            if (query.StartTime.HasValue && query.EndTime.HasValue)
+            {
+                slips = slips.Where(s => s.CreatedAt >= query.StartTime.Value)
+                    .Where(s => s.CreatedAt < query.EndTime.Value);
+            }
+        }
+
         var take = paging?.Take ?? 5;
 
         if (paging != null)
@@ -28,21 +36,14 @@ public class SlipService(BammemoDbContext dbContext, IMapper mapper) : ISlipServ
 
     }
 
-    //public async Task<Dtos.SlipDto?> GetByIdAsync(int id)
-    //{
-    //    var entity = await dbContext.Slips.SingleOrDefaultAsync(s => s.Id == id);
-    //    return entity == null ? null : mapper.Map<Dtos.SlipDto>(entity);
-    //}
-
-    //public async Task<Dtos.SlipDto?> GetByIdAsync(string id)
-    //{
-    //    var rawId = 0;
-    //    return await GetByIdAsync(rawId);
-    //}
+    public async Task<Slip?> GetByIdAsync(int id)
+    {
+        return await dbContext.Slips.SingleOrDefaultAsync(s => s.Id == id);
+    }
 
     public async Task<Slip> CreateAsync(Slip entity)
     {
-        // TODO check url, add tags...
+        // TODO add tags...
 
         await dbContext.Slips.AddAsync(entity);
         await dbContext.SaveChangesAsync();
@@ -50,7 +51,21 @@ public class SlipService(BammemoDbContext dbContext, IMapper mapper) : ISlipServ
         return entity;
     }
 
-    //public string EncodedId(int id)
-    //{
-    //}
+    public async Task<Slip> UpdateAsync(Slip entity)
+    {
+        // TODO update tags...
+
+        dbContext.Slips.Update(entity);
+        await dbContext.SaveChangesAsync();
+
+        return entity;
+    }
+
+    public async Task<long[]> GetCreatedTimeWithSlipAsync(long startTime, long endTime)
+        => await dbContext.Slips
+            .Where(s => s.CreatedAt >= startTime)
+            .Where(s => s.CreatedAt < endTime)
+            .Select(s => s.CreatedAt)
+            .ToArrayAsync();
+
 }

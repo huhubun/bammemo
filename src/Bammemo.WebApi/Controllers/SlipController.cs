@@ -15,10 +15,13 @@ public class SlipController(
     ISlipService slipService) : BammemoControllerBase
 {
     [HttpGet("")]
-    public async Task<IActionResult> ListAsync([FromQuery] CursorPagingRequest<string>? paging)
+    public async Task<IActionResult> ListAsync(
+        [FromQuery] ListSlipQueryRequest? query,
+        [FromQuery] CursorPagingRequest<string>? paging)
     {
-        var a = idService.DecodeAsync;
-        var result = await slipService.ListAsync(await paging.DecodeAsync(idService.DecodeAsync) ?? null);
+        var result = await slipService.ListAsync(
+            query,
+            await paging.DecodeAsync(idService.DecodeAsync) ?? null);
 
         return Ok(new ListSlipResponse
         {
@@ -44,5 +47,34 @@ public class SlipController(
             nameof(SlipController),
             await idService.EncodeAsync(result.Id),
             mapper.Map<CreateSlipResponse>(result));
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateAsync([FromRoute] string id, [FromBody] UpdateSlipRequest request)
+    {
+        var rawId = await idService.DecodeAsync(id);
+        var entity = await slipService.GetByIdAsync(rawId);
+
+        if (entity == null)
+        {
+            return NotFound();
+        }
+
+        entity = mapper.Map(request, entity);
+
+        var result = await slipService.UpdateAsync(entity);
+
+        return NoContent();
+    }
+
+    [HttpGet("times")]
+    public async Task<IActionResult> GetSlipTimesAsync([FromQuery] GetSlipTimesRequest request)
+    {
+        var times = await slipService.GetCreatedTimeWithSlipAsync(request.StartTime, request.EndTime);
+
+        return Ok(new GetSlipTimesResponse
+        {
+            CreatedTimes = times
+        });
     }
 }

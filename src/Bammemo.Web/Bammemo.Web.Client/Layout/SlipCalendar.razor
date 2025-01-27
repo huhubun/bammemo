@@ -1,0 +1,55 @@
+﻿@using Bammemo.Service.Abstractions.WebApiModels.Slips
+@rendermode InteractiveAuto
+@inject WebApiClient webApiClient
+
+<FluentCalendar Value="SelectedTime" Style="height: 250px;" PickerMonthChanged="OnMonthChangedAsync" ValueChanged="OnSelectedDateChangedAsync">
+    <DaysTemplate>
+        @if (!context.IsInactive)
+        {
+            var dayTicks = context.Date.Ticks;
+            var dayEndTicks = context.Date.AddDays(1).Ticks;
+
+            if (Times.Any(t => t >= dayTicks && t < dayEndTicks))
+            {
+
+                <div style="color: red; font-weight: bold;">
+                    @context.DayNumber
+                </div>
+            }
+            else
+            {
+                @context.DayNumber
+            }
+        }
+        else
+        {
+            @context.DayNumber
+        }
+    </DaysTemplate>
+</FluentCalendar>
+
+@code {
+    [Parameter]
+    public DateTime? SelectedTime { get; set; }
+
+    [Parameter]
+    public required long[] Times { get; set; }
+
+    [Parameter]
+    public EventCallback<DateTime?> OnSelectedDateChanged { get; set; }
+
+    private async Task OnMonthChangedAsync(DateTime dateTime)
+    {
+        Times = (await webApiClient.Slips.GetSlipTimesAsync(new GetSlipTimesRequest
+            {
+                StartTime = dateTime.Ticks,
+                EndTime = dateTime.AddMonths(1).Ticks
+            }))?.CreatedTimes ?? [];
+    }
+
+    private async Task OnSelectedDateChangedAsync(DateTime? dateTimes)
+    {
+        SelectedTime = dateTimes;
+        await OnSelectedDateChanged.InvokeAsync(dateTimes);
+    }
+}

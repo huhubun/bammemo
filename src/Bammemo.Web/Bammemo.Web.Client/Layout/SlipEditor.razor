@@ -3,6 +3,7 @@
 @using Bammemo.Web.Client.Services
 @rendermode InteractiveWebAssembly
 @inject WebApiClient webApiClient
+@inject IMapper mapper
 
 <div style="width: 100%">
     <FluentStack Orientation="Orientation.Vertical">
@@ -11,13 +12,13 @@
         <FluentToolbar Style="width: 100%;">
             <FluentButton Appearance="Appearance.Stealth"
                           IconEnd="@(new Icons.Regular.Size16.NumberSymbol())"
-                          Title="Tags" />
+                          Title="标签" />
             <FluentButton Appearance="Appearance.Stealth"
                           IconEnd="@(new Icons.Regular.Size16.Attach())"
-                          Title="更多操作" />
+                          Title="上传" />
             <FluentButton Appearance="Appearance.Stealth"
                           IconEnd="@(new Icons.Regular.Size16.LinkMultiple())"
-                          Title="更多操作" />
+                          Title="链接" />
         </FluentToolbar>
 
         <FluentDivider Style="width: 100%;" />
@@ -28,6 +29,15 @@
                           Items="Enum.GetValues<SlipStatus>()"
                           OptionText="@(s => s.ToString())"
                           OptionValue="@(s => ((int)s).ToString())" />
+
+            @if (IsEdit)
+            {
+                <FluentSpacer />
+
+                <FluentButton Appearance="Appearance.Accent"
+                              OnClick="@(_ => IsEdit = false)"
+                              Loading="isSaveButtonLoading">Cancel</FluentButton>
+            }
 
             <FluentSpacer />
 
@@ -48,20 +58,55 @@
     public bool IsEdit { get; set; }
 
     [Parameter]
-    public EventCallback<CreateSlipResponse> OnSlipSaved { get; set; }
+    public ListSlipDto? Data { get; set; }
 
+    [Parameter]
+    public EventCallback<ListSlipDto> OnSlipSaved { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Data != null)
+        {
+            content = Data.Content;
+            status = ((int)Data.Status).ToString();
+        }
+    }
 
     private async Task OnSaveClickAsync()
     {
-        var createdSlip = await webApiClient.Slips.CreateAsync(new CreateSlipRequest
-            {
-                Content = content,
-                Status = Enum.Parse<SlipStatus>(status)
-            });
+        ArgumentNullException.ThrowIfNull(content);
+
+        if (IsEdit)
+        {
+            ArgumentNullException.ThrowIfNull(Data);
+
+            var editedStatus = Enum.Parse<SlipStatus>(status);
+
+            await webApiClient.Slips.UpdateAsync(Data.Id, new UpdateSlipRequest
+                {
+                    Content = content,
+                    Status = editedStatus
+                });
+
+            Data.Content = content;
+            Data.Status = editedStatus;
+
+            await OnSlipSaved.InvokeAsync(mapper.Map<ListSlipDto>(Data));
+        }
+        else
+        {
+            var createdSlip = await webApiClient.Slips.CreateAsync(new CreateSlipRequest
+                {
+                    Content = content,
+                    Status = Enum.Parse<SlipStatus>(status)
+                });
+
+            await OnSlipSaved.InvokeAsync(mapper.Map<ListSlipDto>(createdSlip));
+        }
 
         content = null;
-
-        await OnSlipSaved.InvokeAsync(createdSlip);
     }
 
     private void AA(string sss)

@@ -13,5 +13,7 @@ public class SlipProfile : Profile
 
         CreateMap<Slip, CreateSlipResponse>()
             .IncludeBase<Slip, ListSlipResponse.SlipModel>();
+
+        CreateMap<UpdateSlipRequest, Slip>();
     }
 }

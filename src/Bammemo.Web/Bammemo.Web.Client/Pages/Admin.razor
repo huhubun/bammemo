@@ -3,7 +3,7 @@
 @using Bammemo.Service.Abstractions.WebApiModels.Slips
 @rendermode InteractiveWebAssembly
 @inject ICommonSlipService commonSlipService
-@inject IMapper mapper
+@inject WebApiClient webApiClient
 
 <PageTitle>Admin 123</PageTitle>
 
@@ -12,6 +12,15 @@
         <FluentStack Orientation="Orientation.Vertical">
 
             <Bammemo.Web.Client.Layout.SlipEditor OnSlipSaved="OnNewSlipSaved" />
+
+            <div>
+                @if (selectedTime.HasValue)
+                {
+                    <FluentBadge Appearance="Appearance.Neutral" OnDismissClick="OnRemoveCalendarSelectedDateAsync">
+                        @selectedTime.ToIsoDateString()
+                    </FluentBadge>
+                }
+            </div>
 
             @foreach (var s in newSlipList.OrderByDescending(s => s.Id))
             {
@@ -34,10 +43,7 @@
     </FluentGridItem>
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
-        <div>asdfasdf</div>
-        <div>asdfasdf</div>
-        <div>asdfasdf</div>
-        <div>asdfasdf</div>
+        <Bammemo.Web.Client.Layout.SlipCalendar Times="slipTimes" SelectedTime="selectedTime" OnSelectedDateChanged="OnCalendarSelectedDateChangedAsync" />
     </FluentGridItem>
 </FluentGrid>
 
@@ -46,13 +52,25 @@
 
     private List<ListSlipDto> slipList = new List<ListSlipDto>();
     private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
-    string? cursorSlipId = null;
+    private string? cursorSlipId = null;
+    private long[] slipTimes = [];
+    private DateTime? selectedTime = null;
 
     protected override async Task OnInitializedAsync()
     {
         var slips = await commonSlipService.ListAsync(null);
 
         RenderSlips(slips);
+
+        var now = DateTime.Now;
+        var startTime = new DateTime(now.Year, now.Month, 1);
+        var endTime = startTime.AddMonths(1);
+
+        slipTimes = (await webApiClient.Slips.GetSlipTimesAsync(new GetSlipTimesRequest
+            {
+                StartTime = TimeZoneInfo.ConvertTimeToUtc(startTime).Ticks,
+                EndTime = TimeZoneInfo.ConvertTimeToUtc(endTime).Ticks
+            }))?.CreatedTimes ?? [];
     }
 
     private void RenderSlips(ListSlipDto[] slips)
@@ -66,7 +84,7 @@
 
     private async Task LoadMore()
     {
-        var slips = await commonSlipService.ListAsync(new CursorPagingRequest<string>
+        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
             {
                 Cursor = cursorSlipId,
                 Take = 5
@@ -75,13 +93,39 @@
         RenderSlips(slips);
     }
 
-    private void OnNewSlipSaved(CreateSlipResponse response)
+    private void OnNewSlipSaved(ListSlipDto slip)
     {
         if (newSlipList.Count == 0 && slipList.Count == 0)
         {
-            cursorSlipId = response.Id;
+            cursorSlipId = slip.Id;
         }
 
-        newSlipList.Add(mapper.Map<ListSlipDto>(response));
+        newSlipList.Add(slip);
+    }
+
+    private async Task OnCalendarSelectedDateChangedAsync(DateTime? dateTime)
+    {
+        selectedTime = dateTime;
+
+        slipList = [];
+        newSlipList = [];
+
+        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
+        RenderSlips(slips);
+    }
+
+    private async Task OnRemoveCalendarSelectedDateAsync() => await OnCalendarSelectedDateChangedAsync(null);
+
+    private ListSlipQueryRequest GetListSlipQueryRequest()
+    {
+        var request = new ListSlipQueryRequest();
+
+        if(selectedTime.HasValue)
+        {
+            request.StartTime = selectedTime.Value.Ticks;
+            request.EndTime = selectedTime.Value.AddDays(1).Ticks;
+        }
+
+        return request;
     }
 }
