@@ -2,8 +2,9 @@ using AutoMapper;
 using Bammemo.Data;
 using Bammemo.Service.Server;
 using Bammemo.Service.Server.Interfaces;
-using Bammemo.Service.Server.MapperProfiles;
+using Bammemo.Web.Client.Layout;
 using Bammemo.Web.Components;
+using Bammemo.Web.Components.Layout;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 
@@ -30,6 +31,10 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
     var scope = provider.CreateScope();
     cfg.AddProfile(new Bammemo.Service.Server.MapperProfiles.SlipProfile(scope.ServiceProvider.GetRequiredService<IIdService>()));
 }).CreateMapper());
+
+builder.Services.AddScoped<IAppVersionService, AppVersionService>();
+builder.Services.AddScoped<CacheStorageAccessor>();
+builder.Services.AddHttpClient<IStaticAssetService, ServerStaticAssetService>();
 
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();

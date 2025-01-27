@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>net9.0</TargetFramework>
@@ -9,6 +9,11 @@
 		<!--<WasmEnableLinking>true</WasmEnableLinking>-->
 		<WasmCompressionFormat>brotli</WasmCompressionFormat>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="wwwroot\js\CacheStorageAccessor.js" />
+	  <None Include="wwwroot\js\MarkdownSection.js" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Bammemo.Data\Bammemo.Data.csproj" />
