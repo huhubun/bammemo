@@ -8,6 +8,7 @@ namespace Bammemo.Web.Client.Services;
 public class WebApiClient(HttpClient httpClient)
 {
     public SlipClient Slips { get; } = new SlipClient(httpClient);
+    public AnalyticsClient Analytics { get; } = new AnalyticsClient(httpClient);
 
     public class SlipClient(HttpClient httpClient)
     {
@@ -39,15 +40,17 @@ public class WebApiClient(HttpClient httpClient)
             return response;
         }
 
-        public async Task UpdateAsync(string id, UpdateSlipRequest request)
+        public async Task<UpdateSlipResponse?> UpdateAsync(string id, UpdateSlipRequest request)
         {
             var responseMessage = await httpClient.PutAsJsonAsync($"slips/{id}", request);
-            if (!responseMessage.IsSuccessStatusCode)
-            {
-                throw new InvalidOperationException(await responseMessage.Content.ReadAsStringAsync());
-            }
-        }
+            var response = await responseMessage.Content.ReadFromJsonAsync<UpdateSlipResponse>();
 
+            return response;
+        }
+    }
+
+    public class AnalyticsClient(HttpClient httpClient)
+    {
         public async Task<GetSlipTimesResponse> GetSlipTimesAsync(GetSlipTimesRequest request)
         {
             var query = QueryHelpers.AddQueryString(
@@ -57,10 +60,16 @@ public class WebApiClient(HttpClient httpClient)
                     {nameof(request.StartTime), request.StartTime.ToString() },
                     {nameof(request.EndTime), request.EndTime.ToString() }
                 });
-            var response = await httpClient.GetFromJsonAsync<GetSlipTimesResponse>("slips/times" + query);
+            var response = await httpClient.GetFromJsonAsync<GetSlipTimesResponse>("analytics/slips/times" + query);
 
             ArgumentNullException.ThrowIfNull(response);
 
+            return response;
+        }
+
+        public async Task<GetSlipTagsResponse> GetSlipTagsAsync()
+        {
+            var response = await httpClient.GetFromJsonAsync<GetSlipTagsResponse>("analytics/slips/tags");
             return response;
         }
     }

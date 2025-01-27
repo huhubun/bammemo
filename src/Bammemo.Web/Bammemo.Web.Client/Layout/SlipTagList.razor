@@ -1,0 +1,20 @@
+﻿@rendermode InteractiveAuto
+@inject WebApiClient webApiClient
+
+<div>
+    @foreach (var tag in tags)
+    {
+        <FluentButton Appearance="Appearance.Outline" IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
+            @tag
+        </FluentButton>
+    }
+</div>
+
+@code {
+    private string[] tags = [];
+
+    protected async override Task OnInitializedAsync()
+    {
+        tags = (await webApiClient.Analytics.GetSlipTagsAsync()).Tags;
+    }
+}

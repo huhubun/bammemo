@@ -84,16 +84,13 @@
 
             var editedStatus = Enum.Parse<SlipStatus>(status);
 
-            await webApiClient.Slips.UpdateAsync(Data.Id, new UpdateSlipRequest
+            var updatedSlip = await webApiClient.Slips.UpdateAsync(Data.Id, new UpdateSlipRequest
                 {
                     Content = content,
                     Status = editedStatus
                 });
 
-            Data.Content = content;
-            Data.Status = editedStatus;
-
-            await OnSlipSaved.InvokeAsync(mapper.Map<ListSlipDto>(Data));
+            await OnSlipSaved.InvokeAsync(mapper.Map<ListSlipDto>(updatedSlip));
         }
         else
         {

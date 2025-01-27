@@ -64,17 +64,6 @@ public class SlipController(
 
         var result = await slipService.UpdateAsync(entity);
 
-        return NoContent();
-    }
-
-    [HttpGet("times")]
-    public async Task<IActionResult> GetSlipTimesAsync([FromQuery] GetSlipTimesRequest request)
-    {
-        var times = await slipService.GetCreatedTimeWithSlipAsync(request.StartTime, request.EndTime);
-
-        return Ok(new GetSlipTimesResponse
-        {
-            CreatedTimes = times
-        });
+        return Ok(mapper.Map<UpdateSlipResponse>(result));
     }
 }

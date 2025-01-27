@@ -1,0 +1,22 @@
+﻿@using Markdig
+@rendermode InteractiveAuto
+
+@if (markdownHtml != null)
+{
+    <div style="width:100%;">
+        @(new MarkupString(markdownHtml))
+    </div>
+}
+
+@code {
+    [Parameter]
+    public required string Content { get; set; }
+
+    private string? markdownHtml = null;
+
+    protected override void OnInitialized()
+    {
+        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+        markdownHtml = Markdown.ToHtml(Content, pipeline);
+    }
+}

@@ -7,8 +7,8 @@ namespace Bammemo.Data.Entities;
 public class SlipTag
 {
     public int Id { get; set; }
-    public required int SlipId { get; set; }
+    public int SlipId { get; set; }
     public required string Tag { get; set; }
 
-    public required virtual Slip Slip { get; set; }
+    public virtual Slip? Slip { get; set; }
 }

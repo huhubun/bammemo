@@ -9,7 +9,7 @@
             var dayTicks = context.Date.Ticks;
             var dayEndTicks = context.Date.AddDays(1).Ticks;
 
-            if (Times.Any(t => t >= dayTicks && t < dayEndTicks))
+            if (times.Any(t => t >= dayTicks && t < dayEndTicks))
             {
 
                 <div style="color: red; font-weight: bold;">
@@ -29,22 +29,30 @@
 </FluentCalendar>
 
 @code {
+    private long[] times = [];
+
     [Parameter]
     public DateTime? SelectedTime { get; set; }
 
-    [Parameter]
-    public required long[] Times { get; set; }
 
     [Parameter]
     public EventCallback<DateTime?> OnSelectedDateChanged { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var now = DateTime.Now;
+        var startTime = new DateTime(now.Year, now.Month, 1);
+
+        await OnMonthChangedAsync(startTime);
+    }
+
     private async Task OnMonthChangedAsync(DateTime dateTime)
     {
-        Times = (await webApiClient.Slips.GetSlipTimesAsync(new GetSlipTimesRequest
+        times = (await webApiClient.Analytics.GetSlipTimesAsync(new GetSlipTimesRequest
             {
-                StartTime = dateTime.Ticks,
-                EndTime = dateTime.AddMonths(1).Ticks
-            }))?.CreatedTimes ?? [];
+                StartTime = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks,
+                EndTime = TimeZoneInfo.ConvertTimeToUtc(dateTime.AddMonths(1)).Ticks
+            }))?.CreatedTimes.Select(t => new DateTime(t).ToLocalTime().Ticks).ToArray() ?? [];
     }
 
     private async Task OnSelectedDateChangedAsync(DateTime? dateTimes)

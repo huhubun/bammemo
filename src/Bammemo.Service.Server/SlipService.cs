@@ -1,20 +1,24 @@
 ﻿using AutoMapper;
 using Bammemo.Data;
 using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Enums;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Abstractions.WebApiModels.Slips;
+using Bammemo.Service.Server.Helpers;
 using Bammemo.Service.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bammemo.Service.Server;
 
-public class SlipService(BammemoDbContext dbContext, IMapper mapper) : ISlipService
+public class SlipService(
+    BammemoDbContext dbContext,
+    IMapper mapper) : ISlipService
 {
     public async Task<Slip[]> ListAsync(
         ListSlipQueryRequest? query,
         CursorPagingRequest<int>? paging)
     {
-        IQueryable<Slip> slips = dbContext.Slips.OrderByDescending(s => s.Id);
+        IQueryable<Slip> slips = dbContext.Slips.Include(s => s.Tags).OrderByDescending(s => s.Id);
 
         if (query != null)
         {
@@ -43,7 +47,15 @@ public class SlipService(BammemoDbContext dbContext, IMapper mapper) : ISlipServ
 
     public async Task<Slip> CreateAsync(Slip entity)
     {
-        // TODO add tags...
+        var tags = MarkdownHelper.ExtractTags(entity.Content);
+
+        if (tags.Length > 0)
+        {
+            entity.Tags = tags.Select(t => new SlipTag
+            {
+                Tag = t
+            }).ToArray();
+        }
 
         await dbContext.Slips.AddAsync(entity);
         await dbContext.SaveChangesAsync();
@@ -53,7 +65,27 @@ public class SlipService(BammemoDbContext dbContext, IMapper mapper) : ISlipServ
 
     public async Task<Slip> UpdateAsync(Slip entity)
     {
-        // TODO update tags...
+        var tags = MarkdownHelper.ExtractTags(entity.Content);
+
+        var existingTagsQuery = dbContext.SlipTags.Where(st => st.SlipId == entity.Id);
+        if (tags.Length == 0)
+        {
+            await existingTagsQuery.ExecuteDeleteAsync();
+        }
+        else
+        {
+            var existingTags = await existingTagsQuery.ToArrayAsync();
+
+            var needRemoveTags = existingTags.ExceptBy(tags, ext => ext.Tag);
+            dbContext.SlipTags.RemoveRange(needRemoveTags);
+
+            var needInsertTags = tags.Except(existingTags.Select(ext => ext.Tag));
+            dbContext.SlipTags.AddRange(needInsertTags.Select(t => new SlipTag
+            {
+                SlipId = entity.Id,
+                Tag = t
+            }));
+        }
 
         dbContext.Slips.Update(entity);
         await dbContext.SaveChangesAsync();
@@ -63,9 +95,18 @@ public class SlipService(BammemoDbContext dbContext, IMapper mapper) : ISlipServ
 
     public async Task<long[]> GetCreatedTimeWithSlipAsync(long startTime, long endTime)
         => await dbContext.Slips
+            .AsNoTracking()
             .Where(s => s.CreatedAt >= startTime)
             .Where(s => s.CreatedAt < endTime)
             .Select(s => s.CreatedAt)
+            .ToArrayAsync();
+
+    public async Task<string[]> GetAllTagsAsync()
+        => await dbContext.SlipTags
+            .AsNoTracking()
+            .Where(st => st.Slip.Status == (int)SlipStatus.Public)
+            .Select(st => st.Tag)
+            .Distinct()
             .ToArrayAsync();
 
 }

@@ -12,5 +12,7 @@ public class ListSlipResponse
         public long? UpdateAt { get; set; }
         public string? FriendlyUrl { get; set; }
         public int Status { get; set; }
+        public string[]? Tags { get; set; }
     }
+
 }

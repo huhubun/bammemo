@@ -1,0 +1,123 @@
+﻿@using Bammemo.Service.Abstractions.Paginations
+@using Bammemo.Service.Abstractions.WebApiModels.Slips
+@rendermode InteractiveAuto
+@inject ICommonSlipService commonSlipService
+@inject WebApiClient webApiClient
+
+<FluentGrid Justify="JustifyContent.Center">
+    <FluentGridItem xs="12" lg="8" xl="6">
+        <FluentStack Orientation="Orientation.Vertical">
+
+            @if (IsAdminPage)
+            {
+                <Bammemo.Web.Client.Layout.SlipEditor OnSlipSaved="OnNewSlipSaved" />
+            }
+
+            <div>
+                @if (selectedTime.HasValue)
+                {
+                    <FluentBadge Appearance="Appearance.Neutral" OnDismissClick="OnRemoveCalendarSelectedDateAsync">
+                        @selectedTime.ToIsoDateString()
+                    </FluentBadge>
+                }
+            </div>
+
+            @foreach (var s in newSlipList)
+            {
+                <Bammemo.Web.Client.Layout.SlipCard Data="s" @key="s.Id" />
+            }
+
+            @foreach (var s in slipList)
+            {
+                <Bammemo.Web.Client.Layout.SlipCard Data="s" @key="s.Id" />
+            }
+
+            @if (cursorSlipId != null)
+            {
+                <div>
+                    <FluentButton OnClick="LoadMore">Load more</FluentButton>
+                </div>
+            }
+
+        </FluentStack>
+    </FluentGridItem>
+
+    <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
+        <Bammemo.Web.Client.Layout.SlipCalendar SelectedTime="selectedTime" OnSelectedDateChanged="OnCalendarSelectedDateChangedAsync" />
+        <Bammemo.Web.Client.Layout.SlipTagList />
+    </FluentGridItem>
+</FluentGrid>
+
+
+@code {
+    [Parameter]
+    public bool IsAdminPage { get; set; }
+
+    private List<ListSlipDto> slipList = new List<ListSlipDto>();
+    private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
+    private string? cursorSlipId = null;
+    private DateTime? selectedTime = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var slips = await commonSlipService.ListAsync(null);
+
+        RenderSlips(slips);
+    }
+
+    private void RenderSlips(ListSlipDto[] slips)
+    {
+        if (slips.Length > 0)
+        {
+            slipList.AddRange(slips);
+            cursorSlipId = slips.Last().Id;
+        }
+    }
+
+    private async Task LoadMore()
+    {
+        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
+            {
+                Cursor = cursorSlipId,
+                Take = 5
+            });
+
+        RenderSlips(slips);
+    }
+
+    private void OnNewSlipSaved(ListSlipDto slip)
+    {
+        if (newSlipList.Count == 0 && slipList.Count == 0)
+        {
+            cursorSlipId = slip.Id;
+        }
+
+        newSlipList.Insert(0, slip);
+    }
+
+    private async Task OnCalendarSelectedDateChangedAsync(DateTime? dateTime)
+    {
+        selectedTime = dateTime;
+
+        slipList = [];
+        newSlipList = [];
+
+        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
+        RenderSlips(slips);
+    }
+
+    private async Task OnRemoveCalendarSelectedDateAsync() => await OnCalendarSelectedDateChangedAsync(null);
+
+    private ListSlipQueryRequest GetListSlipQueryRequest()
+    {
+        var request = new ListSlipQueryRequest();
+
+        if (selectedTime.HasValue)
+        {
+            request.StartTime = TimeZoneInfo.ConvertTimeToUtc(selectedTime.Value).Ticks;
+            request.EndTime = TimeZoneInfo.ConvertTimeToUtc(selectedTime.Value.AddDays(1)).Ticks;
+        }
+
+        return request;
+    }
+}

@@ -22,15 +22,15 @@
 
                 <div>
                     <FluentButton Id="@("slip-card-action-button-" + Data.Id)"
-                    IconEnd="@(new Icons.Regular.Size16.MoreVertical())"
-                    Title="更多操作"
-                    Appearance="Appearance.Stealth"
-                    OnClick="@(() => isMoreOperationMenuOpen = !isMoreOperationMenuOpen)" />
+                                  IconEnd="@(new Icons.Regular.Size16.MoreVertical())"
+                                  Title="更多操作"
+                                  Appearance="Appearance.Stealth"
+                                  OnClick="@(() => isMoreOperationMenuOpen = !isMoreOperationMenuOpen)" />
 
                     <FluentMenu UseMenuService="false"
-                    Anchor="@("slip-card-action-button-" + Data.Id)"
-                    @bind-Open="isMoreOperationMenuOpen"
-                    VerticalThreshold="170">
+                                Anchor="@("slip-card-action-button-" + Data.Id)"
+                                @bind-Open="isMoreOperationMenuOpen"
+                                VerticalThreshold="170">
                         <FluentMenuItem OnClick="@(_ => isEditMode = true)">修改</FluentMenuItem>
                         <FluentMenuItem>复制链接</FluentMenuItem>
                         <FluentMenuItem>归档</FluentMenuItem>
@@ -40,7 +40,8 @@
                 </div>
             </FluentToolbar>
 
-            <MarkdownSection Content="@Data.Content" style="width:100%;" />
+            @* <MarkdownSection Content="@Data.Content" style="width:100%;" /> *@
+            <BammemoMarkdown Content="@Data.Content" />
         </div>
     }
 </div>
