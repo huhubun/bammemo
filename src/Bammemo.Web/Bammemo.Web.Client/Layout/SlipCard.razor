@@ -32,8 +32,10 @@
                                 @bind-Open="isMoreOperationMenuOpen"
                                 VerticalThreshold="170">
                         <FluentMenuItem OnClick="@(_ => isEditMode = true)">修改</FluentMenuItem>
-                        <FluentMenuItem>复制链接</FluentMenuItem>
                         <FluentMenuItem>归档</FluentMenuItem>
+                        <FluentDivider />
+                        <FluentMenuItem>复制链接</FluentMenuItem>
+                        <FluentMenuItem>可读性链接</FluentMenuItem>
                         <FluentDivider />
                         <FluentMenuItem>删除</FluentMenuItem>
                     </FluentMenu>

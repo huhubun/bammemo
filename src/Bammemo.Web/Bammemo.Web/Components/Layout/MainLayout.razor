@@ -31,13 +31,15 @@
 <script type="text/javascript" src="/js/highlight-extensions.js"></script>
 
 <script type="text/javascript">
-    document.addEventListener('input', function(event){
+    function autoResizeSlipEditorTextarea(event){
         if(event.target instanceof HTMLTextAreaElement
             && event.target.classList.contains('slip-editor-input')) {
             event.target.style.height = 'auto';
             event.target.style.height = event.target.scrollHeight + 'px';
         }
-    })
+    }
+    document.addEventListener('input', autoResizeSlipEditorTextarea)
+    document.addEventListener('focus', autoResizeSlipEditorTextarea)
 </script>
 
 @code {

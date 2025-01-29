@@ -18,7 +18,7 @@ public class SlipService(
         ListSlipQueryRequest? query,
         CursorPagingRequest<int>? paging)
     {
-        IQueryable<Slip> slips = dbContext.Slips.Include(s => s.Tags).OrderByDescending(s => s.Id);
+        IQueryable<Slip> slips = dbContext.Slips.AsNoTracking().OrderByDescending(s => s.Id);
 
         if (query != null)
         {
@@ -26,6 +26,11 @@ public class SlipService(
             {
                 slips = slips.Where(s => s.CreatedAt >= query.StartTime.Value)
                     .Where(s => s.CreatedAt < query.EndTime.Value);
+            }
+
+            if(query.Tags?.Length > 0)
+            {
+                slips = slips.Where(s => s.Tags.Any(st => query.Tags.Contains(st.Tag)));
             }
         }
 
@@ -36,7 +41,7 @@ public class SlipService(
             slips = slips.Where(s => s.Id < paging.Cursor);
         }
 
-        return await slips.Take(take).ToArrayAsync();
+        return await slips.Take(take).Include(s => s.Tags).ToArrayAsync();
 
     }
 

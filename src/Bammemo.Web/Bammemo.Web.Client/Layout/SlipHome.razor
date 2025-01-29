@@ -1,6 +1,7 @@
 ﻿@using Bammemo.Service.Abstractions.Paginations
 @using Bammemo.Service.Abstractions.WebApiModels.Slips
 @rendermode InteractiveAuto
+@inject NavigationManager navigationManager
 @inject ICommonSlipService commonSlipService
 @inject WebApiClient webApiClient
 
@@ -14,11 +15,16 @@
             }
 
             <div>
-                @if (selectedTime.HasValue)
+                @if (StartTimeDateTime.HasValue)
                 {
                     <FluentBadge Appearance="Appearance.Neutral" OnDismissClick="OnRemoveCalendarSelectedDateAsync">
-                        @selectedTime.ToIsoDateString()
+                        @StartTimeDateTime.ToIsoDateString()
                     </FluentBadge>
+                }
+
+                @foreach (var tag in SelectedTags ?? [])
+                {
+                    <span>@tag</span>
                 }
             </div>
 
@@ -43,8 +49,9 @@
     </FluentGridItem>
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
-        <Bammemo.Web.Client.Layout.SlipCalendar SelectedTime="selectedTime" OnSelectedDateChanged="OnCalendarSelectedDateChangedAsync" />
-        <Bammemo.Web.Client.Layout.SlipTagList />
+        <Bammemo.Web.Client.Layout.SlipCalendar SelectedTime="StartTimeDateTime"
+                                                OnSelectedDateChanged="OnCalendarSelectedDateChangedAsync" />
+        <Bammemo.Web.Client.Layout.SlipTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
     </FluentGridItem>
 </FluentGrid>
 
@@ -53,20 +60,39 @@
     [Parameter]
     public bool IsAdminPage { get; set; }
 
+    [SupplyParameterFromQuery]
+    private long? StartTime { get; set; }
+
+    private DateTime? StartTimeDateTime => StartTime.HasValue ? new DateTime(StartTime.Value).ToLocalTime() : null;
+
+    [SupplyParameterFromQuery]
+    private long? EndTime { get; set; }
+
+    [SupplyParameterFromQuery(Name = "tags")]
+    private string[]? SelectedTags { get; set; }
+
     private List<ListSlipDto> slipList = new List<ListSlipDto>();
     private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
     private string? cursorSlipId = null;
-    private DateTime? selectedTime = null;
 
     protected override async Task OnInitializedAsync()
     {
-        var slips = await commonSlipService.ListAsync(null);
-
-        RenderSlips(slips);
+        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
+        AppendRenderSlips(slips, isNewRender: true);
     }
 
-    private void RenderSlips(ListSlipDto[] slips)
+    protected override void OnParametersSet()
     {
+    }
+
+    private void AppendRenderSlips(ListSlipDto[] slips, bool isNewRender = false)
+    {
+        if (isNewRender)
+        {
+            slipList = [];
+            newSlipList = [];
+        }
+
         if (slips.Length > 0)
         {
             slipList.AddRange(slips);
@@ -82,7 +108,7 @@
                 Take = 5
             });
 
-        RenderSlips(slips);
+        AppendRenderSlips(slips);
     }
 
     private void OnNewSlipSaved(ListSlipDto slip)
@@ -97,27 +123,36 @@
 
     private async Task OnCalendarSelectedDateChangedAsync(DateTime? dateTime)
     {
-        selectedTime = dateTime;
-
-        slipList = [];
-        newSlipList = [];
+        navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        {
+            { nameof(StartTime), dateTime.HasValue? TimeZoneInfo.ConvertTimeToUtc(dateTime.Value).Ticks : null },
+            { nameof(EndTime), dateTime.HasValue? TimeZoneInfo.ConvertTimeToUtc(dateTime.Value.AddDays(1)).Ticks : null}
+        }));
 
         var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
-        RenderSlips(slips);
+        AppendRenderSlips(slips, isNewRender: true);
     }
 
     private async Task OnRemoveCalendarSelectedDateAsync() => await OnCalendarSelectedDateChangedAsync(null);
 
+    private async Task OnSelectedTagChanged(string[]? tags)
+    {
+        navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        {
+            {"tags", tags}
+        }));
+
+        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
+        AppendRenderSlips(slips, isNewRender: true);
+    }
+
     private ListSlipQueryRequest GetListSlipQueryRequest()
     {
-        var request = new ListSlipQueryRequest();
-
-        if (selectedTime.HasValue)
-        {
-            request.StartTime = TimeZoneInfo.ConvertTimeToUtc(selectedTime.Value).Ticks;
-            request.EndTime = TimeZoneInfo.ConvertTimeToUtc(selectedTime.Value.AddDays(1)).Ticks;
-        }
-
-        return request;
+        return new ListSlipQueryRequest
+            {
+                StartTime = StartTime,
+                EndTime = EndTime,
+                Tags = SelectedTags
+            };
     }
 }

@@ -19,4 +19,11 @@ public static class Extensions
             {nameof(CursorPagingRequest<T>.Cursor), paging!.Cursor?.ToString() },
             {nameof(CursorPagingRequest<T>.Take), paging.Take.ToString() },
         } : [];
+
+    public static List<KeyValuePair<string, string?>> ToQueryStringParameters<T>(this CursorPagingRequest<T>? paging)
+        => paging.HasValue() ?
+        [
+            new KeyValuePair<string, string?>(nameof(CursorPagingRequest<T>.Cursor), paging!.Cursor?.ToString()),
+            new KeyValuePair<string, string?>( nameof(CursorPagingRequest<T>.Take), paging.Take.ToString() ),
+        ] : [];
 }

@@ -16,13 +16,21 @@ public class WebApiClient(HttpClient httpClient)
             ListSlipQueryRequest? query,
             CursorPagingRequest<string>? paging)
         {
-            var requestParameters = paging?.ToDictionary() ?? [];
+            var requestParameters = paging?.ToQueryStringParameters() ?? [];
             if (query != null)
             {
                 if (query.StartTime.HasValue && query.EndTime.HasValue)
                 {
-                    requestParameters.Add(nameof(query.StartTime), query.StartTime.ToString());
-                    requestParameters.Add(nameof(query.EndTime), query.EndTime.ToString());
+                    requestParameters.Add(new KeyValuePair<string, string?>(nameof(query.StartTime), query.StartTime.ToString()));
+                    requestParameters.Add(new KeyValuePair<string, string?>(nameof(query.EndTime), query.EndTime.ToString()));
+                }
+
+                if (query.Tags != null)
+                {
+                    foreach (var tag in query.Tags)
+                    {
+                        requestParameters.Add(new KeyValuePair<string, string?>(nameof(query.Tags), tag));
+                    }
                 }
             }
 

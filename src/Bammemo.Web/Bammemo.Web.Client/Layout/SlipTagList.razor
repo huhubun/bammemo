@@ -4,17 +4,39 @@
 <div>
     @foreach (var tag in tags)
     {
-        <FluentButton Appearance="Appearance.Outline" IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
+        <FluentButton Appearance="Appearance.Outline" IconStart="@(new Icons.Regular.Size16.NumberSymbol())" OnClick="@(_ => OnTagSelectedAsync(tag))">
             @tag
         </FluentButton>
     }
 </div>
 
 @code {
+    [Parameter]
+    public string[]? SelectedTags { get; set; }
+
+    [Parameter]
+    public EventCallback<string[]?> OnSelectedTagChanged { get; set; }
+
     private string[] tags = [];
 
     protected async override Task OnInitializedAsync()
     {
         tags = (await webApiClient.Analytics.GetSlipTagsAsync()).Tags;
+    }
+
+    private async Task OnTagSelectedAsync(string tag)
+    {
+        var selectedTags = new List<string>(SelectedTags ?? Enumerable.Empty<string>());
+
+        if (selectedTags.Contains(tag))
+        {
+            selectedTags.Remove(tag);
+        }
+        else
+        {
+            selectedTags.Add(tag);
+        }
+
+        await OnSelectedTagChanged.InvokeAsync(selectedTags.ToArray());
     }
 }
