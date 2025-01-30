@@ -17,7 +17,7 @@
             <div>
                 @if (StartTimeDateTime.HasValue)
                 {
-                    <FluentBadge Appearance="Appearance.Neutral" OnDismissClick="OnRemoveCalendarSelectedDateAsync">
+                    <FluentBadge Appearance="Appearance.Neutral" OnDismissClick="OnRemoveCalendarSelectedDate">
                         @StartTimeDateTime.ToIsoDateString()
                     </FluentBadge>
                 }
@@ -50,11 +50,10 @@
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
         <Bammemo.Web.Client.Layout.SlipCalendar SelectedTime="StartTimeDateTime"
-                                                OnSelectedDateChanged="OnCalendarSelectedDateChangedAsync" />
+                                                OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
         <Bammemo.Web.Client.Layout.SlipTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
     </FluentGridItem>
 </FluentGrid>
-
 
 @code {
     [Parameter]
@@ -75,14 +74,10 @@
     private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
     private string? cursorSlipId = null;
 
-    protected override async Task OnInitializedAsync()
+    protected async override Task OnParametersSetAsync()
     {
         var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
         AppendRenderSlips(slips, isNewRender: true);
-    }
-
-    protected override void OnParametersSet()
-    {
     }
 
     private void AppendRenderSlips(ListSlipDto[] slips, bool isNewRender = false)
@@ -121,29 +116,23 @@
         newSlipList.Insert(0, slip);
     }
 
-    private async Task OnCalendarSelectedDateChangedAsync(DateTime? dateTime)
+    private void OnCalendarSelectedDateChanged(DateTime? dateTime)
     {
         navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
         {
             { nameof(StartTime), dateTime.HasValue? TimeZoneInfo.ConvertTimeToUtc(dateTime.Value).Ticks : null },
             { nameof(EndTime), dateTime.HasValue? TimeZoneInfo.ConvertTimeToUtc(dateTime.Value.AddDays(1)).Ticks : null}
-        }));
-
-        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
-        AppendRenderSlips(slips, isNewRender: true);
+        }), false);
     }
 
-    private async Task OnRemoveCalendarSelectedDateAsync() => await OnCalendarSelectedDateChangedAsync(null);
+    private void OnRemoveCalendarSelectedDate() => OnCalendarSelectedDateChanged(null);
 
-    private async Task OnSelectedTagChanged(string[]? tags)
+    private void OnSelectedTagChanged(string[]? tags)
     {
         navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
         {
             {"tags", tags}
-        }));
-
-        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
-        AppendRenderSlips(slips, isNewRender: true);
+        }), false);
     }
 
     private ListSlipQueryRequest GetListSlipQueryRequest()

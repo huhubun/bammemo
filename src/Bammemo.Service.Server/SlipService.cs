@@ -42,7 +42,6 @@ public class SlipService(
         }
 
         return await slips.Take(take).Include(s => s.Tags).ToArrayAsync();
-
     }
 
     public async Task<Slip?> GetByIdAsync(int id)
