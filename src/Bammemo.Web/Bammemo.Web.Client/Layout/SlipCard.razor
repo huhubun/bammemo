@@ -3,14 +3,14 @@
 <div style="width: 100%">
     @if (isEditMode)
     {
-        <SlipEditor IsEdit="true" Data="Data" OnSlipSaved="OnNewSlipSaved" />
+        <SlipEditor IsEdit="true" Data="Data" OnSlipSaved="OnNewSlipSaved" OnEditCanceled="@(_ => isEditMode = false)" />
     }
     else
     {
         <div>
             <FluentToolbar style="width:100%">
                 <div>
-                    <snap title="@DisplayTimeTitle">@DisplayTime</snap>
+                    <snap title="@(DisplayTimeTitle == DisplayTime ? null : DisplayTimeTitle)">@DisplayTime</snap>
 
                     @if (Data.Status == Service.Abstractions.Enums.SlipStatus.Private)
                     {
@@ -60,7 +60,7 @@
         get
         {
             var timeSpan = new TimeSpan(DateTime.UtcNow.Ticks - Data.CreatedAt);
-            if (timeSpan.TotalDays > 8)
+            if (timeSpan.TotalDays > 5)
             {
                 return DisplayTimeTitle;
             }

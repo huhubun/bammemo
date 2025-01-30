@@ -4,10 +4,15 @@
 @rendermode InteractiveWebAssembly
 @inject WebApiClient webApiClient
 @inject IMapper mapper
+@inject IJSRuntime jsRuntime
 
 <div style="width: 100%">
     <FluentStack Orientation="Orientation.Vertical">
-        <textarea style="width: 100%; height: auto; resize: none; overflow: hidden;" class="slip-editor-input" @bind="content" @bind:event="oninput" autofocus />
+        <textarea style="width: 100%; height: auto; resize: none; overflow: hidden;"
+                  class="slip-editor-input"
+                  @bind="content"
+                  @bind:event="oninput"
+                  @ref="textarea" />
 
         <FluentToolbar Style="width: 100%;">
             <FluentButton Appearance="Appearance.Stealth"
@@ -35,7 +40,7 @@
                 <FluentSpacer />
 
                 <FluentButton Appearance="Appearance.Accent"
-                              OnClick="@(_ => IsEdit = false)"
+                              OnClick="@(_ => OnEditCanceled.InvokeAsync(true))"
                               Loading="isSaveButtonLoading">Cancel</FluentButton>
             }
 
@@ -53,6 +58,7 @@
     private string? content = null;
     private string status = ((int)SlipStatus.Public).ToString();
     private bool isSaveButtonLoading = false;
+    private ElementReference textarea;
 
     [Parameter]
     public bool IsEdit { get; set; }
@@ -63,14 +69,23 @@
     [Parameter]
     public EventCallback<ListSlipDto> OnSlipSaved { get; set; }
 
+    [Parameter]
+    public EventCallback<bool> OnEditCanceled { get; set; }
+
     protected override void OnParametersSet()
     {
-        base.OnParametersSet();
-
         if (Data != null)
         {
             content = Data.Content;
             status = ((int)Data.Status).ToString();
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Data != null)
+        {
+            await jsRuntime.InvokeVoidAsync("resizeSlipEditorTextarea", textarea);
         }
     }
 

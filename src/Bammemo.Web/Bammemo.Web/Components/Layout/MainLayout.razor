@@ -34,12 +34,16 @@
     function autoResizeSlipEditorTextarea(event){
         if(event.target instanceof HTMLTextAreaElement
             && event.target.classList.contains('slip-editor-input')) {
-            event.target.style.height = 'auto';
-            event.target.style.height = event.target.scrollHeight + 'px';
+            resizeSlipEditorTextarea(event.target);
         }
     }
+
+    function resizeSlipEditorTextarea(element){
+        element.style.height = 'auto';
+        element.style.height = element.scrollHeight + 'px';
+    }
+
     document.addEventListener('input', autoResizeSlipEditorTextarea)
-    document.addEventListener('focus', autoResizeSlipEditorTextarea)
 </script>
 
 @code {
