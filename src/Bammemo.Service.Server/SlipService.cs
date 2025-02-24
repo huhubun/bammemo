@@ -30,7 +30,7 @@ public class SlipService(
 
             if (query.Tags?.Length > 0)
             {
-                slips = slips.Where(s => s.Tags.Any() && s.Tags.Any(st => query.Tags.Contains(st.Tag)));
+                slips = slips.Where(s => s.Tags.Any() && query.Tags.All(tag => query.Tags.Contains(tag)));
             }
         }
 
@@ -49,9 +49,14 @@ public class SlipService(
         return await dbContext.Slips.SingleOrDefaultAsync(s => s.Id == id);
     }
 
+    public async Task<Slip?> GetByIdNoTrackingAsync(int id)
+    {
+        return await dbContext.Slips.AsNoTracking().Include(s => s.Tags).SingleOrDefaultAsync(s => s.Id == id);
+    }
+
     public async Task<Slip?> GetByLinkNameAsync(string linkName)
     {
-        return await dbContext.Slips.SingleOrDefaultAsync(s => s.FriendlyLinkName == linkName);
+        return await dbContext.Slips.AsNoTracking().Include(s => s.Tags).SingleOrDefaultAsync(s => s.FriendlyLinkName == linkName);
     }
 
     public async Task<Slip> CreateAsync(Slip entity)

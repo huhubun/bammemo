@@ -54,10 +54,11 @@
     {
         try
         {
-            var slipUrl = Data.GetUrl();
+            var slipUrl = NavigationManager.ToAbsoluteUri(Data.GetUrl());
 
-            var success = await JSRuntime.InvokeAsync<bool>("bammemo.copyTextToClipboard", slipUrl);
-            ToastService.ShowSuccess($"已复制 {NavigationManager.ToAbsoluteUri(slipUrl)}");
+            await JSRuntime.InvokeAsync<bool>("bammemo.copyTextToClipboard", slipUrl);
+
+            ToastService.ShowSuccess($"已复制 {slipUrl}");
         }
         catch (JSException ex)
         {

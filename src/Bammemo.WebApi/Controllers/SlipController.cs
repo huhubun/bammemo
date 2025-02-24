@@ -40,7 +40,7 @@ public class SlipController(
         }
         else
         {
-            slip = await slipService.GetByIdAsync(await idService.DecodeAsync(idOrLinkName));
+            slip = await slipService.GetByIdNoTrackingAsync(await idService.DecodeAsync(idOrLinkName));
         }
         
         return slip != null ? Ok(mapper.Map<GetSlipByIdResponse>(slip)) : NotFound(idOrLinkName);

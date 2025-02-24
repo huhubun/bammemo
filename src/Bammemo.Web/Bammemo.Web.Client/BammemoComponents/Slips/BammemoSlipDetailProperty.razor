@@ -1,0 +1,17 @@
+﻿@rendermode InteractiveAuto
+
+<div class="bammemo-slip-detail-property">
+    <FluentLabel Typo="Typography.Subject"> @Title </FluentLabel>
+    
+    <div class="bammemo-slip-detail-property-content">
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public required string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

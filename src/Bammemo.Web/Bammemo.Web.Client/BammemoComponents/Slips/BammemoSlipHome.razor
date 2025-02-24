@@ -2,10 +2,11 @@
 @using Bammemo.Service.Abstractions.WebApiModels.Slips
 @rendermode InteractiveAuto
 @implements IDisposable
-@inject PersistentComponentState persistentComponentState
-@inject NavigationManager navigationManager
-@inject ICommonSlipService commonSlipService
-@inject WebApiClient webApiClient
+@inject PersistentComponentState PersistentComponentState
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+@inject ICommonSlipService CommonSlipService
+@inject WebApiClient WebApiClient
 
 <FluentGrid Justify="JustifyContent.Center">
     <FluentGridItem xs="12" lg="8" xl="6">
@@ -13,7 +14,7 @@
 
             @if (IsAdminPage)
             {
-                <Bammemo.Web.Client.Layout.SlipEditor OnSlipSaved="OnNewSlipSaved" />
+                <BammemoSlipEditor OnSlipSaved="OnNewSlipSaved" />
             }
 
             <div>
@@ -42,8 +43,8 @@
 
             @if (cursorSlipId != null)
             {
-                <div>
-                    <FluentButton OnClick="LoadMore">Load more</FluentButton>
+                <div style="width: 100%;">
+                    <FluentButton Appearance="Appearance.Stealth" OnClick="LoadMore" Style="width: 100%;">Load more</FluentButton>
                 </div>
             }
 
@@ -51,9 +52,9 @@
     </FluentGridItem>
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
-        <Bammemo.Web.Client.Layout.SlipCalendar SelectedTime="StartTimeDateTime"
-                                                OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
-        <Bammemo.Web.Client.Layout.SlipTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
+        <BammemoSlipCalendar SelectedTime="StartTimeDateTime"
+        OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
+        <BammemoSlipTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
     </FluentGridItem>
 </FluentGrid>
 
@@ -82,28 +83,28 @@
 
     protected override void OnInitialized()
     {
-        persistingSubscription = persistentComponentState.RegisterOnPersisting(PersistData);
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
     }
 
     protected async override Task OnParametersSetAsync()
     {
-        if (!persistentComponentState.TryTakeFromJson(nameof(persistSlips), out persistSlips))
+        if (!PersistentComponentState.TryTakeFromJson(nameof(persistSlips), out persistSlips))
         {
-            persistSlips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
+            persistSlips = await CommonSlipService.ListAsync(GetListSlipQueryRequest());
         }
 
-        AppendRenderSlips(persistSlips ?? [], isNewRender: true);
+        AppendRenderSlips(persistSlips ?? [], needRerender: true);
     }
 
     private Task PersistData()
     {
-        persistentComponentState.PersistAsJson(nameof(persistSlips), persistSlips);
+        PersistentComponentState.PersistAsJson(nameof(persistSlips), persistSlips);
         return Task.CompletedTask;
     }
 
-    private void AppendRenderSlips(ListSlipDto[] slips, bool isNewRender = false)
+    private void AppendRenderSlips(ListSlipDto[] slips, bool needRerender = false)
     {
-        if (isNewRender)
+        if (needRerender)
         {
             slipList = [];
             newSlipList = [];
@@ -114,13 +115,18 @@
             slipList.AddRange(slips);
             cursorSlipId = slips.Last().Id;
         }
+        else
+        {
+            cursorSlipId = null;
+            ToastService.ShowInfo("已经到底了");
+        }
     }
 
     private async Task LoadMore()
     {
-        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
+        var slips = await CommonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
             {
-                Cursor = cursorSlipId,
+                Cursor = cursorSlipId ?? String.Empty,
                 Take = 5
             });
 
@@ -139,7 +145,7 @@
 
     private void OnCalendarSelectedDateChanged(DateTime? dateTime)
     {
-        navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        NavigationManager.NavigateTo(NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
         {
             { nameof(StartTime), dateTime.HasValue? TimeZoneInfo.ConvertTimeToUtc(dateTime.Value).Ticks : null },
             { nameof(EndTime), dateTime.HasValue? TimeZoneInfo.ConvertTimeToUtc(dateTime.Value.AddDays(1)).Ticks : null}
@@ -150,7 +156,7 @@
 
     private void OnSelectedTagChanged(string[]? tags)
     {
-        navigationManager.NavigateTo(navigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        NavigationManager.NavigateTo(NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
         {
             {"tags", tags}
         }), false);
@@ -167,5 +173,4 @@
     }
 
     void IDisposable.Dispose() => persistingSubscription.Dispose();
-
 }

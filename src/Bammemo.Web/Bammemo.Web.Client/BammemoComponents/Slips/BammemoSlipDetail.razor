@@ -1,0 +1,124 @@
+﻿@using Bammemo.Service.Abstractions.Enums
+@using Bammemo.Service.Abstractions.WebApiModels.Slips
+@rendermode InteractiveAuto
+@implements IDisposable
+@inject PersistentComponentState PersistentComponentState
+@inject ICommonSlipService CommonSlipService
+
+<div>
+    @if (slip?.Title != null)
+    {
+        <div class="bammemo-slip-detail-title">
+            <FluentGrid Justify="JustifyContent.Center">
+                <FluentGridItem xs="12" lg="11" xl="6">
+                    <FluentLabel Typo="Typography.PageTitle">@slip.Title</FluentLabel>
+                </FluentGridItem>
+                <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown" />
+            </FluentGrid>
+        </div>
+    }
+
+    <FluentGrid Justify="JustifyContent.Center">
+
+        <FluentGridItem xs="12" lg="8" xl="6">
+
+            <BammemoCard>
+                @if (slip != null)
+                {
+                    <BammemoMarkdownSection Content="@slip.Content" FullDisplay />
+                }
+                else
+                {
+                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+                        <FluentSkeleton Width="100%" Height="1rem" />
+                        <FluentSkeleton Width="100%" Height="1rem" />
+                        <FluentSkeleton Width="40%" Height="1rem" />
+                    </FluentStack>
+                }
+            </BammemoCard>
+        </FluentGridItem>
+
+        <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+
+                <BammemoSlipDetailProperty Title="发表于">
+                    @if (slip != null)
+                    {
+                        @slip.CreatedAt.ToLocalTimeString()
+                    }
+                    else
+                    {
+                        <FluentSkeleton Width="100%" Height="1rem" />
+                    }
+                </BammemoSlipDetailProperty>
+
+                @if (slip?.UpdateAt.HasValue ?? false)
+                {
+                    <BammemoSlipDetailProperty Title="最后修改于">
+                        <p>
+                            @slip.UpdateAt.Value.ToLocalTimeString()
+                        </p>
+                    </BammemoSlipDetailProperty>
+                }
+
+                @if (slip == null || (slip.Tags?.Any() ?? false))
+                {
+                    <BammemoSlipDetailProperty Title="Tags">
+                        @if (slip != null)
+                        {
+                            <BammemoSlipTagLinks Tags="slip.Tags" />
+                        }
+                        else
+                        {
+                            <FluentStack Orientation="Orientation.Horizontal" VerticalGap="16">
+                                @for (var i = 0; i < 3; i++)
+                                {
+                                    <FluentSkeleton Width="@((4 * 16) + "px")" Height="1rem" />
+                                }
+                            </FluentStack>
+                        }
+                    </BammemoSlipDetailProperty>
+                }
+
+            </FluentStack>
+        </FluentGridItem>
+    </FluentGrid>
+</div>
+
+@code {
+    private PersistingComponentStateSubscription persistingSubscription;
+    private SlipDetailDto? slip;
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    [Parameter]
+    public string? LinkName { get; set; }
+
+    private SlipIdOrLinkNameType Type => Id != null ? SlipIdOrLinkNameType.Id : (LinkName != null ? SlipIdOrLinkNameType.LinkName : throw new ArgumentNullException("IdOrLinkName"));
+    private string IdOrLinkName => Id != null ? Id : (LinkName != null ? LinkName : throw new ArgumentNullException("IdOrLinkName"));
+
+    protected override void OnInitialized()
+    {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (!PersistentComponentState.TryTakeFromJson(nameof(slip), out slip))
+        {
+            slip = await CommonSlipService.GetByIdAsync(IdOrLinkName, new GetSlipByIdRequest
+                {
+                    Type = Type
+                });
+        }
+    }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(nameof(slip), slip);
+        return Task.CompletedTask;
+    }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
+}

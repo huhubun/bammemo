@@ -2,12 +2,14 @@
 @inject WebApiClient webApiClient
 
 <div>
-    @foreach (var tag in tags)
-    {
-        <FluentButton Appearance="Appearance.Outline" IconStart="@(new Icons.Regular.Size16.NumberSymbol())" OnClick="@(_ => OnTagSelectedAsync(tag))">
-            @tag
-        </FluentButton>
-    }
+    <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="16" Wrap>
+        @foreach (var tag in tags)
+        {
+            <FluentButton Appearance="Appearance.Outline" IconStart="@(new Icons.Regular.Size16.NumberSymbol())" OnClick="@(_ => OnTagSelectedAsync(tag))">
+                @tag
+            </FluentButton>
+        }
+    </FluentStack>
 </div>
 
 @code {

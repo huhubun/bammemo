@@ -29,12 +29,6 @@
         }
     }
 
-    private string DisplayTimeTitle
-    {
-        get
-        {
-            return new DateTime(Data.CreatedAt, DateTimeKind.Utc).ToLocalTime().ToString();
-        }
-    }
+    private string DisplayTimeTitle => Data.CreatedAt.ToLocalTimeString();
 
 }

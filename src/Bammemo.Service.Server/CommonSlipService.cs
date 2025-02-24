@@ -32,7 +32,7 @@ public class CommonSlipService(
         }
         else
         {
-            slip = await slipService.GetByIdAsync(await idService.DecodeAsync(idOrLinkName));
+            slip = await slipService.GetByIdNoTrackingAsync(await idService.DecodeAsync(idOrLinkName));
         }
 
         return slip != null ? mapper.Map<SlipDetailDto>(slip) : null;
