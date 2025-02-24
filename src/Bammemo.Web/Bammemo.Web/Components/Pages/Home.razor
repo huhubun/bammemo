@@ -3,10 +3,26 @@
 @using Bammemo.Data.Entities
 @using Microsoft.EntityFrameworkCore
 @inject BammemoDbContext DbContext
-
+@inject IHttpContextAccessor httpContext
+@using System.Globalization;
 
 <PageTitle>Home</PageTitle>
 
+@(httpContext.HttpContext.Request.Headers["Accept-Language"])
+<br />
+@(CultureInfo.DefaultThreadCurrentCulture)
+<br />
+@(CultureInfo.DefaultThreadCurrentUICulture)
+<br />
+@(CultureInfo.CurrentCulture)
+<br />
+<h1>@(String.Join(" ", CultureInfo.CurrentCulture.DateTimeFormat.ShortestDayNames))</h1>
+
+
+<FluentCalendar />
+<FluentCalendar Culture="@(new CultureInfo("zh-cn"))" />
+<FluentCalendar Culture="@(new CultureInfo("zh-CN"))" />
+<FluentCalendar Culture="@(new CultureInfo("en-us"))" />
 <h1>Hello, world! @(slips.Count) </h1>
 
 <ul>

@@ -8,6 +8,7 @@ public interface ISlipService
 {
     Task<Slip[]> ListAsync(ListSlipQueryRequest? query, CursorPagingRequest<int>? paging);
     Task<Slip?> GetByIdAsync(int id);
+    Task<Slip?> GetByLinkNameAsync(string linkName);
     Task<Slip> CreateAsync(Slip slip);
     Task<Slip> UpdateAsync(Slip slip);
     Task<long[]> GetCreatedTimeWithSlipAsync(long startTime, long endTime);

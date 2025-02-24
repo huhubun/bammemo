@@ -4,20 +4,16 @@
     <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
         <SiteNav />
         <FluentBodyContent Class="body-content">
-            <div class="content">
-                @Body
-            </div>
+            <FluentStack Orientation="Orientation.Vertical" Class="body-stack">
+                <div class="content">
+                    @Body
+                </div>
+
+                <BammemoFooter />
+            </FluentStack>
         </FluentBodyContent>
     </FluentStack>
-
-    <FluentFooter>
-        <a href="https://www.fluentui-blazor.net" target="_blank">Documentation and demos</a>
-        <FluentSpacer />
-        <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor" target="_blank">About Blazor</a>
-    </FluentFooter>
-
 </FluentLayout>
-
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
@@ -27,23 +23,33 @@
 
 <FluentDialogProvider />
 <FluentMenuProvider />
+<FluentToastProvider />
 
 <script type="text/javascript" src="/js/highlight-extensions.js"></script>
 
 <script type="text/javascript">
-    function autoResizeSlipEditorTextarea(event){
-        if(event.target instanceof HTMLTextAreaElement
-            && event.target.classList.contains('slip-editor-input')) {
-            resizeSlipEditorTextarea(event.target);
+    var bammemo = {
+        autoResizeSlipEditorTextarea: function (event){
+            if(event.target instanceof HTMLTextAreaElement
+                && event.target.classList.contains('slip-editor-input')) {
+                resizeSlipEditorTextarea(event.target);
+            }
+        },
+        resizeSlipEditorTextarea: function (element){
+            element.style.height = 'auto';
+            element.style.height = element.scrollHeight + 'px';
+        },
+        copyTextToClipboard: function(text){
+            return navigator.clipboard.writeText(text)
+                .then(() => true)
+                .catch((error) => {
+                    console.error('复制失败：', error);
+                    return false;
+                });
         }
     }
 
-    function resizeSlipEditorTextarea(element){
-        element.style.height = 'auto';
-        element.style.height = element.scrollHeight + 'px';
-    }
-
-    document.addEventListener('input', autoResizeSlipEditorTextarea)
+    document.addEventListener('input', bammemo.autoResizeSlipEditorTextarea)
 </script>
 
 @code {

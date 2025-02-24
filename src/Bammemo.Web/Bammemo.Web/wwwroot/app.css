@@ -1,11 +1,26 @@
 @import '/_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css';
 
+:root {
+    /* Zinc 100 */
+    --bammemo-background: #f4f4f5;
+    /* Zinc 50 */
+    --bammemo-foreground: #fafafa;
+    --bammemo-radius: 0.5rem;
+    /* Zinc 200 */
+    --bammemo-border-primary: #e4e4e7;
+    /* Zinc 800 */
+    --bammemo-text-primary: #27272a;
+    /* Zinc 500 */
+    --bammemo-text-secondary: #71717a;
+}
+
 body {
     --body-font: "Segoe UI Variable", "Segoe UI", sans-serif;
     font-family: var(--body-font);
     font-size: var(--type-ramp-base-font-size);
     line-height: var(--type-ramp-base-line-height);
     margin: 0;
+    background-color: var(--bammemo-background);
 }
 
 .navmenu-icon {
@@ -13,28 +28,41 @@ body {
 }
 
 .main {
-    min-height: calc(100dvh - 86px);
+    /*min-height: calc(100dvh - 86px);*/
     color: var(--neutral-foreground-rest);
     align-items: stretch !important;
 }
 
 .body-content {
     align-self: stretch;
-    height: calc(100dvh - 86px) !important;
     display: flex;
+    height: 100dvh !important;
+}
+
+.body-stack {
+    width: 100%;
+    min-height: 100dvh;
 }
 
 .content {
     padding: 0.5rem 1.5rem;
     align-self: stretch !important;
     width: 100%;
+    height: 100%;
+    flex: auto;
+}
+
+.bammemo-footer {
+    flex: initial;
+    text-align: center;
+    padding: 1rem;
 }
 
 .manage {
     width: 100dvw;
 }
 
-footer {
+/*footer {
     background: var(--neutral-layer-4);
     color: var(--neutral-foreground-rest);
     align-items: center;
@@ -54,7 +82,7 @@ footer {
         footer a:hover {
             text-decoration: underline;
         }
-
+*/
 .alert {
     border: 1px dashed var(--accent-fill-rest);
     padding: 5px;
@@ -135,6 +163,15 @@ nav.site-nav-default {
 nav.site-nav-mobile {
     display: none !important;
 }
+
+blockquote {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+    blockquote > :last-child {
+        margin: 0;
+    }
 
 @media (max-width: 600px) {
     .header-gutters {

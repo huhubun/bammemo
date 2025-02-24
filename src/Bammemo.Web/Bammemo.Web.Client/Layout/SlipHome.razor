@@ -1,13 +1,15 @@
 ﻿@using Bammemo.Service.Abstractions.Paginations
 @using Bammemo.Service.Abstractions.WebApiModels.Slips
 @rendermode InteractiveAuto
+@implements IDisposable
+@inject PersistentComponentState persistentComponentState
 @inject NavigationManager navigationManager
 @inject ICommonSlipService commonSlipService
 @inject WebApiClient webApiClient
 
 <FluentGrid Justify="JustifyContent.Center">
     <FluentGridItem xs="12" lg="8" xl="6">
-        <FluentStack Orientation="Orientation.Vertical">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
 
             @if (IsAdminPage)
             {
@@ -30,12 +32,12 @@
 
             @foreach (var s in newSlipList)
             {
-                <Bammemo.Web.Client.Layout.SlipCard Data="s" @key="s.Id" />
+                <BammemoSlipCard Data="s" @key="s.Id" />
             }
 
             @foreach (var s in slipList)
             {
-                <Bammemo.Web.Client.Layout.SlipCard Data="s" @key="s.Id" />
+                <BammemoSlipCard Data="s" @key="s.Id" />
             }
 
             @if (cursorSlipId != null)
@@ -55,6 +57,8 @@
     </FluentGridItem>
 </FluentGrid>
 
+<FluentToastProvider />
+
 @code {
     [Parameter]
     public bool IsAdminPage { get; set; }
@@ -70,14 +74,31 @@
     [SupplyParameterFromQuery(Name = "tags")]
     private string[]? SelectedTags { get; set; }
 
+    private PersistingComponentStateSubscription persistingSubscription;
+    private ListSlipDto[]? persistSlips;
     private List<ListSlipDto> slipList = new List<ListSlipDto>();
     private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
     private string? cursorSlipId = null;
 
+    protected override void OnInitialized()
+    {
+        persistingSubscription = persistentComponentState.RegisterOnPersisting(PersistData);
+    }
+
     protected async override Task OnParametersSetAsync()
     {
-        var slips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
-        AppendRenderSlips(slips, isNewRender: true);
+        if (!persistentComponentState.TryTakeFromJson(nameof(persistSlips), out persistSlips))
+        {
+            persistSlips = await commonSlipService.ListAsync(GetListSlipQueryRequest());
+        }
+
+        AppendRenderSlips(persistSlips ?? [], isNewRender: true);
+    }
+
+    private Task PersistData()
+    {
+        persistentComponentState.PersistAsJson(nameof(persistSlips), persistSlips);
+        return Task.CompletedTask;
     }
 
     private void AppendRenderSlips(ListSlipDto[] slips, bool isNewRender = false)
@@ -144,4 +165,7 @@
                 Tags = SelectedTags
             };
     }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
+
 }

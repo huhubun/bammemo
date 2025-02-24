@@ -40,6 +40,12 @@ public class WebApiClient(HttpClient httpClient)
             return response;
         }
 
+        public async Task<GetSlipByIdResponse?> GetByIdAsync(string idOrLinkName, GetSlipByIdRequest? request = null)
+        {
+            var queryString = request?.Type != null ? QueryHelpers.AddQueryString(String.Empty, nameof(request.Type), request.Type.Value.ToString()) : null;
+            return await httpClient.GetFromJsonAsync<GetSlipByIdResponse?>($"slips/{idOrLinkName}" + queryString);
+        }
+
         public async Task<CreateSlipResponse?> CreateAsync(CreateSlipRequest request)
         {
             var responseMessage = await httpClient.PostAsJsonAsync("slips", request);

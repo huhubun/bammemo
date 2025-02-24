@@ -29,10 +29,21 @@ public class SlipController(
         });
     }
 
-    [HttpGet("{id}", Name = $"{nameof(SlipController)}_{nameof(GetByIdAsync)}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] string id)
+    [HttpGet("{idOrLinkName}", Name = $"{nameof(SlipController)}_{nameof(GetByIdAsync)}")]
+    public async Task<IActionResult> GetByIdAsync([FromRoute] string idOrLinkName, [FromQuery] GetSlipByIdRequest? request)
     {
-        return Ok(id);
+        Slip? slip;
+
+        if (request?.Type == SlipIdOrLinkNameType.LinkName)
+        {
+            slip = await slipService.GetByLinkNameAsync(idOrLinkName);
+        }
+        else
+        {
+            slip = await slipService.GetByIdAsync(await idService.DecodeAsync(idOrLinkName));
+        }
+        
+        return slip != null ? Ok(mapper.Map<GetSlipByIdResponse>(slip)) : NotFound(idOrLinkName);
     }
 
     [HttpPost("")]

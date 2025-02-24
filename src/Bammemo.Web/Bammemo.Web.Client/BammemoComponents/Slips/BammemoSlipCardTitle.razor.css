@@ -1,0 +1,10 @@
+﻿::deep fluent-anchor::part(control) {
+    text-decoration: none !important;
+    color: var(--bammemo-text-primary);
+}
+
+::deep fluent-anchor.bammemo-slip-card-title-main::part(control) {
+    /* text-lg */
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.75rem; /* 28px */
+}

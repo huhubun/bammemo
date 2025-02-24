@@ -12,7 +12,7 @@ public class AnalyticsController(
     public async Task<IActionResult> GetSlipTimesAsync([FromQuery] GetSlipTimesRequest request)
     {
         var times = await slipService.GetCreatedTimeWithSlipAsync(request.StartTime, request.EndTime);
-
+        
         return Ok(new GetSlipTimesResponse
         {
             CreatedTimes = times

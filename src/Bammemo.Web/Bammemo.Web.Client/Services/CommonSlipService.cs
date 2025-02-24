@@ -15,4 +15,10 @@ public class CommonSlipService(
         var result = await client.Slips.ListAsync(query, paging);
         return mapper.Map<ListSlipDto[]>(result?.Data);
     }
+
+    public async Task<SlipDetailDto?> GetByIdAsync(string idOrLinkName, GetSlipByIdRequest? request = null)
+    {
+        var result = await client.Slips.GetByIdAsync(idOrLinkName, request);
+        return mapper.Map<SlipDetailDto>(result);
+    }
 }

@@ -35,8 +35,10 @@ namespace Bammemo.Data.Migrations
                     Content = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<long>(type: "INTEGER", nullable: false),
                     UpdateAt = table.Column<long>(type: "INTEGER", nullable: true),
-                    FriendlyUrl = table.Column<string>(type: "TEXT", nullable: true),
-                    Status = table.Column<int>(type: "INTEGER", nullable: false)
+                    FriendlyLinkName = table.Column<string>(type: "TEXT", nullable: true),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: true),
+                    Excerpt = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

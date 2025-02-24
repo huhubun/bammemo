@@ -1,0 +1,40 @@
+﻿@rendermode InteractiveAuto
+
+<span>
+    <FluentAnchor Appearance="Appearance.Hypertext" Href="@Data.GetUrl()" Class="@Class">
+        <snap title="@(DisplayTimeTitle == DisplayTime ? null : DisplayTimeTitle)">@DisplayTime</snap>
+    </FluentAnchor>
+</span>
+
+@code {
+    [Parameter]
+    public required ListSlipDto Data { get; set; }
+
+    [Parameter]
+    public required string? Class { get; set; }
+
+    private string DisplayTime
+    {
+        get
+        {
+            var timeSpan = new TimeSpan(DateTime.UtcNow.Ticks - Data.CreatedAt);
+            if (timeSpan.TotalDays > 5)
+            {
+                return DisplayTimeTitle;
+            }
+            else
+            {
+                return timeSpan.ToTimeAgo();
+            }
+        }
+    }
+
+    private string DisplayTimeTitle
+    {
+        get
+        {
+            return new DateTime(Data.CreatedAt, DateTimeKind.Utc).ToLocalTime().ToString();
+        }
+    }
+
+}

@@ -14,7 +14,7 @@ namespace Bammemo.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
 
             modelBuilder.Entity("Bammemo.Data.Entities.Setting", b =>
                 {
@@ -56,11 +56,17 @@ namespace Bammemo.Data.Migrations
                     b.Property<long>("CreatedAt")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("FriendlyUrl")
+                    b.Property<string>("Excerpt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FriendlyLinkName")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("TEXT");
 
                     b.Property<long?>("UpdateAt")
                         .HasColumnType("INTEGER");

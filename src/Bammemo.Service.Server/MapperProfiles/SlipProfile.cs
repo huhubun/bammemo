@@ -26,5 +26,12 @@ public class SlipProfile : Profile
             {
                 dest.Id = await idService.EncodeAsync(src.Id);
             });
+
+        CreateMap<Slip, SlipDetailDto>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .AfterMap(async (src, dest, _) =>
+            {
+                dest.Id = await idService.EncodeAsync(src.Id);
+            });
     }
 }

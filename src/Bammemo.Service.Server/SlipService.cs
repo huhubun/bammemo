@@ -28,9 +28,9 @@ public class SlipService(
                     .Where(s => s.CreatedAt < query.EndTime.Value);
             }
 
-            if(query.Tags?.Length > 0)
+            if (query.Tags?.Length > 0)
             {
-                slips = slips.Where(s => s.Tags.Any(st => query.Tags.Contains(st.Tag)));
+                slips = slips.Where(s => s.Tags.Any() && s.Tags.Any(st => query.Tags.Contains(st.Tag)));
             }
         }
 
@@ -47,6 +47,11 @@ public class SlipService(
     public async Task<Slip?> GetByIdAsync(int id)
     {
         return await dbContext.Slips.SingleOrDefaultAsync(s => s.Id == id);
+    }
+
+    public async Task<Slip?> GetByLinkNameAsync(string linkName)
+    {
+        return await dbContext.Slips.SingleOrDefaultAsync(s => s.FriendlyLinkName == linkName);
     }
 
     public async Task<Slip> CreateAsync(Slip entity)

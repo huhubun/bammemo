@@ -1,0 +1,31 @@
+﻿@rendermode InteractiveAuto
+
+<BammemoCard HoverShadow="true">
+    @if (isEditMode)
+    {
+        <BammemoSlipEditor IsEdit="true" Data="Data" OnSlipSaved="OnNewSlipSaved" OnEditCanceled="@(_ => isEditMode = false)" />
+    }
+    else
+    {
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="width: 100%;">
+            <BammemoSlipCardHead Data="Data" />
+            <BammemoMarkdownSection Content="@Data.Content" ReadAllUrl="@Data.GetUrl()" />
+        </FluentStack>
+    }
+</BammemoCard>
+
+@code {
+    private bool isEditMode = false;
+
+
+    [Parameter]
+    public required ListSlipDto Data { get; set; }
+
+    private void OnNewSlipSaved(ListSlipDto slip)
+    {
+        Data = slip;
+        isEditMode = false;
+    }
+
+
+}

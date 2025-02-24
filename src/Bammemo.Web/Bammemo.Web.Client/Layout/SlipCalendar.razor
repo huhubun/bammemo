@@ -1,8 +1,12 @@
 ﻿@using Bammemo.Service.Abstractions.WebApiModels.Slips
+@using System.Globalization
 @rendermode InteractiveAuto
 @inject WebApiClient webApiClient
 
-<FluentCalendar Value="SelectedTime" Style="height: 250px;" PickerMonthChanged="OnMonthChangedAsync" ValueChanged="OnSelectedDateChangedAsync">
+<FluentCalendar Value="SelectedTime"
+                Style="height: 250px;"
+                PickerMonthChanged="OnMonthChangedAsync"
+                ValueChanged="OnSelectedDateChangedAsync">
     <DaysTemplate>
         @if (!context.IsInactive)
         {

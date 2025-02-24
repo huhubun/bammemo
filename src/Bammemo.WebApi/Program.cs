@@ -40,16 +40,19 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var settingService = scope.ServiceProvider.GetRequiredService<ISettingService>();
-    var setting = await settingService.GetByKeyAsync(SettingKeys.IdAlphabet);
-
-    if (setting == null)
+    if (!File.Exists("/bammemo/bammemo.db"))
     {
+        Directory.CreateDirectory("/bammemo");
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<BammemoDbContext>();
+        dbContext.Database.EnsureCreated();
+
         var idAlphabet = IdHelper.GenerateIdAlphabet();
+
+        var settingService = scope.ServiceProvider.GetRequiredService<ISettingService>();
         await settingService.CreateAsync(SettingKeys.IdAlphabet, idAlphabet);
     }
 }
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -1,0 +1,8 @@
+﻿@page "/p/{linkName}"
+
+<h3>Blog Post @LinkName</h3>
+
+@code {
+    [Parameter]
+    public required string LinkName { get; set; }
+}

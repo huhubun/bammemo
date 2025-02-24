@@ -5,7 +5,9 @@ namespace Bammemo.Service.Abstractions;
 
 public interface ICommonSlipService
 {
-    Task<Dtos.ListSlipDto[]> ListAsync(
+    Task<ListSlipDto[]> ListAsync(
         ListSlipQueryRequest? query,
         CursorPagingRequest<string>? paging = null);
+
+    Task<SlipDetailDto?> GetByIdAsync(string idOrLinkName, GetSlipByIdRequest? request = null);
 }

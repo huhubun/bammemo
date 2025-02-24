@@ -1,9 +1,7 @@
 using Bammemo.Data;
 using Bammemo.Service.Server;
 using Bammemo.Service.Server.Interfaces;
-using Bammemo.Web.Client.Layout;
 using Bammemo.Web.Components;
-using Bammemo.Web.Components.Layout;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 
@@ -29,14 +27,13 @@ builder.Services.AddBammemoAutoMapper(
 // ‘§≥ œ÷–Ë“™
 builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client => client.BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? throw new NullReferenceException("Please config ApiUrl first")));
 
-builder.Services.AddScoped<IAppVersionService, AppVersionService>();
-builder.Services.AddScoped<CacheStorageAccessor>();
-builder.Services.AddHttpClient<IStaticAssetService, ServerStaticAssetService>();
-
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ISlipService, SlipService>();
 builder.Services.AddScoped<IIdService, IdService>();
+
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+
 
 var app = builder.Build();
 

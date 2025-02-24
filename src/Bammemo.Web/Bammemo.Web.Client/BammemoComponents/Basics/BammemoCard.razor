@@ -1,0 +1,23 @@
+﻿@rendermode InteractiveAuto
+
+<div class="bammemo-card @Class" @attributes="attributes">
+    @ChildContent
+</div>
+
+@code {
+    private Dictionary<string, object> attributes = new();
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public bool HoverShadow { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        attributes["hover-shadow"] = HoverShadow;
+    }
+}
