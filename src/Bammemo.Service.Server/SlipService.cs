@@ -30,7 +30,12 @@ public class SlipService(
 
             if (query.Tags?.Length > 0)
             {
-                slips = slips.Where(s => s.Tags.Any() && query.Tags.All(tag => query.Tags.Contains(tag)));
+                slips = slips.Where(s => s.Tags.Any());
+
+                foreach (var tag in query.Tags)
+                {
+                    slips = slips.Where(s => s.Tags.Select(t => t.Tag).Contains(tag));
+                }
             }
         }
 
