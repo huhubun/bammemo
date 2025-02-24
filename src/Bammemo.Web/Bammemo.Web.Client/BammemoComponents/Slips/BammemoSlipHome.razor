@@ -17,19 +17,23 @@
                 <BammemoSlipEditor OnSlipSaved="OnNewSlipSaved" />
             }
 
-            <div>
+            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
                 @if (StartTimeDateTime.HasValue)
                 {
-                    <FluentBadge Appearance="Appearance.Neutral" OnDismissClick="OnRemoveCalendarSelectedDate">
+                    <BammemoFilterBadge OnClick="OnRemoveCalendarSelectedDate"
+                                        IconStart="@(new Icons.Regular.Size16.Calendar())">
                         @StartTimeDateTime.ToIsoDateString()
-                    </FluentBadge>
+                    </BammemoFilterBadge>
                 }
 
                 @foreach (var tag in SelectedTags ?? [])
                 {
-                    <span>@tag</span>
+                    <BammemoFilterBadge OnClick="@(_ => OnRemoveSelectedTagClick(tag))"
+                                        IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
+                        @tag
+                    </BammemoFilterBadge>
                 }
-            </div>
+            </FluentStack>
 
             @foreach (var s in newSlipList)
             {
@@ -48,12 +52,27 @@
                 </div>
             }
 
+            @if (showNoDataFound)
+            {
+                <FluentGrid Spacing="@(16*2)" Style="padding: 4rem 0; width: 100%; text-align: center;">
+                    <FluentGridItem xs="12">
+                        <FluentEmoji Value="@(new Microsoft.FluentUI.AspNetCore.Components.Emojis.TravelPlaces.Color.Default.FlyingSaucer())" Width="128px" />
+                    </FluentGridItem>
+
+                    <FluentGridItem xs="12">
+                        <FluentLabel Typo="Typography.PageTitle">
+                            No data found
+                        </FluentLabel>
+                    </FluentGridItem>
+                </FluentGrid>
+            }
+
         </FluentStack>
     </FluentGridItem>
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
         <BammemoSlipCalendar SelectedTime="StartTimeDateTime"
-        OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
+                             OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
         <BammemoSlipTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
     </FluentGridItem>
 </FluentGrid>
@@ -80,6 +99,7 @@
     private List<ListSlipDto> slipList = new List<ListSlipDto>();
     private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
     private string? cursorSlipId = null;
+    private bool showNoDataFound = false;
 
     protected override void OnInitialized()
     {
@@ -104,6 +124,8 @@
 
     private void AppendRenderSlips(ListSlipDto[] slips, bool needRerender = false)
     {
+        showNoDataFound = false;
+
         if (needRerender)
         {
             slipList = [];
@@ -118,7 +140,15 @@
         else
         {
             cursorSlipId = null;
-            ToastService.ShowInfo("已经到底了");
+
+            if (needRerender)
+            {
+                showNoDataFound = true;
+            }
+            else
+            {
+                ToastService.ShowInfo("已经到底了");
+            }
         }
     }
 
@@ -160,6 +190,14 @@
         {
             {"tags", tags}
         }), false);
+    }
+
+    private void OnRemoveSelectedTagClick(string tag)
+    {
+        var tags = SelectedTags.ToList();
+        tags.Remove(tag);
+
+        OnSelectedTagChanged(tags.ToArray());
     }
 
     private ListSlipQueryRequest GetListSlipQueryRequest()

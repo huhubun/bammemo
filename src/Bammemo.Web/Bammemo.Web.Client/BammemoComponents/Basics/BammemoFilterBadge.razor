@@ -1,0 +1,25 @@
+﻿@rendermode InteractiveAuto
+
+<span class="bammemo-filter-badge">
+    <FluentButton Appearance="Appearance.Outline"
+                  OnClick="OnClick"
+                  IconStart="IconStart"
+                  IconEnd="@(HideCloseIcon ? null : new Icons.Regular.Size12.Dismiss())">
+        @ChildContent
+    </FluentButton>
+</span>
+
+@code {
+    [Parameter]
+    public bool HideCloseIcon { get; set; }
+
+    [Parameter]
+    public Icon? IconStart { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+}

@@ -3,6 +3,7 @@
 @using Markdig
 @using System.Text
 @rendermode InteractiveAuto
+@inject NavigationManager NavigationManager
 
 @if (markdownHtml != null)
 {
@@ -13,6 +14,9 @@
     if (hasMore && ReadAllUrl!=null)
     {
         <FluentAnchor IconStart="@(new Icons.Regular.Size16.ReadingList())" Href="@ReadAllUrl">阅读全文</FluentAnchor>
+        <NavLink href="@ReadAllUrl">阅读全文 NavLink</NavLink>
+        <FluentNavLink Href="@ReadAllUrl">阅读全文 FluentNavLink</FluentNavLink>
+        <FluentButton OnClick="@(_ => NavigationManager.NavigateTo(ReadAllUrl))">阅读全文 Nav</FluentButton>
     }
 }
 

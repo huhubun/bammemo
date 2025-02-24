@@ -4,7 +4,7 @@
 <div class="bammemo-slip-tag-links">
     @if (Tags != null)
     {
-        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="16" Wrap>
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
             @foreach (var tag in Tags)
             {
                 <FluentAnchor Href="@(Navigation.GetUriWithQueryParameters("/", new Dictionary<string, object?>(){ {"tags", tag} }))"

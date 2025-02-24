@@ -1,9 +1,12 @@
-﻿<FluentFooter Class="bammemo-footer">
-    Footer start text
-    <FluentSpacer />
-    Footer end text
-</FluentFooter>
+﻿@rendermode InteractiveAuto
+@inject IJSRuntime JS
 
+<div class="bammemo-footer">
+    <FluentFooter>
+        Render mode @(OperatingSystem.IsBrowser() ? "WebAssembly" : "Server")<br />
+        .NET Version @(System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription)
+    </FluentFooter>
+</div>
 
 @code {
 

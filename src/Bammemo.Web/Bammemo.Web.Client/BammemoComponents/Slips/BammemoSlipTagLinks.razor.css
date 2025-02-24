@@ -1,1 +1,7 @@
-﻿
+﻿::deep fluent-anchor::part(start) {
+    margin-right: 4px;
+}
+
+::deep fluent-anchor::part(control) {
+    text-decoration: none;
+}
