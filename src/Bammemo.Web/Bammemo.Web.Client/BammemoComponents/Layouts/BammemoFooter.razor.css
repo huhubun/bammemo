@@ -1,0 +1,16 @@
+﻿.bammemo-footer {
+    width: 100%;
+}
+
+::deep footer {
+    width: 100%;
+    justify-content: center;
+}
+
+::deep .bammemo-environment-info-wrap{
+    align-items: center;
+}
+
+    ::deep .bammemo-environment-info-wrap fluent-divider {
+        height: 1rem;
+    }

@@ -22,7 +22,7 @@ public class CommonSlipService(
         return mapper.Map<ListSlipDto[]>(result);
     }
 
-    public async Task<SlipDetailDto?> GetByIdAsync(string idOrLinkName, GetSlipByIdRequest? request = null)
+    public async Task<SlipDetailDto?> GetByIdOrLinkNameAsync(string idOrLinkName, GetSlipByIdRequest? request = null)
     {
         Slip? slip;
 

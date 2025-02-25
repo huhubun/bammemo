@@ -101,17 +101,22 @@
     protected override void OnInitialized()
     {
         persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+        Console.WriteLine($"{DateTime.Now} | {OperatingSystem.IsBrowser()} | OnInitialized");
     }
 
     protected async override Task OnParametersSetAsync()
     {
+        Console.WriteLine($"{DateTime.Now} | {OperatingSystem.IsBrowser()} | OnParametersSetAsync");
         if (!PersistentComponentState.TryTakeFromJson(nameof(slip), out slip))
         {
-            slip = await CommonSlipService.GetByIdAsync(IdOrLinkName, new GetSlipByIdRequest
+            Console.WriteLine($"{DateTime.Now} | {OperatingSystem.IsBrowser()} | GetByIdAsync");
+
+            slip = await CommonSlipService.GetByIdOrLinkNameAsync(IdOrLinkName, new GetSlipByIdRequest
                 {
                     Type = Type
                 });
         }
+        Console.WriteLine($"{DateTime.Now} | {OperatingSystem.IsBrowser()} | OnParametersSetAsync END");
     }
 
     private Task PersistData()

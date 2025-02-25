@@ -9,5 +9,5 @@ public interface ICommonSlipService
         ListSlipQueryRequest? query,
         CursorPagingRequest<string>? paging = null);
 
-    Task<SlipDetailDto?> GetByIdAsync(string idOrLinkName, GetSlipByIdRequest? request = null);
+    Task<SlipDetailDto?> GetByIdOrLinkNameAsync(string idOrLinkName, GetSlipByIdRequest? request = null);
 }

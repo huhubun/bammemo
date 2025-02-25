@@ -3,4 +3,5 @@
 public static class SettingKeys
 {
     public const string IdAlphabet = nameof(IdAlphabet);
+    public const string FilingNumberLinks = nameof(FilingNumberLinks);
 }

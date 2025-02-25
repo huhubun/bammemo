@@ -1,4 +1,5 @@
 ﻿using Bammemo.Service.Abstractions.Paginations;
+using Bammemo.Service.Abstractions.WebApiModels.Settings;
 using Bammemo.Service.Abstractions.WebApiModels.Slips;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Http.Json;
@@ -9,6 +10,7 @@ public class WebApiClient(HttpClient httpClient)
 {
     public SlipClient Slips { get; } = new SlipClient(httpClient);
     public AnalyticsClient Analytics { get; } = new AnalyticsClient(httpClient);
+    public SettingClient Settings { get; } = new SettingClient(httpClient);
 
     public class SlipClient(HttpClient httpClient)
     {
@@ -84,6 +86,31 @@ public class WebApiClient(HttpClient httpClient)
         public async Task<GetSlipTagsResponse> GetSlipTagsAsync()
         {
             var response = await httpClient.GetFromJsonAsync<GetSlipTagsResponse>("analytics/slips/tags");
+            return response;
+        }
+    }
+
+    public class SettingClient(HttpClient httpClient)
+    {
+        public async Task<GetSettingByKeyResponse> GetByKeyAsync(string key)
+        {
+            var response = await httpClient.GetFromJsonAsync<GetSettingByKeyResponse>($"settings/{key}");
+
+            ArgumentNullException.ThrowIfNull(response);
+
+            return response;
+        }
+
+        public async Task<BatchGetSettingByKeyResponse> BatchGetByKeysAsync(BatchGetSettingByKeyRequest request)
+        {
+            var query = QueryHelpers.AddQueryString(
+                String.Empty,
+                request.Keys.Select(k => new KeyValuePair<string, string?>(nameof(request.Keys), k)));
+
+            var response = await httpClient.GetFromJsonAsync<BatchGetSettingByKeyResponse>($"settings/batch" + query);
+
+            ArgumentNullException.ThrowIfNull(response);
+
             return response;
         }
     }

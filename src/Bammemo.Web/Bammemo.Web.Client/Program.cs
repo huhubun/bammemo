@@ -10,6 +10,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient<WebApiClient>(client => client.BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? throw new NullReferenceException("Please config ApiUrl first")));
 
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
+builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
 
 
 await builder.Build().RunAsync();

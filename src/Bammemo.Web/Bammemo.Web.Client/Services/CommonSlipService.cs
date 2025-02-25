@@ -16,7 +16,7 @@ public class CommonSlipService(
         return mapper.Map<ListSlipDto[]>(result?.Data);
     }
 
-    public async Task<SlipDetailDto?> GetByIdAsync(string idOrLinkName, GetSlipByIdRequest? request = null)
+    public async Task<SlipDetailDto?> GetByIdOrLinkNameAsync(string idOrLinkName, GetSlipByIdRequest? request = null)
     {
         var result = await client.Slips.GetByIdAsync(idOrLinkName, request);
         return mapper.Map<SlipDetailDto>(result);
