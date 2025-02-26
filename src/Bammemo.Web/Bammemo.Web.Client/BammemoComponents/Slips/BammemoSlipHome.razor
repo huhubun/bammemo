@@ -11,29 +11,31 @@
 <FluentGrid Justify="JustifyContent.Center">
     <FluentGridItem xs="12" lg="8" xl="6">
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
-
             @if (IsAdminPage)
             {
                 <BammemoSlipEditor OnSlipSaved="OnNewSlipSaved" />
             }
 
-            <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
-                @if (StartTimeDateTime.HasValue)
-                {
-                    <BammemoFilterBadge OnClick="OnRemoveCalendarSelectedDate"
-                                        IconStart="@(new Icons.Regular.Size16.Calendar())">
-                        @StartTimeDateTime.ToIsoDateString()
-                    </BammemoFilterBadge>
-                }
+            @if (StartTimeDateTime.HasValue || (SelectedTags?.Length > 0))
+            {
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
+                    @if (StartTimeDateTime.HasValue)
+                    {
+                        <BammemoFilterBadge OnClick="OnRemoveCalendarSelectedDate"
+                                            IconStart="@(new Icons.Regular.Size16.Calendar())">
+                            @StartTimeDateTime.ToIsoDateString()
+                        </BammemoFilterBadge>
+                    }
 
-                @foreach (var tag in SelectedTags ?? [])
-                {
-                    <BammemoFilterBadge OnClick="@(_ => OnRemoveSelectedTagClick(tag))"
-                                        IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
-                        @tag
-                    </BammemoFilterBadge>
-                }
-            </FluentStack>
+                    @foreach (var tag in SelectedTags ?? [])
+                    {
+                        <BammemoFilterBadge OnClick="@(_ => OnRemoveSelectedTagClick(tag))"
+                                            IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
+                            @tag
+                        </BammemoFilterBadge>
+                    }
+                </FluentStack>
+            }
 
             @foreach (var s in newSlipList)
             {
@@ -71,9 +73,11 @@
     </FluentGridItem>
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
-        <BammemoSlipCalendar SelectedTime="StartTimeDateTime"
-                             OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
-        <BammemoSlipTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Style="width: 250px; position: fixed;">
+            <BammemoSlipCalendar SelectedTime="StartTimeDateTime"
+                                 OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
+            <BammemoSlipTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
+        </FluentStack>
     </FluentGridItem>
 </FluentGrid>
 

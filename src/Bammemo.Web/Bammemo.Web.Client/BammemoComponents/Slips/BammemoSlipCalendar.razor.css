@@ -1,0 +1,40 @@
+﻿.bammemo-slip-calendar ::deep .fluent-calendar {
+    height: 250px;
+    width: 250px;
+    color: var(--bammemo-text-secondary) !important;
+}
+
+    .bammemo-slip-calendar ::deep .fluent-calendar .fluent-year, .bammemo-slip-calendar ::deep .fluent-calendar .fluent-month {
+        color: var(--bammemo-text-secondary) !important;
+    }
+
+    .bammemo-slip-calendar ::deep .fluent-calendar .title {
+        font-weight: 500;
+        padding-left: 0;
+        font-size: 1.1em;
+    }
+
+    .bammemo-slip-calendar ::deep .fluent-calendar .week-day {
+        font-weight: 500 !important;
+    }
+
+
+    .bammemo-slip-calendar ::deep .fluent-calendar .fluent-year .year,
+    .bammemo-slip-calendar ::deep .fluent-calendar .fluent-month .month,
+    .bammemo-slip-calendar ::deep .fluent-calendar .days .day {
+        /* rounded-lg */
+        border-radius: 0.5rem; /* 8px */
+    }
+
+        .bammemo-slip-calendar ::deep .fluent-calendar .fluent-year .year[selected],
+        .bammemo-slip-calendar ::deep .fluent-calendar .fluent-month .month[selected],
+        .bammemo-slip-calendar ::deep .fluent-calendar .day[selected] {
+            /* rounded-lg */
+            border-radius: 0.5rem; /* 8px */
+            background-color: var(--bammemo-foreground)
+        }
+
+        .bammemo-slip-calendar ::deep .fluent-calendar .days .day:not([selected]):not([multi-day])[today] {
+            /* rounded-lg */
+            border-radius: 0.5rem; /* 8px */
+        }

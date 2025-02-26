@@ -1,0 +1,7 @@
+﻿::deep fluent-button::part(control) {
+    padding: 0;
+}
+
+::deep fluent-button::part(start) {
+    margin-right: 4px;
+}

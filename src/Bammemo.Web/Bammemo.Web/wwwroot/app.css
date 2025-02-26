@@ -1,26 +1,46 @@
 @import '/_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css';
 
-:root {
+.root111 {
+    --bammemo-radius: 0.5rem;
     /* Zinc 100 */
     --bammemo-background: #f4f4f5;
     /* Zinc 50 */
     --bammemo-foreground: #fafafa;
-    --bammemo-radius: 0.5rem;
     /* Zinc 200 */
     --bammemo-border-primary: #e4e4e7;
     /* Zinc 800 */
     --bammemo-text-primary: #27272a;
-    /* Zinc 500 */
-    --bammemo-text-secondary: #71717a;
+    /* Zinc 600 */
+    --bammemo-text-secondary: #52525b;
+    /* Zinc 400 */
+    --bammemo-text-tertiary: #a1a1aa;
 }
 
-body {
+body1 {
     --body-font: "Segoe UI Variable", "Segoe UI", sans-serif;
     font-family: var(--body-font);
     font-size: var(--type-ramp-base-font-size);
     line-height: var(--type-ramp-base-line-height);
     margin: 0;
     background-color: var(--bammemo-background);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    font-family: var(--body-font);
+    font-size: var(--type-ramp-base-font-size);
+    line-height: var(--type-ramp-base-line-height);
+    font-weight: var(--font-weight);
+    color: var(--neutral-foreground-rest);
+    /*background: var(--neutral-fill-layer-rest);*/
+    background: var(--neutral-layer-2);
+}
+
+
+a {
+    color: var(--bammemo-text-primary);
 }
 
 .navmenu-icon {

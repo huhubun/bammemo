@@ -1,15 +1,15 @@
 ﻿.bammemo-card {
     width: 100%;
     padding: 1rem;
-    border: 1px solid var(--bammemo-foreground);
-    background-color: var(--bammemo-foreground);
-    border-radius: var(--bammemo-radius);
+    border: 1px solid var(--neutral-layer-floating);
+    background-color: var(--neutral-layer-floating);
+    border-radius: calc(var(--layer-corner-radius) * 1px);
 }
 
     .bammemo-card:hover {
-        border: 1px solid var(--bammemo-border-primary);
+        border: 1px solid var(--neutral-stroke-hover);
     }
 
     .bammemo-card[hover-shadow]:hover {
-        box-shadow: 0 0 5px 0 var(--bammemo-border-primary);
+        box-shadow: 0 0 5px 0 var(--neutral-stroke-hover);
     }

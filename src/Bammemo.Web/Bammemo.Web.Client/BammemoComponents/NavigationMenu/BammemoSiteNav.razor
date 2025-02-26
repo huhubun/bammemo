@@ -1,9 +1,19 @@
-﻿@rendermode InteractiveAuto
+﻿@using Microsoft.FluentUI.AspNetCore.Components.DesignTokens
+@rendermode InteractiveAuto
 @inject IDialogService DialogService
+@inject IJSRuntime JSRuntime
+@inject GlobalState GlobalState
+@inject NeutralFillLayerRest NeutralFillLayerRest
+@inject DisabledOpacity DisabledOpacity
 
 <div class="site-nav">
     <nav class="site-nav-default">
         <BammemoNavMenu Collapsible="true" />
+        <div>
+            <FluentDesignTheme StorageName="theme" @bind-Mode="designThemeMode" />
+            <FluentButton OnClick="_ => System.Console.WriteLine(designThemeMode)">output</FluentButton>
+            <FluentButton OnClick="_ => designThemeMode = designThemeMode != DesignThemeModes.Dark ? DesignThemeModes.Dark :  DesignThemeModes.Light">change @designThemeMode</FluentButton>
+        </div>
     </nav>
 
     <nav class="site-nav-mobile">
@@ -18,6 +28,12 @@
 @code {
     private bool expanded = true;
     private IDialogReference? _dialog;
+    private DesignThemeModes designThemeMode;
+
+    protected override void OnInitialized()
+    {
+        // GlobalState.OnChange += async () => await JSRuntime.InvokeVoidAsync("bammemo.color.delayedApply");
+    }
 
     private async Task OpenPanelRightAsync()
     {

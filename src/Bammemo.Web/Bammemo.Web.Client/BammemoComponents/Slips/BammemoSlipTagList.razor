@@ -2,14 +2,15 @@
 @inject WebApiClient webApiClient
 
 <div>
-    <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
+    <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" VerticalGap="@(16/4)" Wrap>
         @foreach (var tag in tags)
         {
-            <BammemoFilterBadge HideCloseIcon
-                                IconStart="@(new Icons.Regular.Size16.NumberSymbol())"
-                                OnClick="@(_ => OnTagSelectedAsync(tag))">
+            <FluentButton BackgroundColor="var(--bammemo-background)"
+                          Color="var(--bammemo-text-secondary)"
+                          OnClick="@(_ => OnTagSelectedAsync(tag))"
+                          IconStart="@(new Icons.Regular.Size16.NumberSymbol().WithColor("var(--bammemo-text-tertiary)"))">
                 @tag
-            </BammemoFilterBadge>
+            </FluentButton>
         }
     </FluentStack>
 </div>

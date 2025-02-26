@@ -1,7 +1,7 @@
 ﻿@rendermode InteractiveAuto
 
 <span class="bammemo-filter-badge">
-    <FluentButton Appearance="Appearance.Outline"
+    <FluentButton Appearance="Appearance"
                   OnClick="OnClick"
                   IconStart="IconStart"
                   IconEnd="@(HideCloseIcon ? null : new Icons.Regular.Size12.Dismiss())">
@@ -15,6 +15,9 @@
 
     [Parameter]
     public Icon? IconStart { get; set; }
+
+    [Parameter]
+    public Appearance? Appearance { get; set; } = Microsoft.FluentUI.AspNetCore.Components.Appearance.Outline;
 
     [Parameter]
     public RenderFragment? ChildContent { get; set; }

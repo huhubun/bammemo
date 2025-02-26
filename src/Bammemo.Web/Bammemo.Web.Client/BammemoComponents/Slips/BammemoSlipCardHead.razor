@@ -14,7 +14,7 @@
             }
 
             <FluentButton Id="@("slip-card-action-button-" + Data.Id)"
-                          IconEnd="@(new Icons.Regular.Size16.MoreVertical())"
+                          IconEnd="@(new Icons.Regular.Size20.MoreVertical().WithColor("var(--bammemo-text-secondary)"))"
                           Title="更多操作"
                           Appearance="Appearance.Stealth"
                           OnClick="@(() => isMoreOperationMenuOpen = !isMoreOperationMenuOpen)" />
@@ -56,7 +56,7 @@
         {
             var slipUrl = NavigationManager.ToAbsoluteUri(Data.GetUrl());
 
-            await JSRuntime.InvokeAsync<bool>("bammemo.copyTextToClipboard", slipUrl);
+            await JSRuntime.InvokeAsync<bool>("bammemo.util.copyTextToClipboard", slipUrl);
 
             ToastService.ShowSuccess($"已复制 {slipUrl}");
         }

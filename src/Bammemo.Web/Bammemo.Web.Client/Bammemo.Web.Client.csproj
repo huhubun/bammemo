@@ -25,6 +25,10 @@
     <Content Update="Pages\Admin.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
+	<Content Include="Layout\MainLayout.razor.js">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
+
   </ItemGroup>
 
 </Project>

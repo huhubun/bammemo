@@ -32,3 +32,8 @@
     /* 覆盖 toolbar 内部元素 自带 margin */
     margin: 0;
 }
+
+.bammemo-slip-card-head-wrap ::deep fluent-toolbar {
+    /*--fill-color: inherit;*/
+    background: inherit;
+}

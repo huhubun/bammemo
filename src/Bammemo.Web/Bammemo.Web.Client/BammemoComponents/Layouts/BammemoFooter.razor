@@ -9,7 +9,11 @@
     <FluentGrid Justify="JustifyContent.Center">
         <FluentGridItem xs="12" lg="8" xl="6">
             <FluentStack Orientation="Orientation.Vertical" VerticalGap="@(16/4)">
-                <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" HorizontalGap="16" Class="bammemo-environment-info-wrap">
+                <FluentStack Orientation="Orientation.Horizontal"
+                             HorizontalAlignment="HorizontalAlignment.Center"
+                             HorizontalGap="@(16/2)"
+                             Class="bammemo-footer-environment-info-wrap"
+                             Style="align-items: center;">
                     <div>
                         @DotNetVersion
                     </div>
@@ -32,7 +36,11 @@
 
                 @if (filingNumberLinks != null)
                 {
-                    <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" HorizontalGap="16">
+                    <FluentStack Orientation="Orientation.Horizontal"
+                                 HorizontalAlignment="HorizontalAlignment.Center"
+                                 HorizontalGap="@(16/2)"
+                                 Class="bammemo-footer-filing-number-links-wrap"
+                                 Style="align-items: center;">
                         @foreach (var link in filingNumberLinks)
                         {
                             <div>

@@ -3,8 +3,8 @@
 @rendermode InteractiveAuto
 @inject WebApiClient webApiClient
 
+<div class="bammemo-slip-calendar">
 <FluentCalendar Value="SelectedTime"
-                Style="height: 250px;"
                 PickerMonthChanged="OnMonthChangedAsync"
                 ValueChanged="OnSelectedDateChangedAsync">
     <DaysTemplate>
@@ -31,6 +31,7 @@
         }
     </DaysTemplate>
 </FluentCalendar>
+</div>
 
 @code {
     private long[] times = [];
