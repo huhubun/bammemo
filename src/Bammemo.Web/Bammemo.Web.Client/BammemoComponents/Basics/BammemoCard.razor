@@ -11,6 +11,9 @@
     public string? Class { get; set; }
 
     [Parameter]
+    public bool HoverBorder { get; set; }
+
+    [Parameter]
     public bool HoverShadow { get; set; }
 
     [Parameter]
@@ -18,6 +21,7 @@
 
     protected override void OnParametersSet()
     {
+        attributes["hover-border"] = HoverBorder;
         attributes["hover-shadow"] = HoverShadow;
     }
 }

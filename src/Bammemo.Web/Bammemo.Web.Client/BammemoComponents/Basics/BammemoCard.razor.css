@@ -3,13 +3,13 @@
     padding: 1rem;
     border: 1px solid var(--neutral-layer-floating);
     background-color: var(--neutral-layer-floating);
-    border-radius: calc(var(--layer-corner-radius) * 1px);
+    border-radius: calc(var(--layer-corner-radius) * 2px);
 }
 
-    .bammemo-card:hover {
-        border: 1px solid var(--neutral-stroke-hover);
+    .bammemo-card[hover-border]:hover {
+        border: 1px solid var(--neutral-stroke-active);
     }
 
     .bammemo-card[hover-shadow]:hover {
-        box-shadow: 0 0 5px 0 var(--neutral-stroke-hover);
+        box-shadow: 0 0 5px 0 var(--neutral-stroke-active);
     }

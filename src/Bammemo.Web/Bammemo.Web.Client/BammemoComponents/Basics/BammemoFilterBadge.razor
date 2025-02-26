@@ -4,12 +4,15 @@
     <FluentButton Appearance="Appearance"
                   OnClick="OnClick"
                   IconStart="IconStart"
-                  IconEnd="@(HideCloseIcon ? null : new Icons.Regular.Size12.Dismiss())">
+                  IconEnd="@(HideCloseIcon ? null : new Icons.Regular.Size12.Dismiss())"
+                  AdditionalAttributes="attributes">
         @ChildContent
     </FluentButton>
 </span>
 
 @code {
+    private Dictionary<string, object> attributes = new();
+
     [Parameter]
     public bool HideCloseIcon { get; set; }
 
@@ -25,4 +28,8 @@
     [Parameter]
     public EventCallback<MouseEventArgs> OnClick { get; set; }
 
+    protected override void OnParametersSet()
+    {
+        attributes["closable"] = !HideCloseIcon;
+    }
 }

@@ -1,0 +1,15 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components
+@rendermode InteractiveAuto
+
+<div class="bammemo-no-data-wrap">
+<BammemoCard>
+    <FluentStack Class="bammemo-no-data-content-wrap"
+                 Orientation="Orientation.Vertical"
+                 HorizontalAlignment="HorizontalAlignment.Center">
+        <FluentEmoji Value="@(new Emojis.TravelPlaces.Color.Default.FlyingSaucer())" Width="128px" />
+        <FluentLabel Typo="Typography.PageTitle">
+            No data found
+        </FluentLabel>
+    </FluentStack>
+</BammemoCard>
+</div>

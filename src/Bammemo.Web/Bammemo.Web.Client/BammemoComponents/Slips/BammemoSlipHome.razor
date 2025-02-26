@@ -56,17 +56,7 @@
 
             @if (showNoDataFound)
             {
-                <FluentGrid Spacing="@(16*2)" Style="padding: 4rem 0; width: 100%; text-align: center;">
-                    <FluentGridItem xs="12">
-                        <FluentEmoji Value="@(new Microsoft.FluentUI.AspNetCore.Components.Emojis.TravelPlaces.Color.Default.FlyingSaucer())" Width="128px" />
-                    </FluentGridItem>
-
-                    <FluentGridItem xs="12">
-                        <FluentLabel Typo="Typography.PageTitle">
-                            No data found
-                        </FluentLabel>
-                    </FluentGridItem>
-                </FluentGrid>
+                <BammemoNoData />
             }
 
         </FluentStack>

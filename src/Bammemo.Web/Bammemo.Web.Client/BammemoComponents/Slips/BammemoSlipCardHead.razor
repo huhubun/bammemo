@@ -14,7 +14,8 @@
             }
 
             <FluentButton Id="@("slip-card-action-button-" + Data.Id)"
-                          IconEnd="@(new Icons.Regular.Size20.MoreVertical().WithColor("var(--bammemo-text-secondary)"))"
+                          Class="bammemo-slip-card-head-more-button"
+                          IconEnd="@(new Icons.Regular.Size20.MoreVertical())"
                           Title="更多操作"
                           Appearance="Appearance.Stealth"
                           OnClick="@(() => isMoreOperationMenuOpen = !isMoreOperationMenuOpen)" />

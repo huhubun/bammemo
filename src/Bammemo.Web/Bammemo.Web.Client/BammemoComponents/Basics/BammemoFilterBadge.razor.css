@@ -1,3 +1,7 @@
 ﻿::deep fluent-button::part(start){
     margin-right: 4px;
 }
+
+::deep fluent-button[closable]:hover {
+    text-decoration: line-through;
+}

@@ -34,6 +34,14 @@
 }
 
 .bammemo-slip-card-head-wrap ::deep fluent-toolbar {
-    /*--fill-color: inherit;*/
     background: inherit;
 }
+
+::deep .bammemo-slip-card-head-more-button::part(control) {
+    background: inherit;
+}
+
+
+    ::deep .bammemo-slip-card-head-more-button::part(control):hover {
+        background: var(--neutral-fill-hover);
+    }

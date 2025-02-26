@@ -1,14 +1,14 @@
 ﻿@rendermode InteractiveAuto
 @inject WebApiClient webApiClient
 
-<div>
+<div class="bammemo-slip-tag-list">
     <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" VerticalGap="@(16/4)" Wrap>
         @foreach (var tag in tags)
         {
-            <FluentButton BackgroundColor="var(--bammemo-background)"
-                          Color="var(--bammemo-text-secondary)"
+            <FluentButton BackgroundColor="var(--neutral-layer-2)"
+                          Color="var(--accent-foreground-active)"
                           OnClick="@(_ => OnTagSelectedAsync(tag))"
-                          IconStart="@(new Icons.Regular.Size16.NumberSymbol().WithColor("var(--bammemo-text-tertiary)"))">
+                          IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
                 @tag
             </FluentButton>
         }

@@ -19,7 +19,7 @@
     function getCommonStyles() {
         return {
             'control-corner-radius': 16 / 2,
-            'layer-corner-radius': 16,
+            'layer-corner-radius': 16 / 2,
         }
     }
 
@@ -37,7 +37,7 @@
 
     return {
         apply: function () {
-            const styles = checkIsDarkMode() ? getDarkStyles() : getLightStyles();
+            const styles = {}; //checkIsDarkMode() ? getDarkStyles() : getLightStyles();
 
             let styleText = '';
             for (const style of [getCommonStyles(), styles]) {
@@ -45,7 +45,7 @@
                     styleText += `--${key}: ${value};`
                 }
             }
-            
+
             sheet.replaceSync(`:root { ${styleText} }`);
             document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
         },

@@ -1,30 +1,5 @@
 @import '/_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css';
 
-.root111 {
-    --bammemo-radius: 0.5rem;
-    /* Zinc 100 */
-    --bammemo-background: #f4f4f5;
-    /* Zinc 50 */
-    --bammemo-foreground: #fafafa;
-    /* Zinc 200 */
-    --bammemo-border-primary: #e4e4e7;
-    /* Zinc 800 */
-    --bammemo-text-primary: #27272a;
-    /* Zinc 600 */
-    --bammemo-text-secondary: #52525b;
-    /* Zinc 400 */
-    --bammemo-text-tertiary: #a1a1aa;
-}
-
-body1 {
-    --body-font: "Segoe UI Variable", "Segoe UI", sans-serif;
-    font-family: var(--body-font);
-    font-size: var(--type-ramp-base-font-size);
-    line-height: var(--type-ramp-base-line-height);
-    margin: 0;
-    background-color: var(--bammemo-background);
-}
-
 body {
     margin: 0;
     padding: 0;
@@ -34,13 +9,7 @@ body {
     line-height: var(--type-ramp-base-line-height);
     font-weight: var(--font-weight);
     color: var(--neutral-foreground-rest);
-    /*background: var(--neutral-fill-layer-rest);*/
     background: var(--neutral-layer-2);
-}
-
-
-a {
-    color: var(--bammemo-text-primary);
 }
 
 .navmenu-icon {
@@ -82,32 +51,10 @@ a {
     width: 100dvw;
 }
 
-/*footer {
-    background: var(--neutral-layer-4);
-    color: var(--neutral-foreground-rest);
-    align-items: center;
-    padding: 10px 10px;
-}
-
-    footer a {
-        color: var(--neutral-foreground-rest);
-        text-decoration: none;
-    }
-
-        footer a:focus {
-            outline: 1px dashed;
-            outline-offset: 3px;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-*/
 .alert {
     border: 1px dashed var(--accent-fill-rest);
     padding: 5px;
 }
-
 
 #blazor-error-ui {
     background: lightyellow;
@@ -187,6 +134,7 @@ nav.site-nav-mobile {
 blockquote {
     margin-left: 0;
     margin-right: 0;
+    font-style: normal;
 }
 
     blockquote > :last-child {

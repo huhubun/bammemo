@@ -1,0 +1,7 @@
+﻿.bammemo-no-data-wrap {
+    width: 100%;
+}
+
+.bammemo-no-data-wrap ::deep .bammemo-no-data-content-wrap {
+    padding: 4rem 0;
+}
