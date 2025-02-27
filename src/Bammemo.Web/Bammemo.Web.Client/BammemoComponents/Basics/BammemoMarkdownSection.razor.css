@@ -12,3 +12,8 @@
     .bammemo-markdown-section-content ::deep img:hover {
         box-shadow: 0 0 5px 0 var(--neutral-stroke-active);
     }
+
+    .bammemo-markdown-section-content ::deep p {
+        overflow-wrap: break-word;
+    }
+

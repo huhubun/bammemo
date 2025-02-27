@@ -1,5 +1,14 @@
 @import '/_content/Microsoft.FluentUI.AspNetCore.Components/css/reboot.css';
 
+@font-face {
+    font-family: "bammemo-font";
+    src: url("/fonts/bammemo-font.woff2") format("woff2"), url("/fonts/bammemo-font.ttf") format("ttf");
+}
+
+.bammemo-font-text{
+    font-family: bammemo-font !important;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -123,11 +132,11 @@ code {
     color: #c02d76;
 }
 
-nav.site-nav-default {
+nav.bammemo-site-nav-desktop {
     display: block !important;
 }
 
-nav.site-nav-mobile {
+nav.bammemo-site-nav-mobile {
     display: none !important;
 }
 
@@ -142,6 +151,10 @@ blockquote {
     }
 
 @media (max-width: 600px) {
+    .body-content {
+        height: calc(100dvh - 64px) !important;
+    }
+
     .header-gutters {
         margin: 0.5rem 3rem 0.5rem 1.5rem !important;
     }
@@ -155,11 +168,11 @@ blockquote {
         row-gap: 0 !important;
     }
 
-    nav.site-nav-default {
+    nav.bammemo-site-nav-desktop {
         display: none !important;
     }
 
-    nav.site-nav-mobile {
+    nav.bammemo-site-nav-mobile {
         display: block !important;
         padding: 1rem;
     }

@@ -1,20 +1,27 @@
-﻿.site-nav-default, .site-nav-default ::deep .bammemo-nav-menu-wrap {
+﻿.bammemo-site-nav-desktop {
     height: 100dvh;
 }
 
-    .site-nav-default ::deep .bammemo-site-nav-app-bar {
-        height: 100%;
-        padding: 1rem 0 0 0;
-        border-right: 1px solid transparent;
-        display: block;
-        background: var(--neutral-layer-3);
-        --neutral-foreground-rest: var(--accent-fill-rest);
+    .bammemo-site-nav-desktop ::deep .bammemo-nav-menu-wrap {
+        /* logo 部分占 80px */
+        height: calc(100dvh - 80px);
     }
 
-        .site-nav-default ::deep .bammemo-site-nav-app-bar:hover {
-            border-right: 1px solid var(--neutral-stroke-active);
-            box-shadow: 0 0 5px 0 var(--neutral-stroke-active);
-        }
+.bammemo-site-nav-desktop {
+    background: var(--neutral-layer-3);
+    --neutral-foreground-rest: var(--accent-fill-rest);
+    border-right: 1px solid transparent;
+}
+
+    .bammemo-site-nav-desktop ::deep .bammemo-site-nav-app-bar {
+        height: 100%;
+        display: block;
+    }
+
+    .bammemo-site-nav-desktop:hover {
+        border-right: 1px solid var(--neutral-stroke-active);
+        box-shadow: 0 0 5px 0 var(--neutral-stroke-active);
+    }
 
 
 ::deep .bammemo-site-nav-mobile-title {
@@ -24,6 +31,11 @@
     margin: 0;
     padding: 0;
 }
+
+::deep fluent-anchor::part(control) {
+    text-decoration: none;
+}
+
 
 ::deep fluent-dialog .fluent-dialog-body .bammemo-nav-menu-wrap {
     height: 100%;
@@ -35,8 +47,7 @@
 
 
 @media (max-width: 600px) {
-    .site-nav-default  {
-        display: none;  
+    .bammemo-site-nav-desktop {
+        display: none;
     }
 }
- 

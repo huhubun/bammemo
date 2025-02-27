@@ -7,3 +7,13 @@
     font-size: 1.25rem; /* 20px */
     line-height: 1.75rem; /* 28px */
 }
+
+::deep .bammemo-slip-card-title-title-wrap {
+    width: 100%;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
+}
+

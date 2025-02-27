@@ -7,26 +7,35 @@
 @inject DisabledOpacity DisabledOpacity
 
 <div class="site-nav">
-    <div class="site-nav-default">
+    <div class="bammemo-site-nav-desktop">
+        <div style="width: 100%; padding: 1rem 0;">
+            <div style=" margin: 0 auto; width: 48px; height: 48px; background: var(--accent-fill-rest); color: var(--neutral-layer-3); font-family: bammemo-font; font-size: 1.2rem; display: flex; justify-content: center;  align-items: center; border-radius: calc(var(--control-corner-radius) * 1.5px); ">
+                bun
+            </div>
+        </div>
         <BammemoNavMenu Type="BammenoNavMenuType.AppBar" />
     </div>
 
-    <nav class="site-nav-mobile">
+    <nav class="bammemo-site-nav-mobile">
         <FluentStack Orientation="Orientation.Horizontal" Style="align-items: center;">
             <FluentButton BackgroundColor="var(--neutral-layer-2)"
                           Color="var(--accent-foreground-rest)"
                           OnClick="@OpenPanelRightAsync"
                           IconStart="new Icons.Regular.Size24.Navigation()" />
 
-            <h1 class="bammemo-site-nav-mobile-title">呼呼小笼包的博客</h1>
+            <FluentAnchor Href="/"
+                          Class="bammemo-site-nav-mobile-title"
+                          Appearance="Appearance.Hypertext">
+                呼呼小笼包的博客
+            </FluentAnchor>
 
-            <FluentSpacer />
+            @*             <FluentSpacer />
 
             <FluentButton BackgroundColor="var(--neutral-layer-2)"
                           Color="var(--accent-foreground-rest)"
                           OnClick="@OpenPanelRightAsync"
-                          IconStart="new Icons.Regular.Size24.PanelRight()" />
-        </FluentStack>
+                          IconStart="new Icons.Regular.Size24.PanelRight()" /> *@ 
+       </FluentStack>
     </nav>
 
     <FluentDialogProvider />

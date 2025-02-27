@@ -4,7 +4,7 @@
 @inject NavigationManager NavigationManager
 
 <div class="bammemo-slip-card-head-wrap">
-    <FluentToolbar Class="bammemo-slip-card-head">
+    <FluentStack Orientation="Orientation.Horizontal" Class="bammemo-slip-card-head" Style="align-items: center;">
         <BammemoSlipCardTitle Data="Data" />
 
         <div class="bammemo-slip-card-head-action">
@@ -40,7 +40,7 @@
                 }
             </FluentMenu>
         </div>
-    </FluentToolbar>
+    </FluentStack>
 </div>
 
 @code {

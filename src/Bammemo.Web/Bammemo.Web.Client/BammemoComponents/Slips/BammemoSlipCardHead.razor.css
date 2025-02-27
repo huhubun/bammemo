@@ -4,43 +4,29 @@
 
 ::deep .bammemo-slip-card-head {
     width: 100%;
-    /* 覆盖 toolbar 自带 padding */
     padding: 0;
 }
 
-::deep fluent-toolbar::part(positioning-region) {
-    flex-wrap: nowrap;
-    flex-direction: row;
-    width: 100%;
-}
-
 ::deep .bammemo-slip-card-title {
-    flex: auto;
-    width: 100%;
-    /* 覆盖 toolbar 内部元素 自带 margin */
-    margin: 0;
+    flex: 1;
+    width: 0;
 }
 
 .bammemo-slip-card-head-action {
+    flex: 0;
     display: flex;
     flex-direction: row;
-    flex: auto;
     justify-items: center;
     align-items: center;
     justify-content: end;
     width: 100%;
-    /* 覆盖 toolbar 内部元素 自带 margin */
     margin: 0;
 }
 
-.bammemo-slip-card-head-wrap ::deep fluent-toolbar {
-    background: inherit;
-}
 
 ::deep .bammemo-slip-card-head-more-button::part(control) {
     background: inherit;
 }
-
 
     ::deep .bammemo-slip-card-head-more-button::part(control):hover {
         background: var(--neutral-fill-hover);
