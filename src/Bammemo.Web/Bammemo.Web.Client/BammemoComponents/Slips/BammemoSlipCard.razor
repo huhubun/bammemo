@@ -1,18 +1,20 @@
 ﻿@rendermode InteractiveAuto
 
-<BammemoCard HoverBorder HoverShadow>
-    @if (isEditMode)
-    {
-        <BammemoSlipEditor IsEdit="true" Data="Data" OnSlipSaved="OnNewSlipSaved" OnEditCanceled="@(_ => isEditMode = false)" />
-    }
-    else
-    {
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="width: 100%;">
-            <BammemoSlipCardHead Data="Data" />
-            <BammemoMarkdownSection Content="@Data.Content" ReadAllUrl="@Data.GetUrl()" />
-        </FluentStack>
-    }
-</BammemoCard>
+<div class="bammemo-slip-card-wrap">
+    <BammemoCard HoverBorder HoverShadow>
+        @if (isEditMode)
+        {
+            <BammemoSlipEditor IsEdit="true" Data="Data" OnSlipSaved="OnNewSlipSaved" OnEditCanceled="@(_ => isEditMode = false)" />
+        }
+        else
+        {
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="width: 100%;">
+                <BammemoSlipCardHead Data="Data" />
+                <BammemoMarkdownSection Content="@Data.Content" ReadAllUrl="@Data.GetUrl()" />
+            </FluentStack>
+        }
+    </BammemoCard>
+</div>
 
 @code {
     private bool isEditMode = false;

@@ -1,0 +1,14 @@
+﻿.site-nav-default {
+    height: 100dvh;
+}
+
+    .site-nav-default ::deep .bammemo-site-nav-app-bar {
+        height: 100%;
+        padding: 1rem 0;
+        border-right: 1px solid transparent;
+    }
+
+        .site-nav-default ::deep .bammemo-site-nav-app-bar:hover {
+            border-right: 1px solid var(--neutral-stroke-active);
+            box-shadow: 0 0 5px 0 var(--neutral-stroke-active);
+        }

@@ -7,14 +7,16 @@
 
 @if (markdownHtml != null)
 {
-    <div style="width:100%;">
-        @(new MarkupString(markdownHtml))
-    </div>
+    <div class="bammemo-markdown-section-wrap">
+        <div class="bammemo-markdown-section-content">
+            @(new MarkupString(markdownHtml))
+        </div>
 
-    if (hasMore && ReadAllUrl!=null)
-    {
-        <FluentAnchor IconStart="@(new Icons.Regular.Size16.ReadingList())" Href="@ReadAllUrl">阅读全文</FluentAnchor>
-    }
+        @if (hasMore && ReadAllUrl != null)
+        {
+            <FluentAnchor IconStart="@(new Icons.Regular.Size16.ReadingList())" Href="@ReadAllUrl">阅读全文</FluentAnchor>
+        }
+    </div>
 }
 
 @code {
@@ -22,7 +24,7 @@
     public required string Content { get; set; }
 
     [Parameter]
-    public required bool FullDisplay{ get; set; }
+    public required bool FullDisplay { get; set; }
 
     [Parameter]
     public string? ReadAllUrl { get; set; }
@@ -33,7 +35,7 @@
     protected override void OnInitialized()
     {
         var pipeline = new MarkdownPipelineBuilder()
-            .Use <MoreSeparatorExtension>()
+            .Use<MoreSeparatorExtension>()
             .UseAdvancedExtensions()
             .Build();
 
