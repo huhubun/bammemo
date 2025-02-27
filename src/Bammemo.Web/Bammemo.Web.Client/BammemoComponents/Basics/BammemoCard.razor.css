@@ -4,6 +4,8 @@
     border: 1px solid var(--neutral-layer-floating);
     background-color: var(--neutral-layer-floating);
     border-radius: calc(var(--layer-corner-radius) * 2px);
+    --type-ramp-base-font-size: 1rem;
+    --type-ramp-base-line-height: 1.5rem;
 }
 
     .bammemo-card[hover-border]:hover {

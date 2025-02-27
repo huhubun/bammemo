@@ -19,7 +19,7 @@
     function getCommonStyles() {
         return {
             'control-corner-radius': 16 / 2,
-            'layer-corner-radius': 16 / 2,
+            'layer-corner-radius': 16 / 2
         }
     }
 

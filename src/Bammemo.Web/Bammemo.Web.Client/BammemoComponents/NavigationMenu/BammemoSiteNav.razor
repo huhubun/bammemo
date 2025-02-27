@@ -8,42 +8,25 @@
 
 <div class="site-nav">
     <div class="site-nav-default">
-        <FluentDesignTheme StorageName="theme" @bind-Mode="designThemeMode" />
-
-        @*         <BammemoNavMenu Collapsible="true" />
-        <div>
-
-            <FluentButton OnClick="_ => System.Console.WriteLine(designThemeMode)">output</FluentButton>
-            <FluentButton OnClick="_ => designThemeMode = designThemeMode != DesignThemeModes.Dark ? DesignThemeModes.Dark :  DesignThemeModes.Light">change @designThemeMode</FluentButton>
-        </div> *@
-        <FluentAppBar Class="bammemo-site-nav-app-bar">
-            <FluentAppBarItem Href="/"
-                              Match="NavLinkMatch.All"
-                              IconRest="new Icons.Regular.Size24.Home()"
-                              IconActive="new Icons.Filled.Size24.Home()"
-                              Tooltip="首页" />
-
-            <FluentAppBarItem Href="/about"
-                              Match="NavLinkMatch.All"
-                              IconRest="new Icons.Regular.Size24.Info()"
-                              IconActive="new Icons.Filled.Size24.Info()"
-                              Tooltip="关于" />
-
-            <FluentSpacer />
-
-            <FluentAppBarItem Match="NavLinkMatch.All"
-                              IconRest="@ColorModeIcon"
-                              Tooltip="@ColorModeText"
-                              OnClick="SwitchColorMode" />
-
-        </FluentAppBar>
-
+        <BammemoNavMenu Type="BammenoNavMenuType.AppBar" />
     </div>
 
     <nav class="site-nav-mobile">
-        <FluentButton @onclick="@OpenPanelRightAsync" Appearance="Appearance.Accent">
-            Open panel (&lt;&lt;)
-        </FluentButton>
+        <FluentStack Orientation="Orientation.Horizontal" Style="align-items: center;">
+            <FluentButton BackgroundColor="var(--neutral-layer-2)"
+                          Color="var(--accent-foreground-rest)"
+                          OnClick="@OpenPanelRightAsync"
+                          IconStart="new Icons.Regular.Size24.Navigation()" />
+
+            <h1 class="bammemo-site-nav-mobile-title">呼呼小笼包的博客</h1>
+
+            <FluentSpacer />
+
+            <FluentButton BackgroundColor="var(--neutral-layer-2)"
+                          Color="var(--accent-foreground-rest)"
+                          OnClick="@OpenPanelRightAsync"
+                          IconStart="new Icons.Regular.Size24.PanelRight()" />
+        </FluentStack>
     </nav>
 
     <FluentDialogProvider />
@@ -52,30 +35,12 @@
 @code {
     private bool expanded = true;
     private IDialogReference? _dialog;
-    private DesignThemeModes designThemeMode;
 
-    public Icon ColorModeIcon => designThemeMode switch
-    {
-        DesignThemeModes.Light => new Icons.Regular.Size20.WeatherSunny(),
-        DesignThemeModes.Dark => new Icons.Regular.Size20.WeatherMoon(),
-        _ => new Icons.Regular.Size20.Desktop(),
-    };
 
-    public string ColorModeText => designThemeMode switch
-    {
-        DesignThemeModes.Light => "亮色模式",
-        DesignThemeModes.Dark => "暗色模式",
-        _ => "跟随系统",
-    };
 
     protected override void OnInitialized()
     {
         // GlobalState.OnChange += async () => await JSRuntime.InvokeVoidAsync("bammemo.color.delayedApply");
-    }
-
-    private void SwitchColorMode()
-    {
-        designThemeMode = (DesignThemeModes)(((int)designThemeMode + 1) % Enum.GetValues<DesignThemeModes>().Length);
     }
 
     private async Task OpenPanelRightAsync()
@@ -90,4 +55,5 @@
             });
         DialogResult result = await _dialog.Result;
     }
+
 }

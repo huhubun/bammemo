@@ -3,22 +3,17 @@
 
 <FluentDialogHeader ShowDismiss="true">
     <FluentStack VerticalAlignment="VerticalAlignment.Center">
-        <FluentLabel Typo="Typography.PaneHeader">
-            Bammemo
-        </FluentLabel>
+        <h1 class="bammemo-site-nav-mobile-title">呼呼小笼包的博客</h1>
     </FluentStack>
 </FluentDialogHeader>
 
-
-<FluentDialogBody >
-    <BammemoNavMenu />
+<FluentDialogBody>
+    <BammemoNavMenu Type="BammenoNavMenuType.Menu" />
 </FluentDialogBody>
 
 <FluentDialogFooter>
     &nbsp;
 </FluentDialogFooter>
-
-
 
 @code {
     public string Content { get; set; } = default!;
