@@ -5,6 +5,20 @@
 @inject PersistentComponentState PersistentComponentState
 @inject ICommonSlipService CommonSlipService
 
+<BammemoPageTitle Title="@(slip?.Title ?? $"{slip?.CreatedAt.ToLocalTimeString()} 发表的博文")" />
+
+<HeadContent>
+    @if (slip?.Excerpt != null)
+    {
+        <meta name="description" content="@slip.Excerpt" />
+    }
+
+    @if (slip?.Tags?.Any() ?? false)
+    {
+        <meta name="keywords" content="@String.Join(",", slip.Tags)" />
+    }
+</HeadContent>
+
 <div>
     @if (slip?.Title != null)
     {

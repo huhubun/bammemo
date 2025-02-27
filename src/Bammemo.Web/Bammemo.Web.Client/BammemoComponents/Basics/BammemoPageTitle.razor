@@ -1,0 +1,14 @@
+﻿@rendermode InteractiveAuto
+
+<PageTitle>
+    @Title @TitleSuffix
+</PageTitle>
+
+@code {
+    [Parameter]
+    public string? Title { get; set; }
+
+    public string SiteName { get; set; } = "呼呼小笼包的博客";
+
+    public string? TitleSuffix => Title != null ? $"| {SiteName}" : SiteName;
+}
