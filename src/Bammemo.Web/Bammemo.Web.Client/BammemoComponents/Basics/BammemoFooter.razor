@@ -1,6 +1,8 @@
 ﻿@using Bammemo.Service.Abstractions.SettingModels
 @using System.Text.Json
+@using System.Reflection
 @rendermode InteractiveAuto
+@implements IDisposable
 @inject PersistentComponentState PersistentComponentState
 @inject IMapper Mapper
 @inject ICommonSettingService CommonSettingService
@@ -10,10 +12,10 @@
         <FluentGridItem xs="12" lg="8" xl="6">
             <FluentStack Orientation="Orientation.Vertical" VerticalGap="@(16/4)">
                 <FluentStack Orientation="Orientation.Horizontal"
-                             HorizontalAlignment="HorizontalAlignment.Center"
-                             HorizontalGap="10"
-                             Class="bammemo-footer-environment-info-wrap"
-                             Style="align-items: center;">
+                HorizontalAlignment="HorizontalAlignment.Center"
+                HorizontalGap="10"
+                Class="bammemo-footer-environment-info-wrap"
+                Style="align-items: center;">
                     <div>
                         @DotNetVersion
                     </div>
@@ -25,29 +27,32 @@
                     <FluentDivider Role="DividerRole.Presentation" Orientation="Orientation.Vertical"></FluentDivider>
 
                     <div>
-                        <FluentAnchor Href="https://github.com/huhubun/bammemo" Appearance="Appearance.Hypertext" Target="_blank" Class="bammemo-font-text">Bammemo</FluentAnchor>
+                        <FluentAnchor Href="https://github.com/huhubun/bammemo" Appearance="Appearance.Hypertext" Target="_blank" Class="bammemo-font-text">
+                            Bammemo 
+                            <BammemoPackageVersion />
+                        </FluentAnchor>
                     </div>
                 </FluentStack>
 
                 @if (filingNumberLinks != null)
                 {
-                    <FluentStack Orientation="Orientation.Horizontal"
-                                 HorizontalAlignment="HorizontalAlignment.Center"
-                                 HorizontalGap="10"
-                                 Class="bammemo-footer-filing-number-links-wrap"
-                                 Style="align-items: center;">
+                            <FluentStack Orientation="Orientation.Horizontal"
+                                HorizontalAlignment="HorizontalAlignment.Center"
+                                HorizontalGap="10"
+                                Class="bammemo-footer-filing-number-links-wrap"
+                                Style="align-items: center;">
                         @foreach (var link in filingNumberLinks)
                         {
-                            <div>
-                                <FluentAnchor Href="@link.Url" Appearance="Appearance.Hypertext" Target="_blank">@link.Text</FluentAnchor>
-                            </div>
+                                            <div>
+                                                <FluentAnchor Href="@link.Url" Appearance="Appearance.Hypertext" Target="_blank">@link.Text</FluentAnchor>
+                                            </div>
 
                             @if (link != filingNumberLinks.Last())
                             {
-                                <FluentDivider Role="DividerRole.Presentation" Orientation="Orientation.Vertical"></FluentDivider>
+                                            <FluentDivider Role="DividerRole.Presentation" Orientation="Orientation.Vertical"></FluentDivider>
                             }
                         }
-                    </FluentStack>
+                            </FluentStack>
                 }
             </FluentStack>
         </FluentGridItem>
@@ -78,4 +83,6 @@
         PersistentComponentState.PersistAsJson(nameof(filingNumberLinks), filingNumberLinks);
         return Task.CompletedTask;
     }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
 }

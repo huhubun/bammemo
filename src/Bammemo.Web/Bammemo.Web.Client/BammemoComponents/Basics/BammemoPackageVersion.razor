@@ -1,0 +1,24 @@
+﻿@using System.Reflection
+
+@PackageVersion
+
+@code {
+    public static string PackageVersion
+    {
+        get
+        {
+            var version = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+            if (version != null)
+            {
+                if (version.Contains('+'))
+                {
+                    return version.Split('+')[0];
+                }
+
+                return version;
+            }
+
+            return "[UNKNOWN_VERSION]";
+        }
+    }
+}

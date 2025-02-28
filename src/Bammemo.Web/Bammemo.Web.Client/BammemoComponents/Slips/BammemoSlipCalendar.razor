@@ -1,6 +1,8 @@
 ﻿@using Bammemo.Service.Abstractions.WebApiModels.Slips
 @using System.Globalization
 @rendermode InteractiveAuto
+@implements IDisposable
+@inject PersistentComponentState PersistentComponentState
 @inject WebApiClient webApiClient
 
 <div class="bammemo-slip-calendar">
@@ -13,7 +15,7 @@
             var dayTicks = context.Date.Ticks;
             var dayEndTicks = context.Date.AddDays(1).Ticks;
 
-            if (times.Any(t => t >= dayTicks && t < dayEndTicks))
+            if ((publishedTimes ?? Enumerable.Empty<long>()).Any(t => t >= dayTicks && t < dayEndTicks))
             {
                 <div class="bammemo-slip-calendar-day-published">
                     @context.DayNumber
@@ -33,7 +35,8 @@
 </div>
 
 @code {
-    private long[] times = [];
+    private PersistingComponentStateSubscription persistingSubscription;
+    private long[]? publishedTimes;
 
     [Parameter]
     public DateTime? SelectedTime { get; set; }
@@ -43,6 +46,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
         var now = DateTime.Now;
         var startTime = new DateTime(now.Year, now.Month, 1);
 
@@ -51,11 +56,14 @@
 
     private async Task OnMonthChangedAsync(DateTime dateTime)
     {
-        times = (await webApiClient.Analytics.GetSlipTimesAsync(new GetSlipTimesRequest
-            {
-                StartTime = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks,
-                EndTime = TimeZoneInfo.ConvertTimeToUtc(dateTime.AddMonths(1)).Ticks
-            }))?.CreatedTimes.Select(t => new DateTime(t).ToLocalTime().Ticks).ToArray() ?? [];
+        if (!PersistentComponentState.TryTakeFromJson(nameof(publishedTimes), out publishedTimes))
+        {
+            publishedTimes = (await webApiClient.Analytics.GetSlipTimesAsync(new GetSlipTimesRequest
+                {
+                    StartTime = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks,
+                    EndTime = TimeZoneInfo.ConvertTimeToUtc(dateTime.AddMonths(1)).Ticks
+                }))?.CreatedTimes.Select(t => new DateTime(t).ToLocalTime().Ticks).ToArray() ?? [];
+        }
     }
 
     private async Task OnSelectedDateChangedAsync(DateTime? dateTimes)
@@ -63,4 +71,12 @@
         SelectedTime = dateTimes;
         await OnSelectedDateChanged.InvokeAsync(dateTimes);
     }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(nameof(publishedTimes), publishedTimes);
+        return Task.CompletedTask;
+    }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
 }

@@ -1,9 +1,11 @@
 ﻿@rendermode InteractiveAuto
+@implements IDisposable
+@inject PersistentComponentState PersistentComponentState
 @inject WebApiClient webApiClient
 
 <div class="bammemo-slip-tag-list">
     <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" VerticalGap="@(16/4)" Wrap>
-        @foreach (var tag in tags)
+        @foreach (var tag in popularTags ?? Enumerable.Empty<string>())
         {
             <FluentButton BackgroundColor="var(--neutral-layer-2)"
                           Color="var(--accent-foreground-active)"
@@ -16,17 +18,23 @@
 </div>
 
 @code {
+    private PersistingComponentStateSubscription persistingSubscription;
+    private string[]? popularTags;
+
     [Parameter]
     public string[]? SelectedTags { get; set; }
 
     [Parameter]
     public EventCallback<string[]?> OnSelectedTagChanged { get; set; }
 
-    private string[] tags = [];
-
     protected async override Task OnInitializedAsync()
     {
-        tags = (await webApiClient.Analytics.GetSlipTagsAsync()).Tags;
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson(nameof(popularTags), out popularTags))
+        {
+            popularTags = (await webApiClient.Analytics.GetSlipTagsAsync()).Tags;
+        }
     }
 
     private async Task OnTagSelectedAsync(string tag)
@@ -44,4 +52,12 @@
 
         await OnSelectedTagChanged.InvokeAsync(selectedTags.ToArray());
     }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(nameof(popularTags), popularTags);
+        return Task.CompletedTask;
+    }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
 }
