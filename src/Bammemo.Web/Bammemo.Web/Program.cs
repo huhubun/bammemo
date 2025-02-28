@@ -37,10 +37,12 @@ builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client 
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<ISlipService, SlipService>();
 builder.Services.AddScoped<IIdService, IdService>();
+builder.Services.AddScoped<IRedirectRuleService, RedirectRuleService>();
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
 
-builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+//builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -57,6 +59,9 @@ else
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
+app.UseStatusCodePagesWithRedirects("/404");
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()

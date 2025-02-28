@@ -2,6 +2,25 @@
     height: 100dvh;
 }
 
+    .bammemo-site-nav-desktop .bammemo-site-nav-site-logo-wrap {
+        width: 100%;
+        padding: 1rem 0;
+    }
+
+        .bammemo-site-nav-desktop .bammemo-site-nav-site-logo-wrap .bammemo-site-nav-site-logo {
+            border-radius: calc(var(--control-corner-radius) * 1.5px);
+            margin: 0 auto;
+            width: 48px;
+            height: 48px;
+            background: var(--accent-fill-rest);
+            color: var(--neutral-layer-3);
+            font-family: "Bammemo Serif";
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
     .bammemo-site-nav-desktop ::deep .bammemo-nav-menu-wrap {
         /* logo 部分占 80px */
         height: calc(100dvh - 80px);

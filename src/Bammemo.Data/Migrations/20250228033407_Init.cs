@@ -11,6 +11,21 @@ namespace Bammemo.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "RedirectRules",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Source = table.Column<string>(type: "TEXT", nullable: false),
+                    Target = table.Column<string>(type: "TEXT", nullable: false),
+                    HttpStatus = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RedirectRules", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Settings",
                 columns: table => new
                 {
@@ -66,6 +81,11 @@ namespace Bammemo.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_RedirectRules_Source",
+                table: "RedirectRules",
+                column: "Source");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Settings_Key",
                 table: "Settings",
                 column: "Key");
@@ -89,6 +109,9 @@ namespace Bammemo.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "RedirectRules");
+
             migrationBuilder.DropTable(
                 name: "Settings");
 

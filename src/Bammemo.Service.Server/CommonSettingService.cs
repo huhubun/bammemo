@@ -12,7 +12,7 @@ public class CommonSettingService(
 {
     public async Task<GetSettingByKeyDto> GetByKeyAsync(string key)
     {
-        var setting = await settingService.GetByKeyAsync(key);
+        var setting = await settingService.GetByKeyFromCacheAsync(key);
         return mapper.Map<GetSettingByKeyDto>(setting);
     }
 

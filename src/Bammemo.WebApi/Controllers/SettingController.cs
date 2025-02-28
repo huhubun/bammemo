@@ -14,7 +14,7 @@ public class SettingController(
     [HttpGet("{key}")]
     public async Task<IActionResult> GetByKeyAsync([FromRoute] string key)
     {
-        var setting = await settingService.GetByKeyAsync(key);
+        var setting = await settingService.GetByKeyFromCacheAsync(key);
         if (setting != null)
         {
             return Ok(mapper.Map<GetSettingByKeyResponse>(setting));

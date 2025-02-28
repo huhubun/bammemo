@@ -12,5 +12,4 @@ builder.Services.AddHttpClient<WebApiClient>(client => client.BaseAddress = new 
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
 
-
 await builder.Build().RunAsync();

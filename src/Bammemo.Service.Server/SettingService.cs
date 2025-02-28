@@ -2,21 +2,23 @@
 using Bammemo.Data.Entities;
 using Bammemo.Service.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Bammemo.Service.Server;
 
 public class SettingService(
-    BammemoDbContext dbContext) : ISettingService
+    BammemoDbContext dbContext,
+    IMemoryCache memoryCache) : ISettingService
 {
-    public async Task<Setting?> GetByKeyAsync(string key)
-        => await dbContext.Settings.AsNoTracking().SingleOrDefaultAsync(s => s.Key == key);
+    public async Task<Setting?> GetByKeyFromCacheAsync(string key)
+        => await memoryCache.GetOrCreateAsync(GetCacheKey(key), async _ => await dbContext.Settings.AsNoTracking().SingleOrDefaultAsync(s => s.Key == key));
 
     public async Task<List<Setting>> GetByKeysAsync(IEnumerable<string> keys)
         => await dbContext.Settings.AsNoTracking().Where(s => keys.Contains(s.Key)).ToListAsync();
 
     public async Task CreateOrUpdateAsync(string key, string value)
     {
-        var setting = await GetByKeyAsync(key);
+        var setting = await dbContext.Settings.SingleOrDefaultAsync(s => s.Key == key);
         if (setting == null)
         {
             await CreateAsync(key, value);
@@ -24,6 +26,7 @@ public class SettingService(
         else
         {
             await UpdateAsync(key, value);
+            memoryCache.Remove(GetCacheKey(key));
         }
     }
 
@@ -47,5 +50,9 @@ public class SettingService(
         entity.UpdateAt = DateTime.UtcNow.Ticks;
 
         await dbContext.SaveChangesAsync();
+
+        memoryCache.Remove(GetCacheKey(key));
     }
+
+    private static string GetCacheKey(string key) => $"settings_{key.ToLower()}";
 }

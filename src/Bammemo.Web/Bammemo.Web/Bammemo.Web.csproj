@@ -5,8 +5,6 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<!--<PublishTrimmed>true</PublishTrimmed>-->
-		<!--<WasmEnableLinking>true</WasmEnableLinking>-->
 		<WasmCompressionFormat>brotli</WasmCompressionFormat>
 	</PropertyGroup>
 
@@ -21,9 +19,5 @@
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.5" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.11.5" />
 		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.5" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Components\Layout\" />
 	</ItemGroup>
 </Project>

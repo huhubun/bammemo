@@ -19,7 +19,7 @@ public class IdService(
 
     private Task<SqidsEncoder<int>?> SqidsTask => memoryCache.GetOrCreateAsync(nameof(Sqids), async _ =>
     {
-        var idAlphabetSetting = await settingService.GetByKeyAsync(SettingKeys.IdAlphabet);
+        var idAlphabetSetting = await settingService.GetByKeyFromCacheAsync(SettingKeys.IdAlphabet);
 
         ArgumentNullException.ThrowIfNull(idAlphabetSetting);
 

@@ -8,9 +8,9 @@
 
 <div class="site-nav">
     <div class="bammemo-site-nav-desktop">
-        <div style="width: 100%; padding: 1rem 0;">
-            <div style=" margin: 0 auto; width: 48px; height: 48px; background: var(--accent-fill-rest); color: var(--neutral-layer-3); font-family: bammemo-font; font-size: 1.2rem; display: flex; justify-content: center;  align-items: center; border-radius: calc(var(--control-corner-radius) * 1.5px); ">
-                bun
+        <div class="bammemo-site-nav-site-logo-wrap">
+            <div class="bammemo-site-nav-site-logo">
+                <BammemoSettingValue SettingKey="@SettingKeys.SiteLogoText" EntryPoint="@(nameof(BammemoSiteNav))" />
             </div>
         </div>
         <BammemoNavMenu Type="BammenoNavMenuType.AppBar" />
@@ -26,7 +26,7 @@
             <FluentAnchor Href="/"
                           Class="bammemo-site-nav-mobile-title"
                           Appearance="Appearance.Hypertext">
-                呼呼小笼包的博客
+                <BammemoSettingValue SettingKey="@SettingKeys.SiteName" EntryPoint="@(nameof(BammemoSiteNav))" />
             </FluentAnchor>
 
             @*             <FluentSpacer />

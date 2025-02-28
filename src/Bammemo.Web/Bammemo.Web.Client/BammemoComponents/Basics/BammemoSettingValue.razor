@@ -1,0 +1,32 @@
+﻿@rendermode InteractiveAuto
+@inject PersistentComponentState PersistentComponentState
+@inject ICommonSettingService CommonSettingService
+
+@settingValue
+
+@code {
+    private PersistingComponentStateSubscription persistingSubscription;
+    private string? settingValue;
+
+    [Parameter]
+    public required string SettingKey { get; set; }
+
+    [Parameter]
+    public required string EntryPoint { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson($"{SettingKey}_{EntryPoint}", out settingValue))
+        {
+            settingValue = (await CommonSettingService.GetByKeyAsync(SettingKey))?.Value;
+        }
+    }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson($"{SettingKey}_{EntryPoint}", settingValue);
+        return Task.CompletedTask;
+    }
+}

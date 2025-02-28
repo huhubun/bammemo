@@ -46,10 +46,14 @@ using (var scope = app.Services.CreateScope())
 
         var dbContext = scope.ServiceProvider.GetRequiredService<BammemoDbContext>();
         dbContext.Database.EnsureCreated();
+    }
 
+    var settingService = scope.ServiceProvider.GetRequiredService<ISettingService>();
+
+    var setting = await settingService.GetByKeyFromCacheAsync(SettingKeys.IdAlphabet);
+    if (setting == null)
+    {
         var idAlphabet = IdHelper.GenerateIdAlphabet();
-
-        var settingService = scope.ServiceProvider.GetRequiredService<ISettingService>();
         await settingService.CreateAsync(SettingKeys.IdAlphabet, idAlphabet);
     }
 }

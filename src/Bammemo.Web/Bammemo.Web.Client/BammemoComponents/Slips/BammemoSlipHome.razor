@@ -9,7 +9,7 @@
 @inject WebApiClient WebApiClient
 
 <FluentGrid Justify="JustifyContent.Center">
-    <FluentGridItem xs="12" lg="8" xl="6" Style="padding: 8px;"> 
+    <FluentGridItem xs="12" lg="8" xl="6" Style="padding: 8px;">
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
             @if (IsAdminPage)
             {
@@ -63,7 +63,7 @@
     </FluentGridItem>
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Style="width: 250px; position: fixed;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Style="width: 250px; ">
             <BammemoSlipCalendar SelectedTime="StartTimeDateTime"
                                  OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
             <BammemoSlipTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />

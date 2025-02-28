@@ -15,7 +15,7 @@ public class IdServiceTest
     public IdServiceTest()
     {
         _defaultSettingService = new Mock<ISettingService>();
-        _defaultSettingService.Setup(s => s.GetByKeyAsync(SettingKeys.IdAlphabet)).ReturnsAsync(new Setting
+        _defaultSettingService.Setup(s => s.GetByKeyFromCacheAsync(SettingKeys.IdAlphabet)).ReturnsAsync(new Setting
         {
             Key = SettingKeys.IdAlphabet,
             Value = ID_ALPHABET

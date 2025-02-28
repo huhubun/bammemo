@@ -4,7 +4,6 @@
 <div class="bammemo-nav-menu-wrap @Class">
     <FluentDesignTheme StorageName="theme" @bind-Mode="designThemeMode" />
 
-
     @if (Type == BammenoNavMenuType.Menu)
     {
         var groupIndex = 0;
@@ -29,7 +28,7 @@
                 }
                 else
                 {
-                    <FluentNavMenu  Title="Navigation menu" @bind-Expanded="expanded">
+                    <FluentNavMenu Title="Navigation menu" @bind-Expanded="expanded">
                         @foreach (var item in group.Select(g => g.item))
                         {
                             switch (item.Type)
@@ -45,7 +44,7 @@
                                     <FluentNavLink Match="@item.Match"
                                                    Icon="@item.IconRest"
                                                    OnClick="@item.OnClick">
-                                                   
+
                                         @item.Text
                                     </FluentNavLink>
                                     break;
@@ -101,6 +100,13 @@
             IconRest = new Icons.Regular.Size24.Home(),
             IconActive = new Icons.Filled.Size24.Home(),
             Href = "/"
+        },
+        new()
+        {
+            Text = "链接",
+            IconRest = new Icons.Regular.Size24.LinkMultiple(),
+            IconActive = new Icons.Filled.Size24.LinkMultiple(),
+            Href = "/links"
         },
         new()
         {

@@ -9,7 +9,7 @@
 {
     <div class="bammemo-markdown-section-wrap">
         <div class="bammemo-markdown-section-content">
-            @(new MarkupString(markdownHtml))
+            @(new MarkupString(markdownHtml)) 
         </div>
 
         @if (hasMore && ReadAllUrl != null)
@@ -37,6 +37,8 @@
         var pipeline = new MarkdownPipelineBuilder()
             .Use<MoreSeparatorExtension>()
             .UseAdvancedExtensions()
+        .UseAutoIdentifiers()
+        .UseEmojiAndSmiley() 
             .Build();
 
 

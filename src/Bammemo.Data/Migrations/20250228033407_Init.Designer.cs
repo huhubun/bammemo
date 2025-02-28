@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bammemo.Data.Migrations
 {
     [DbContext(typeof(BammemoDbContext))]
-    [Migration("20250222081525_Init")]
+    [Migration("20250228033407_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -18,6 +18,30 @@ namespace Bammemo.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
+
+            modelBuilder.Entity("Bammemo.Data.Entities.RedirectRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("HttpStatus")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Target")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Source");
+
+                    b.ToTable("RedirectRules");
+                });
 
             modelBuilder.Entity("Bammemo.Data.Entities.Setting", b =>
                 {

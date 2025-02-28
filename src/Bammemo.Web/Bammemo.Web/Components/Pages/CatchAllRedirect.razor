@@ -1,0 +1,48 @@
+﻿@page "/{*pageRoute}"
+@using Bammemo.Service.Server.Interfaces
+@inject IHttpContextAccessor HttpContextAccessor
+@inject NavigationManager NavigationManager
+@inject IRedirectRuleService RedirectRuleService
+
+@code {
+    [Parameter]
+    public string? PageRoute { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (PageRoute != null)
+            {
+                var redirectRule = await RedirectRuleService.GetBySourceAsync(PageRoute);
+                if (redirectRule != null)
+                {
+                    var target = $"/{redirectRule.Target}";
+
+                    if (redirectRule.HttpStatus == 302)
+                    {
+                        NavigationManager.NavigateTo(target);
+                    }
+                    else if (HttpContextAccessor.HttpContext != null)
+                    {
+                        HttpContextAccessor.HttpContext.Response.StatusCode = 301;
+                        HttpContextAccessor.HttpContext.Response.Redirect(target, true);
+                        return;
+                    }
+                    else
+                    {
+                        // TODO log
+                    }
+                }
+            }
+
+            NavigationManager.NavigateTo("/404");
+        }
+        // https://github.com/dotnet/aspnetcore/issues/53996
+        // 由于在 OnInitialized 中使用 NavigationManager，抛出此异常是可以直接被忽略的，导航会正常进行
+        catch (NavigationException)
+        {
+            // Ignore
+        }
+    }
+}
