@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
+	<PublishTrimmed>true</PublishTrimmed>
+	<TrimMode>full</TrimMode>
+	<RunAOTCompilation>true</RunAOTCompilation>
+	<WasmCompressionFormat>brotli</WasmCompressionFormat>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,7 +32,10 @@
 	<Content Include="Layout\MainLayout.razor.js">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</Content>
-
   </ItemGroup>
+
+	<ItemGroup>
+		<TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+	</ItemGroup>
 
 </Project>
