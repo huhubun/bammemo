@@ -48,7 +48,7 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v} 
           else
-            VERSION="0.0.0-$(echo "${{ steps.meta.outputs.tags }}" | cut -d ',' -f1 | cut -d ':' -f2)"
+            VERSION="0.0.0-$(echo "${{ steps.meta.outputs.tags }}" | cut -d ',' -f1 | cut -d ':' -f2 | tr '_' '-')"
           fi
           echo "Determine version result: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV

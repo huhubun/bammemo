@@ -18,9 +18,9 @@ COPY src/. ./src/
 WORKDIR /source/src/Bammemo.WebApi
 RUN dotnet publish --configuration Release \
     --runtime linux-x64 \
-    --p:VersionPrefix=$APP_VERSION \
-    -o /app \
-    --no-restore
+    --no-restore \
+    -p:VersionPrefix=$APP_VERSION \
+    -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine
 WORKDIR /app
