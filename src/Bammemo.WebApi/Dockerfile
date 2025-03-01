@@ -16,13 +16,18 @@ RUN dotnet restore --runtime linux-x64 "/source/src/Bammemo.WebApi/Bammemo.WebAp
 
 COPY src/. ./src/
 WORKDIR /source/src/Bammemo.WebApi
+RUN dotnet build --configuration Release \
+    --runtime linux-x64 \
+    --no-restore 
+
+FROM build AS publish
 RUN dotnet publish --configuration Release \
     --runtime linux-x64 \
     --no-restore \
     -p:VersionPrefix=$APP_VERSION \
     -o /app
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
 WORKDIR /app
 COPY --from=build /app ./
 ENTRYPOINT ["dotnet", "Bammemo.WebApi.dll"]
