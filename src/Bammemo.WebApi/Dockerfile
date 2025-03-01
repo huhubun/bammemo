@@ -2,6 +2,7 @@ ARG VERSION=0.0.0
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ENV APP_VERSION=$VERSION
+RUN echo "App Version: $APP_VERSION"
 WORKDIR /source
 
 COPY src/Bammemo.Data/*.csproj ./src/Bammemo.Data/
