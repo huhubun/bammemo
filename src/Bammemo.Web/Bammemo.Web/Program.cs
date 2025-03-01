@@ -1,12 +1,15 @@
 using Bammemo.Data;
 using Bammemo.Service.Server;
+using Bammemo.Service.Server.Configurations;
 using Bammemo.Service.Server.Interfaces;
 using Bammemo.Web.Components;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.FluentUI.AspNetCore.Components;
 
 var builder = WebApplication.CreateBuilder(args);
+var bammemoOptions = builder.Configuration.GetSection(BammemoOptions.Position).Get<BammemoOptions>() ?? throw new NullReferenceException(nameof(BammemoOptions));
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -21,8 +24,11 @@ builder.Services.Configure<HubOptions>(options =>
 });
 
 builder.Services.AddDbContext<BammemoDbContext>(options =>
-    options.UseSqlite("Data Source=/bammemo/bammemo.db")
+    options.UseSqlite(bammemoOptions.ConnectionString)
 );
+
+builder.Services.Configure<BammemoOptions>(
+    builder.Configuration.GetSection(BammemoOptions.Position));
 
 builder.Services.AddServerSideBlazor()
     .AddCircuitOptions(option => { option.DetailedErrors = true; });
@@ -32,7 +38,10 @@ builder.Services.AddBammemoAutoMapper(
     typeof(Bammemo.Service.Server.MapperProfiles.SlipProfile).Assembly);
 
 // ‘§≥ œ÷–Ë“™
-builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client => client.BaseAddress = new Uri(builder.Configuration["ApiUrl"] ?? throw new NullReferenceException("Please config ApiUrl first")));
+builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client =>
+{
+    client.BaseAddress = new Uri(bammemoOptions?.ApiUrl ?? throw new OptionsValidationException(nameof(BammemoOptions.ApiUrl), typeof(BammemoOptions), null));
+});
 
 builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<ISlipService, SlipService>();
@@ -41,7 +50,6 @@ builder.Services.AddScoped<IRedirectRuleService, RedirectRuleService>();
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
 
-//builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

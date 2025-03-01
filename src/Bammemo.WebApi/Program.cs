@@ -1,26 +1,36 @@
 using Bammemo.Data;
 using Bammemo.Service.Server;
+using Bammemo.Service.Server.Configurations;
 using Bammemo.Service.Server.Helpers;
 using Bammemo.Service.Server.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var bammemoOptions = builder.Configuration.GetSection(BammemoOptions.Position).Get<BammemoOptions>() ?? throw new NullReferenceException(nameof(BammemoOptions));
 
 builder.Services.AddCors(
     options => options.AddDefaultPolicy(
-        policy => policy.WithOrigins(
+        policy =>
+        {
+            policy.WithOrigins(
             [
-                builder.Configuration["ApiUrl"] ?? throw new ArgumentNullException("ApiUrl"),
-                builder.Configuration["WebUrl"] ?? throw new ArgumentNullException("WebUrl")
+                bammemoOptions?.ApiUrl ?? throw new OptionsValidationException(nameof(BammemoOptions.ApiUrl), typeof(BammemoOptions), null),
+                bammemoOptions.WebUrl ?? throw new OptionsValidationException(nameof(BammemoOptions.WebUrl), typeof(BammemoOptions), null)
             ])
-            .AllowAnyMethod()
-            .AllowAnyHeader()));
+           .AllowAnyMethod()
+           .AllowAnyHeader();
+        }));
 
 // Add services to the container.
 builder.Services.AddDbContext<BammemoDbContext>(options =>
-    options.UseSqlite("Data Source=/bammemo/bammemo.db")
+
+    options.UseSqlite(bammemoOptions.ConnectionString)
 );
+
+builder.Services.Configure<BammemoOptions>(
+    builder.Configuration.GetSection(BammemoOptions.Position));
 
 builder.Services.AddControllers();
 builder.Services.AddMemoryCache();
