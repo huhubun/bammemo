@@ -19,6 +19,7 @@ RUN dotnet publish --configuration Release \
     --p:VersionPrefix=$APP_VERSION \
     --p:FileVersion=$APP_VERSION \
     --p:AssemblyVersion=$APP_VERSION \
+    --p:NuGetVersion=$APP_VERSION \
     -o /app \
     --no-restore
 
