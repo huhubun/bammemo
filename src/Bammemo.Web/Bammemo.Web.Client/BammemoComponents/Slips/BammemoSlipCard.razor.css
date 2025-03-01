@@ -1,0 +1,11 @@
+﻿.bammemo-slip-card-wrap {
+    width: 100%;
+}
+
+    .bammemo-slip-card-wrap ::deep .bammemo-markdown-section-wrap h1,
+    .bammemo-slip-card-wrap ::deep .bammemo-markdown-section-wrap h2,
+    .bammemo-slip-card-wrap ::deep .bammemo-markdown-section-wrap h3 {
+        /* text-lg */
+        font-size: 1.125rem; /* 18px */
+        line-height: 1.75rem; /* 28px */
+    }

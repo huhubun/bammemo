@@ -1,0 +1,22 @@
+﻿@implements IDialogContentComponent<string>
+@rendermode InteractiveAuto
+
+<FluentDialogHeader ShowDismiss="true" Style="align-items: center;">
+    <FluentStack VerticalAlignment="VerticalAlignment.Center">
+        <h1 class="bammemo-site-nav-mobile-title">
+            <BammemoSettingValue SettingKey="@SettingKeys.SiteName" EntryPoint="@(nameof(BammemoNavPanel))" />
+        </h1>
+    </FluentStack>
+</FluentDialogHeader>
+
+<FluentDialogBody>
+    <BammemoNavMenu Type="BammenoNavMenuType.Menu" />
+</FluentDialogBody>
+
+<FluentDialogFooter>
+    &nbsp;
+</FluentDialogFooter>
+
+@code {
+    public string Content { get; set; } = default!;
+}

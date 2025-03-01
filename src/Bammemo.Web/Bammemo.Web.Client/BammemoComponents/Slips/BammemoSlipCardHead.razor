@@ -1,0 +1,69 @@
+﻿@rendermode InteractiveAuto
+@inject IToastService ToastService
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<div class="bammemo-slip-card-head-wrap">
+    <FluentStack Orientation="Orientation.Horizontal" Class="bammemo-slip-card-head" Style="align-items: center;">
+        <BammemoSlipCardTitle Data="Data" />
+
+        <div class="bammemo-slip-card-head-action">
+            @if (Data.Status == Service.Abstractions.Enums.SlipStatus.Private)
+            {
+                <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size16.LockClosed())" />
+            }
+
+            <FluentButton Id="@("slip-card-action-button-" + Data.Id)"
+                          Class="bammemo-slip-card-head-more-button"
+                          IconEnd="@(new Icons.Regular.Size20.MoreVertical())"
+                          Title="更多操作"
+                          Appearance="Appearance.Stealth"
+                          OnClick="@(() => isMoreOperationMenuOpen = !isMoreOperationMenuOpen)" />
+
+            <FluentMenu UseMenuService="false"
+                        Anchor="@("slip-card-action-button-" + Data.Id)"
+                        @bind-Open="isMoreOperationMenuOpen"
+                        VerticalThreshold="170">
+                @if (isLoggedIn)
+                {
+                    @* <FluentMenuItem OnClick="@(_ => isEditMode = true)">修改</FluentMenuItem> *@
+                    <FluentMenuItem>归档</FluentMenuItem>
+                    <FluentDivider />
+                    <FluentMenuItem OnClick="CopySlipUrlAsync">复制链接</FluentMenuItem>
+                    <FluentMenuItem>可读性链接</FluentMenuItem>
+                    <FluentDivider />
+                    <FluentMenuItem>删除</FluentMenuItem>
+                }
+                else
+                {
+                    <FluentMenuItem OnClick="CopySlipUrlAsync">复制链接</FluentMenuItem>
+                }
+            </FluentMenu>
+        </div>
+    </FluentStack>
+</div>
+
+@code {
+    bool isMoreOperationMenuOpen = false;
+    // TODO
+    private bool isLoggedIn = false;
+
+    [Parameter]
+    public required ListSlipDto Data { get; set; }
+
+    private async Task CopySlipUrlAsync()
+    {
+        try
+        {
+            var slipUrl = NavigationManager.ToAbsoluteUri(Data.GetUrl());
+
+            await JSRuntime.InvokeAsync<bool>("bammemo.util.copyTextToClipboard", slipUrl);
+
+            ToastService.ShowSuccess($"已复制 {slipUrl}");
+        }
+        catch (JSException ex)
+        {
+            ToastService.ShowError($"复制失败：{ex.Message}");
+        }
+    }
+}

@@ -1,0 +1,25 @@
+﻿@rendermode InteractiveAuto
+
+<div class="bammemo-slip-card-title">
+    @if (Data.Title != null)
+    {
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
+            <div class="bammemo-slip-card-title-title-wrap">
+                <FluentAnchor Appearance="Appearance.Hypertext" Href="@Data.GetUrl()" Class="bammemo-slip-card-title-main">
+                    @Data.Title
+                </FluentAnchor>
+            </div>
+
+            <BammemoSlipCardTitlePublishTime Data="Data" />
+        </FluentStack>
+    }
+    else
+    {
+        <BammemoSlipCardTitlePublishTime Data="Data" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public required ListSlipDto Data { get; set; }
+}

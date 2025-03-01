@@ -1,0 +1,36 @@
+﻿@rendermode InteractiveAuto
+@implements IDisposable
+@inject PersistentComponentState PersistentComponentState
+@inject ICommonSettingService CommonSettingService
+
+<PageTitle>
+    @Title@TitleSuffix
+</PageTitle>
+
+@code {
+    private PersistingComponentStateSubscription persistingSubscription;
+    private string? siteName;
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    public string? TitleSuffix => Title != null ? $" | {siteName}" : siteName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson($"{nameof(siteName)}_{nameof(BammemoPageTitle)}", out siteName))
+        {
+            siteName = (await CommonSettingService.GetByKeyAsync(SettingKeys.SiteName))?.Value;
+        }
+    }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson($"{nameof(siteName)}_{nameof(BammemoPageTitle)}", siteName);
+        return Task.CompletedTask;
+    }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
+}

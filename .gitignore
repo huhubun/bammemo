@@ -398,3 +398,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/src/Bammemo.Web/Bammemo.Web/bammemo.db-shm
+/src/Bammemo.Web/Bammemo.Web/bammemo.db-wal

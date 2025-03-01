@@ -1,0 +1,72 @@
+﻿.bammemo-site-nav-desktop {
+    height: 100dvh;
+}
+
+    .bammemo-site-nav-desktop .bammemo-site-nav-site-logo-wrap {
+        width: 100%;
+        padding: 1rem 0;
+    }
+
+        .bammemo-site-nav-desktop .bammemo-site-nav-site-logo-wrap .bammemo-site-nav-site-logo {
+            border-radius: calc(var(--control-corner-radius) * 1.5px);
+            margin: 0 auto;
+            width: 48px;
+            height: 48px;
+            background: var(--accent-fill-rest);
+            color: var(--neutral-layer-3);
+            font-family: "Bammemo Serif";
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+    .bammemo-site-nav-desktop ::deep .bammemo-nav-menu-wrap {
+        /* logo 部分占 80px */
+        height: calc(100dvh - 80px);
+    }
+
+.bammemo-site-nav-desktop {
+    background: var(--neutral-layer-3);
+    --neutral-foreground-rest: var(--accent-fill-rest);
+    border-right: 1px solid transparent;
+}
+
+    .bammemo-site-nav-desktop ::deep .bammemo-site-nav-app-bar {
+        height: 100%;
+        display: block;
+    }
+
+    .bammemo-site-nav-desktop:hover {
+        border-right: 1px solid var(--neutral-stroke-active);
+        box-shadow: 0 0 5px 0 var(--neutral-stroke-active);
+    }
+
+
+::deep .bammemo-site-nav-mobile-title {
+    /* text-lg */
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.75rem; /* 28px */
+    margin: 0;
+    padding: 0;
+}
+
+::deep fluent-anchor::part(control) {
+    text-decoration: none;
+}
+
+
+::deep fluent-dialog .fluent-dialog-body .bammemo-nav-menu-wrap {
+    height: 100%;
+}
+
+::deep fluent-dialog .fluent-dialog-footer {
+    display: none;
+}
+
+
+@media (max-width: 600px) {
+    .bammemo-site-nav-desktop {
+        display: none;
+    }
+}

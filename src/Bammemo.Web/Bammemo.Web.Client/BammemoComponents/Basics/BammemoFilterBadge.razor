@@ -1,0 +1,35 @@
+﻿@rendermode InteractiveAuto
+
+<span class="bammemo-filter-badge">
+    <FluentButton Appearance="Appearance"
+                  OnClick="OnClick"
+                  IconStart="IconStart"
+                  IconEnd="@(HideCloseIcon ? null : new Icons.Regular.Size12.Dismiss())"
+                  AdditionalAttributes="attributes">
+        @ChildContent
+    </FluentButton>
+</span>
+
+@code {
+    private Dictionary<string, object> attributes = new();
+
+    [Parameter]
+    public bool HideCloseIcon { get; set; }
+
+    [Parameter]
+    public Icon? IconStart { get; set; }
+
+    [Parameter]
+    public Appearance? Appearance { get; set; } = Microsoft.FluentUI.AspNetCore.Components.Appearance.Outline;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        attributes["closable"] = !HideCloseIcon;
+    }
+}

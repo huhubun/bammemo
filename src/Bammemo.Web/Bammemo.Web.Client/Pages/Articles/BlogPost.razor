@@ -1,0 +1,9 @@
+﻿@page "/p/{linkName}"
+@rendermode InteractiveAuto
+
+<BammemoSlipDetail LinkName="@LinkName" />
+
+@code {
+    [Parameter]
+    public required string LinkName { get; set; }
+}

@@ -1,0 +1,65 @@
+﻿@using Microsoft.FluentUI.AspNetCore.Components.DesignTokens
+@rendermode InteractiveAuto
+@inject IDialogService DialogService
+@inject IJSRuntime JSRuntime
+@inject GlobalState GlobalState
+@inject NeutralFillLayerRest NeutralFillLayerRest
+@inject DisabledOpacity DisabledOpacity
+
+<div class="site-nav">
+    <div class="bammemo-site-nav-desktop">
+        <div class="bammemo-site-nav-site-logo-wrap">
+            <div class="bammemo-site-nav-site-logo">
+                <BammemoSettingValue SettingKey="@SettingKeys.SiteLogoText" EntryPoint="@(nameof(BammemoSiteNav))" />
+            </div>
+        </div>
+        <BammemoNavMenu Type="BammenoNavMenuType.AppBar" />
+    </div>
+
+    <nav class="bammemo-site-nav-mobile">
+        <FluentStack Orientation="Orientation.Horizontal" Style="align-items: center;">
+            <FluentButton BackgroundColor="var(--neutral-layer-2)"
+                          Color="var(--accent-foreground-rest)"
+                          OnClick="@OpenPanelRightAsync"
+                          IconStart="new Icons.Regular.Size24.Navigation()" />
+
+            <FluentAnchor Href="/"
+                          Class="bammemo-site-nav-mobile-title"
+                          Appearance="Appearance.Hypertext">
+                <BammemoSettingValue SettingKey="@SettingKeys.SiteName" EntryPoint="@(nameof(BammemoSiteNav))" />
+            </FluentAnchor>
+
+            @*             <FluentSpacer />
+
+            <FluentButton BackgroundColor="var(--neutral-layer-2)"
+                          Color="var(--accent-foreground-rest)"
+                          OnClick="@OpenPanelRightAsync"
+                          IconStart="new Icons.Regular.Size24.PanelRight()" /> *@ 
+       </FluentStack>
+    </nav>
+
+    <FluentDialogProvider />
+</div>
+
+@code {
+    private IDialogReference? _dialog;
+
+    protected override void OnInitialized()
+    {
+        // GlobalState.OnChange += async () => await JSRuntime.InvokeVoidAsync("bammemo.color.delayedApply");
+    }
+
+    private async Task OpenPanelRightAsync()
+    {
+        _dialog = await DialogService.ShowPanelAsync<BammemoNavPanel>(new DialogParameters
+            {
+                Alignment = HorizontalAlignment.Left,
+                ShowTitle = false,
+                PrimaryActionEnabled = false,
+                SecondaryActionEnabled = false,
+                DialogType = DialogType.Panel
+            });
+        DialogResult result = await _dialog.Result;
+    }
+
+}

@@ -1,0 +1,76 @@
+﻿@using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator
+@using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Blocks
+@using Markdig
+@using System.Text
+@rendermode InteractiveAuto
+@inject NavigationManager NavigationManager
+
+@if (markdownHtml != null)
+{
+    <div class="bammemo-markdown-section-wrap">
+        <div class="bammemo-markdown-section-content">
+            @(new MarkupString(markdownHtml)) 
+        </div>
+
+        @if (hasMore && ReadAllUrl != null)
+        {
+            <FluentAnchor IconStart="@(new Icons.Regular.Size16.ReadingList())" Href="@ReadAllUrl">阅读全文</FluentAnchor>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public required string Content { get; set; }
+
+    [Parameter]
+    public required bool FullDisplay { get; set; }
+
+    [Parameter]
+    public string? ReadAllUrl { get; set; }
+
+    private string? markdownHtml = null;
+    private bool hasMore = false;
+
+    protected override void OnInitialized()
+    {
+        var pipeline = new MarkdownPipelineBuilder()
+            .Use<MoreSeparatorExtension>()
+            .UseAdvancedExtensions()
+        .UseAutoIdentifiers()
+        .UseEmojiAndSmiley() 
+            .Build();
+
+
+        if (FullDisplay)
+        {
+            markdownHtml = Markdown.ToHtml(Content, pipeline);
+        }
+        else
+        {
+            (markdownHtml, hasMore) = ParseContent(Content, pipeline);
+        }
+    }
+
+    public (string Summary, bool HasMore) ParseContent(string markdown, MarkdownPipeline pipeline)
+    {
+        var document = Markdown.Parse(markdown, pipeline);
+        var summary = new StringBuilder();
+        bool hasMore = false;
+
+        foreach (var block in document)
+        {
+            if (block is MoreSeparatorBlock)
+            {
+                hasMore = true;
+                break;
+            }
+
+            var renderer = new Markdig.Renderers.HtmlRenderer(new StringWriter(summary));
+            renderer.Write(block);
+        }
+
+        return (summary.ToString(), hasMore);
+    }
+
+}

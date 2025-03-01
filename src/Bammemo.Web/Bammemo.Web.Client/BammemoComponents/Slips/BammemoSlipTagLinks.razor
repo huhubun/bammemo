@@ -1,0 +1,23 @@
+﻿@rendermode InteractiveAuto
+@inject NavigationManager Navigation
+
+<div class="bammemo-slip-tag-links">
+    @if (Tags != null)
+    {
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
+            @foreach (var tag in Tags)
+            {
+                <FluentAnchor Href="@(Navigation.GetUriWithQueryParameters("/", new Dictionary<string, object?>(){ {"tags", tag} }))"
+                              Appearance="Appearance.Hypertext"
+                              IconStart="@(new Icons.Regular.Size16.NumberSymbol().WithColor(Color.Neutral))">
+                    @tag
+                </FluentAnchor>
+            }
+        </FluentStack>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public required string[]? Tags { get; set; }
+}

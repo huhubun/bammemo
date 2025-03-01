@@ -1,0 +1,6 @@
+﻿<!-- https://github.com/dotnet/runtime/blob/main/docs/tools/illink/data-formats.md#descriptor-format -->
+<linker>
+	<assembly fullname="Bammemo.Web.Client" preserve="all" />
+	<assembly fullname="AutoMapper" preserve="all" />
+	<assembly fullname="Markdig" preserve="all" />
+</linker>

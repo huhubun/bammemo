@@ -1,0 +1,208 @@
+﻿@using Bammemo.Service.Abstractions.Paginations
+@using Bammemo.Service.Abstractions.WebApiModels.Slips
+@rendermode InteractiveAuto
+@implements IDisposable
+@inject PersistentComponentState PersistentComponentState
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+@inject ICommonSlipService CommonSlipService
+@inject WebApiClient WebApiClient
+
+<FluentGrid Justify="JustifyContent.Center">
+    <FluentGridItem xs="12" lg="8" xl="6" Style="padding: 8px;">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            @if (IsAdminPage)
+            {
+                <BammemoSlipEditor OnSlipSaved="OnNewSlipSaved" />
+            }
+
+            @if (StartTimeDateTime.HasValue || (SelectedTags?.Length > 0))
+            {
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
+                    @if (StartTimeDateTime.HasValue)
+                    {
+                        <BammemoFilterBadge OnClick="OnRemoveCalendarSelectedDate"
+                                            IconStart="@(new Icons.Regular.Size16.Calendar())">
+                            @StartTimeDateTime.ToIsoDateString()
+                        </BammemoFilterBadge>
+                    }
+
+                    @foreach (var tag in SelectedTags ?? [])
+                    {
+                        <BammemoFilterBadge OnClick="@(_ => OnRemoveSelectedTagClick(tag))"
+                                            IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
+                            @tag
+                        </BammemoFilterBadge>
+                    }
+                </FluentStack>
+            }
+
+            @foreach (var s in newSlipList)
+            {
+                <BammemoSlipCard Data="s" @key="s.Id" />
+            }
+
+            @foreach (var s in slipList)
+            {
+                <BammemoSlipCard Data="s" @key="s.Id" />
+            }
+
+            @if (cursorSlipId != null)
+            {
+                <div style="width: 100%;">
+                    <FluentButton Appearance="Appearance.Stealth" OnClick="LoadMore" Style="width: 100%;">Load more</FluentButton>
+                </div>
+            }
+
+            @if (showNoDataFound)
+            {
+                <BammemoNoData />
+            }
+
+        </FluentStack>
+    </FluentGridItem>
+
+    <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Style="width: 250px; ">
+            <BammemoSlipCalendar SelectedTime="StartTimeDateTime"
+                                 OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
+            <BammemoSlipHomeTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
+        </FluentStack>
+    </FluentGridItem>
+</FluentGrid>
+
+<FluentToastProvider />
+
+@code {
+    [Parameter]
+    public bool IsAdminPage { get; set; }
+
+    [SupplyParameterFromQuery]
+    private long? StartTime { get; set; }
+
+    private DateTime? StartTimeDateTime => StartTime.HasValue ? new DateTime(StartTime.Value).ToLocalTime() : null;
+
+    [SupplyParameterFromQuery]
+    private long? EndTime { get; set; }
+
+    [SupplyParameterFromQuery(Name = "tags")]
+    private string[]? SelectedTags { get; set; }
+
+    private PersistingComponentStateSubscription persistingSubscription;
+    private ListSlipDto[]? persistSlips;
+    private List<ListSlipDto> slipList = new List<ListSlipDto>();
+    private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
+    private string? cursorSlipId = null;
+    private bool showNoDataFound = false;
+
+    protected override void OnInitialized()
+    {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        if (!PersistentComponentState.TryTakeFromJson(nameof(persistSlips), out persistSlips))
+        {
+            persistSlips = await CommonSlipService.ListAsync(GetListSlipQueryRequest());
+        }
+
+        AppendRenderSlips(persistSlips ?? [], needRerender: true);
+    }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(nameof(persistSlips), persistSlips);
+        return Task.CompletedTask;
+    }
+
+    private void AppendRenderSlips(ListSlipDto[] slips, bool needRerender = false)
+    {
+        showNoDataFound = false;
+
+        if (needRerender)
+        {
+            slipList = [];
+            newSlipList = [];
+        }
+
+        if (slips.Length > 0)
+        {
+            slipList.AddRange(slips);
+            cursorSlipId = slips.Last().Id;
+        }
+        else
+        {
+            cursorSlipId = null;
+
+            if (needRerender)
+            {
+                showNoDataFound = true;
+            }
+            else
+            {
+                ToastService.ShowInfo("已经到底了");
+            }
+        }
+    }
+
+    private async Task LoadMore()
+    {
+        var slips = await CommonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
+            {
+                Cursor = cursorSlipId ?? String.Empty,
+                Take = 5
+            });
+
+        AppendRenderSlips(slips);
+    }
+
+    private void OnNewSlipSaved(ListSlipDto slip)
+    {
+        if (newSlipList.Count == 0 && slipList.Count == 0)
+        {
+            cursorSlipId = slip.Id;
+        }
+
+        newSlipList.Insert(0, slip);
+    }
+
+    private void OnCalendarSelectedDateChanged(DateTime? dateTime)
+    {
+        NavigationManager.NavigateTo(NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        {
+            { nameof(StartTime), dateTime.HasValue? TimeZoneInfo.ConvertTimeToUtc(dateTime.Value).Ticks : null },
+            { nameof(EndTime), dateTime.HasValue? TimeZoneInfo.ConvertTimeToUtc(dateTime.Value.AddDays(1)).Ticks : null}
+        }), false);
+    }
+
+    private void OnRemoveCalendarSelectedDate() => OnCalendarSelectedDateChanged(null);
+
+    private void OnSelectedTagChanged(string[]? tags)
+    {
+        NavigationManager.NavigateTo(NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        {
+            {"tags", tags}
+        }), false);
+    }
+
+    private void OnRemoveSelectedTagClick(string tag)
+    {
+        var tags = SelectedTags.ToList();
+        tags.Remove(tag);
+
+        OnSelectedTagChanged(tags.ToArray());
+    }
+
+    private ListSlipQueryRequest GetListSlipQueryRequest()
+    {
+        return new ListSlipQueryRequest
+            {
+                StartTime = StartTime,
+                EndTime = EndTime,
+                Tags = SelectedTags
+            };
+    }
+
+    void IDisposable.Dispose() => persistingSubscription.Dispose();
+}

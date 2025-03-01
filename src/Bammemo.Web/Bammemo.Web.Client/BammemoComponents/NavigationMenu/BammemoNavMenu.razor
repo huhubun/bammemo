@@ -1,0 +1,171 @@
+﻿@rendermode InteractiveAuto
+@inject IDialogService DialogService
+
+<div class="bammemo-nav-menu-wrap @Class">
+    <FluentDesignTheme StorageName="theme" @bind-Mode="designThemeMode" />
+
+    @if (Type == BammenoNavMenuType.Menu)
+    {
+        var groupIndex = 0;
+
+        <FluentStack Orientation="Orientation.Vertical" Style="height: 100%;">
+            @foreach (var group in NavItems.Select(item => new { item, index = groupIndex })
+           .GroupBy(i =>
+           {
+               if (i.item.Type == BammemoNavMenuItemType.Spacer)
+               {
+                   groupIndex += 2;
+                   return groupIndex - 1;
+               }
+
+               return groupIndex;
+           }))
+            {
+
+                if (group.All(i => i.item.Type == BammemoNavMenuItemType.Spacer))
+                {
+                    <FluentSpacer />
+                }
+                else
+                {
+                    <FluentNavMenu Title="Navigation menu" @bind-Expanded="expanded">
+                        @foreach (var item in group.Select(g => g.item))
+                        {
+                            switch (item.Type)
+                            {
+                                case BammemoNavMenuItemType.Link:
+                                    <FluentNavLink Href="@item.Href"
+                                                   Match="@item.Match"
+                                                   Icon="@item.IconRest">
+                                        @item.Text
+                                    </FluentNavLink>
+                                    break;
+                                case BammemoNavMenuItemType.Button:
+                                    <FluentNavLink Match="@item.Match"
+                                                   Icon="@item.IconRest"
+                                                   OnClick="@item.OnClick">
+
+                                        @item.Text
+                                    </FluentNavLink>
+                                    break;
+
+                                default: throw new NotSupportedException(item.Type.ToString());
+                            }
+                        }
+                    </FluentNavMenu>
+                }
+            }
+        </FluentStack>
+    }
+    else
+    {
+        <FluentAppBar Class="bammemo-site-nav-app-bar">
+            @foreach (var item in NavItems)
+            {
+                switch (item.Type)
+                {
+                    case BammemoNavMenuItemType.Link:
+                        <FluentAppBarItem Href="@item.Href"
+                                          Match="@item.Match"
+                                          IconRest="@item.IconRest"
+                                          IconActive="@item.IconActive"
+                                          Tooltip="@item.Text" />
+                        break;
+                    case BammemoNavMenuItemType.Spacer:
+                        <FluentSpacer />
+                        break;
+                    case BammemoNavMenuItemType.Button:
+                        <FluentAppBarItem Match="@item.Match"
+                                          IconRest="@item.IconRest"
+                                          Tooltip="@item.Text"
+                                          OnClick="@item.OnClick" />
+                        break;
+
+                    default: throw new NotSupportedException(item.Type.ToString());
+                }
+            }
+        </FluentAppBar>
+    }
+</div>
+
+@code {
+    private DesignThemeModes designThemeMode;
+    private bool expanded = true;
+
+    private BammemoSiteNavItem[] NavItems => new BammemoSiteNavItem[]
+    {
+        new()
+        {
+            Text = "首页",
+            IconRest = new Icons.Regular.Size24.Home(),
+            IconActive = new Icons.Filled.Size24.Home(),
+            Href = "/"
+        },
+        new()
+        {
+            Text = "链接",
+            IconRest = new Icons.Regular.Size24.LinkMultiple(),
+            IconActive = new Icons.Filled.Size24.LinkMultiple(),
+            Href = "/links"
+        },
+        new()
+        {
+            Text = "关于",
+            IconRest = new Icons.Regular.Size24.Info(),
+            IconActive = new Icons.Filled.Size24.Info(),
+            Href = "/about"
+        },
+        new()
+        {
+            Type = BammemoNavMenuItemType.Spacer
+        },
+        new()
+        {
+            Text = $"色彩模式： {ColorModeText}",
+            IconRest = ColorModeIcon,
+            Type = BammemoNavMenuItemType.Button,
+            OnClick = SwitchColorMode
+        }
+    };
+
+    [Parameter]
+    public BammenoNavMenuType Type { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+
+    public Icon ColorModeIcon => designThemeMode switch
+    {
+        DesignThemeModes.Light => new Icons.Regular.Size20.WeatherSunny(),
+        DesignThemeModes.Dark => new Icons.Regular.Size20.WeatherMoon(),
+        _ => new Icons.Regular.Size20.Desktop(),
+    };
+
+    public string ColorModeText => designThemeMode switch
+    {
+        DesignThemeModes.Light => "浅色",
+        DesignThemeModes.Dark => "深色",
+        _ => "跟随系统",
+    };
+
+    private void SwitchColorMode()
+    {
+        designThemeMode = (DesignThemeModes)(((int)designThemeMode + 1) % Enum.GetValues<DesignThemeModes>().Length);
+    }
+
+
+    public record BammemoSiteNavItem
+    {
+        public string? Text { get; set; }
+        public Icon? IconRest { get; set; }
+        public Icon? IconActive { get; set; }
+        public string? Href { get; set; }
+        public NavLinkMatch Match { get; set; } = NavLinkMatch.All;
+        public BammemoNavMenuItemType Type { get; set; } = BammemoNavMenuItemType.Link;
+        public Action? OnClick { get; set; }
+    }
+
+
+
+}

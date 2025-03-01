@@ -1,0 +1,33 @@
+﻿.bammemo-slip-card-head-wrap {
+    width: 100%;
+}
+
+::deep .bammemo-slip-card-head {
+    width: 100%;
+    padding: 0;
+}
+
+::deep .bammemo-slip-card-title {
+    flex: 1;
+    width: 0;
+}
+
+.bammemo-slip-card-head-action {
+    flex: 0;
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+    justify-content: end;
+    width: 100%;
+    margin: 0;
+}
+
+
+::deep .bammemo-slip-card-head-more-button::part(control) {
+    background: inherit;
+}
+
+    ::deep .bammemo-slip-card-head-more-button::part(control):hover {
+        background: var(--neutral-fill-hover);
+    }

@@ -1,0 +1,28 @@
+﻿@inherits LayoutComponentBase
+
+<FluentPageScript Src="/Layout/MainLayout.razor.js" />
+
+<FluentLayout>
+    <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
+        <BammemoSiteNav />
+        <FluentBodyContent Class="body-content">
+            <FluentStack Orientation="Orientation.Vertical" Class="body-stack">
+                <div class="content">
+                    @Body
+                </div>
+
+                <BammemoFooter />
+            </FluentStack>
+        </FluentBodyContent>
+    </FluentStack>
+</FluentLayout>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+<FluentDialogProvider />
+<FluentMenuProvider />
+<FluentToastProvider />
