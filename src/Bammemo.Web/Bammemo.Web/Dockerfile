@@ -22,15 +22,13 @@ COPY src/. ./src/
 WORKDIR /source/src/Bammemo.Web/Bammemo.Web
 RUN dotnet build --configuration Release \
     --runtime linux-x64 \
-    --no-restore \
-    -p:UseMonoRuntime=false
+    --no-restore 
 
 FROM build AS publish
 RUN dotnet publish --configuration Release \
     --runtime linux-x64 \
     --no-restore \
     -p:VersionPrefix=$APP_VERSION \
-    -p:UseMonoRuntime=false \
     -o /app
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
