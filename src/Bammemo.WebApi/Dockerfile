@@ -1,7 +1,8 @@
 ARG VERSION=0.0.0
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ENV APP_VERSION=$VERSION
+ARG VERSION
+ENV APP_VERSION=${VERSION}
 RUN echo "App Version: $APP_VERSION"
 WORKDIR /source
 
