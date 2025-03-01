@@ -46,7 +46,7 @@ jobs:
       - name: Determine version
         run: |
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}  # 去掉 "refs/tags/v"
+            VERSION=${GITHUB_REF#refs/tags/v} 
           else
             VERSION=$(echo "${{ steps.meta.outputs.tags }}" | cut -d ',' -f1 | cut -d ':' -f2)
           fi
