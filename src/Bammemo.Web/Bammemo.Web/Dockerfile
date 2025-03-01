@@ -13,6 +13,7 @@ RUN dotnet restore --runtime linux-x64 "/source/src/Bammemo.Service.Server/Bamme
 
 COPY src/Bammemo.Web/Bammemo.Web/*.csproj ./src/Bammemo.Web/Bammemo.Web/
 COPY src/Bammemo.Web/Bammemo.Web.Client/*.csproj ./src/Bammemo.Web/Bammemo.Web.Client/
+RUN dotnet workload install wasm-tools
 RUN dotnet restore --runtime linux-x64 "/source/src/Bammemo.Web/Bammemo.Web/Bammemo.Web.csproj"
 
 COPY src/. ./src/
