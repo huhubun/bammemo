@@ -17,9 +17,6 @@ WORKDIR /source/src/Bammemo.WebApi
 RUN dotnet publish --configuration Release \
     --runtime linux-x64 \
     --p:VersionPrefix=$APP_VERSION \
-    --p:FileVersion=$APP_VERSION \
-    --p:AssemblyVersion=$APP_VERSION \
-    --p:NuGetVersion=$APP_VERSION \
     -o /app \
     --no-restore
 

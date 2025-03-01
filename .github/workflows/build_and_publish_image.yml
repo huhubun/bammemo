@@ -48,7 +48,7 @@ jobs:
           if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v} 
           else
-            VERSION=$(echo "${{ steps.meta.outputs.tags }}" | cut -d ',' -f1 | cut -d ':' -f2)
+            VERSION="0.0.0-$(echo "${{ steps.meta.outputs.tags }}" | cut -d ',' -f1 | cut -d ':' -f2)"
           fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
