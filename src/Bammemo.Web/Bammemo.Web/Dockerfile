@@ -33,5 +33,5 @@ RUN dotnet publish --configuration Release \
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
 WORKDIR /app
-COPY --from=build /app ./
+COPY --from=publish /app ./
 ENTRYPOINT ["dotnet", "Bammemo.Web.dll"]
