@@ -4,6 +4,8 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG VERSION
 ENV APP_VERSION=${VERSION}
 RUN echo "App Version: $APP_VERSION"
+RUN apt-get update
+RUN apt-get install -y python3
 WORKDIR /source
 
 COPY src/Bammemo.Data/*.csproj ./src/Bammemo.Data/
