@@ -9,8 +9,8 @@ WORKDIR /source
 
 COPY src/Bammemo.Data/*.csproj ./src/Bammemo.Data/
 COPY src/Bammemo.Service.Abstractions/*.csproj ./src/Bammemo.Service.Abstractions/
-COPY src/Bammemo.Service.Server/*.csproj ./src/Bammemo.Service.Server/
-RUN dotnet restore --runtime linux-musl-x64 "/source/src/Bammemo.Service.Server/Bammemo.Service.Server.csproj"
+COPY src/Bammemo.Service/*.csproj ./src/Bammemo.Service/
+RUN dotnet restore --runtime linux-musl-x64 "/source/src/Bammemo.Service/Bammemo.Service.csproj"
 
 COPY src/Bammemo.WebApi/*.csproj ./src/Bammemo.WebApi/
 RUN dotnet restore --runtime linux-musl-x64 "/source/src/Bammemo.WebApi/Bammemo.WebApi.csproj"

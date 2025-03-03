@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Bammemo.Service.Abstractions.WebApiModels.Settings;
-using Bammemo.Service.Server.Interfaces;
+using Bammemo.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bammemo.WebApi.Controllers;

@@ -1,10 +1,10 @@
 using Bammemo.Data;
-using Bammemo.Service.Server;
-using Bammemo.Service.Server.Configurations;
-using Bammemo.Service.Server.Helpers;
-using Bammemo.Service.Server.Interfaces;
+using Bammemo.Service;
+using Bammemo.Service.Helpers;
+using Bammemo.Service.Interfaces;
+using Bammemo.Service.Options;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,13 +17,11 @@ builder.Services.AddCors(
     options => options.AddDefaultPolicy(
         policy =>
         {
-            policy.WithOrigins(
-            [
-                bammemoOptions?.ApiUrl ?? throw new OptionsValidationException(nameof(BammemoOptions.ApiUrl), typeof(BammemoOptions), null),
-                bammemoOptions.WebUrl ?? throw new OptionsValidationException(nameof(BammemoOptions.WebUrl), typeof(BammemoOptions), null)
-            ])
-           .AllowAnyMethod()
-           .AllowAnyHeader();
+            var origins = new List<string?> { bammemoOptions.ApiUrlAuthority, bammemoOptions.WebUrlAuthority };
+
+            policy.WithOrigins([.. origins.Where(o => !String.IsNullOrEmpty(o)).Distinct().Cast<string>()])
+               .AllowAnyMethod()
+               .AllowAnyHeader();
         }));
 
 // Add services to the container.
@@ -43,7 +41,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddBammemoAutoMapper(
     typeof(Program).Assembly,
-    typeof(Bammemo.Service.Server.MapperProfiles.SlipProfile).Assembly);
+    typeof(Bammemo.Service.MapperProfiles.SlipProfile).Assembly);
 
 builder.Services.AddScoped<ISlipService, SlipService>();
 builder.Services.AddScoped<ISettingService, SettingService>();
@@ -53,9 +51,15 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    if (!File.Exists("/bammemo/bammemo.db"))
+    var connectionString = new SqliteConnectionStringBuilder(bammemoOptions.ConnectionString);
+
+    if (!File.Exists(connectionString.DataSource))
     {
-        Directory.CreateDirectory("/bammemo");
+        var directory = Path.GetDirectoryName(connectionString.DataSource);
+        if (!String.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
 
         var dbContext = scope.ServiceProvider.GetRequiredService<BammemoDbContext>();
         dbContext.Database.EnsureCreated();

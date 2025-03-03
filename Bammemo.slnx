@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Tests/">
+    <Project Path="src/tests/Bammemo.Service.Test/Bammemo.Service.Test.csproj" />
+  </Folder>
+  <Folder Name="/解决方案项/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/Bammemo.Data/Bammemo.Data.csproj" />
+  <Project Path="src/Bammemo.Service.Abstractions/Bammemo.Service.Abstractions.csproj" />
+  <Project Path="src/Bammemo.Service/Bammemo.Service.csproj" />
+  <Project Path="src/Bammemo.Web/Bammemo.Web.Client/Bammemo.Web.Client.csproj" />
+  <Project Path="src/Bammemo.Web/Bammemo.Web/Bammemo.Web.csproj" />
+  <Project Path="src/Bammemo.WebApi/Bammemo.WebApi.csproj" />
+</Solution>
