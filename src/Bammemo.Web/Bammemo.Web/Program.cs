@@ -1,7 +1,7 @@
 using Bammemo.Data;
 using Bammemo.Service.Server;
-using Bammemo.Service.Server.Configurations;
 using Bammemo.Service.Server.Interfaces;
+using Bammemo.Service.Server.Options;
 using Bammemo.Web.Components;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
