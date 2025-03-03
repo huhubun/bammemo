@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bammemo.Data\Bammemo.Data.csproj" />
-    <ProjectReference Include="..\Bammemo.Service.Server\Bammemo.Service.Server.csproj" />
+    <ProjectReference Include="..\Bammemo.Service\Bammemo.Service.csproj" />
   </ItemGroup>
 
 </Project>

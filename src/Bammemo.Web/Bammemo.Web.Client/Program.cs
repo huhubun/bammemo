@@ -1,4 +1,4 @@
-using Bammemo.Service.Server.Options;
+using Bammemo.Service.Options;
 using Bammemo.Web.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;

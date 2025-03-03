@@ -1,8 +1,8 @@
 using Bammemo.Data;
-using Bammemo.Service.Server;
-using Bammemo.Service.Server.Helpers;
-using Bammemo.Service.Server.Interfaces;
-using Bammemo.Service.Server.Options;
+using Bammemo.Service;
+using Bammemo.Service.Helpers;
+using Bammemo.Service.Interfaces;
+using Bammemo.Service.Options;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -41,7 +41,7 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddBammemoAutoMapper(
     typeof(Program).Assembly,
-    typeof(Bammemo.Service.Server.MapperProfiles.SlipProfile).Assembly);
+    typeof(Bammemo.Service.MapperProfiles.SlipProfile).Assembly);
 
 builder.Services.AddScoped<ISlipService, SlipService>();
 builder.Services.AddScoped<ISettingService, SettingService>();

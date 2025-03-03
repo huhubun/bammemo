@@ -1,7 +1,8 @@
 using Bammemo.Data;
-using Bammemo.Service.Server;
-using Bammemo.Service.Server.Interfaces;
-using Bammemo.Service.Server.Options;
+using Bammemo.Service;
+using Bammemo.Service.Interfaces;
+using Bammemo.Service.MapperProfiles;
+using Bammemo.Service.Options;
 using Bammemo.Web.Components;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,7 @@ builder.Services.AddServerSideBlazor()
 
 builder.Services.AddBammemoAutoMapper(
     typeof(Program).Assembly,
-    typeof(Bammemo.Service.Server.MapperProfiles.SlipProfile).Assembly);
+    typeof(SlipProfile).Assembly);
 
 // ‘§≥ œ÷–Ë“™
 builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client =>

@@ -9,7 +9,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Bammemo.Data\Bammemo.Data.csproj" />
-		<ProjectReference Include="..\..\Bammemo.Service.Server\Bammemo.Service.Server.csproj" />
+		<ProjectReference Include="..\..\Bammemo.Service\Bammemo.Service.csproj" />
 		<ProjectReference Include="..\Bammemo.Web.Client\Bammemo.Web.Client.csproj" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.2" />
 	</ItemGroup>

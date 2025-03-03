@@ -1,4 +1,4 @@
-﻿namespace Bammemo.Service.Server.Options;
+﻿namespace Bammemo.Service.Options;
 
 public class BammemoWebClientOptions
 {

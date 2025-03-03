@@ -1,5 +1,5 @@
 ﻿using Bammemo.Service.Abstractions.WebApiModels.Slips;
-using Bammemo.Service.Server.Interfaces;
+using Bammemo.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bammemo.WebApi.Controllers;

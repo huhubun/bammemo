@@ -2,7 +2,7 @@
 using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Abstractions.WebApiModels.Slips;
-using Bammemo.Service.Server.Interfaces;
+using Bammemo.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bammemo.WebApi.Controllers;
