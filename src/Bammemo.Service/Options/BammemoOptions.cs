@@ -9,7 +9,7 @@ public class BammemoOptions
     public string? WebUrl { get; set; }
 
     public string ApiUrlAuthority => GetUrlAuthority(ApiUrl);
-    public string? WebUrlAuthority => WebUrl != null ? GetUrlAuthority(ApiUrl) : null;
+    public string? WebUrlAuthority => WebUrl != null ? GetUrlAuthority(WebUrl) : null;
 
     private static string GetUrlAuthority(string url)
         => new Uri(url).GetLeftPart(UriPartial.Authority);

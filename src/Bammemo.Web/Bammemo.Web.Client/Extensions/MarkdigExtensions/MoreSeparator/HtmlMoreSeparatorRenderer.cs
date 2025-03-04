@@ -1,8 +1,7 @@
-﻿using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Blocks;
-using Markdig.Renderers;
+﻿using Markdig.Renderers;
 using Markdig.Renderers.Html;
 
-namespace Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Renderers;
+namespace Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator;
 
 public class HtmlMoreSeparatorRenderer : HtmlObjectRenderer<MoreSeparatorBlock>
 {

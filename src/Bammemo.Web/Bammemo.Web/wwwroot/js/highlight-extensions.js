@@ -1,6 +1,6 @@
 ﻿// Add Stylesheets
-hljs_addStylesheet('https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.6.0/styles/vs.min.css', 'highlight-light', null);
-hljs_addStylesheet('https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.6.0/styles/vs2015.min.css', 'highlight-dark', 'disabled');
+hljs_addStylesheet('https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.6.0/styles/github.min.css', 'highlight-light', null);
+hljs_addStylesheet('https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.6.0/styles/github-dark.min.css', 'highlight-dark', 'disabled');
 
 hljs_addInlineStylesheet(`pre[class~="snippet"] {
     --font-monospace: "courier";

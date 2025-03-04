@@ -1,10 +1,11 @@
-﻿using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Parsers;
-using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Renderers;
-using Markdig;
+﻿using Markdig;
 using Markdig.Parsers;
 using Markdig.Renderers;
+using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator;
 
-namespace Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator;
+#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
+namespace Bammemo.Web.Client.Extensions.MarkdigExtensions;
+#pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
 
 public class MoreSeparatorExtension : IMarkdownExtension
 {
