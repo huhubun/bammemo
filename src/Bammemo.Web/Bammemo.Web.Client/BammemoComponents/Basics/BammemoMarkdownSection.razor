@@ -1,15 +1,16 @@
-﻿@using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator
-@using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Blocks
+﻿@using Bammemo.Web.Client.Extensions.MarkdigExtensions
+@using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator
 @using Markdig
 @using System.Text
 @rendermode InteractiveAuto
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 @if (markdownHtml != null)
 {
     <div class="bammemo-markdown-section-wrap">
         <div class="bammemo-markdown-section-content">
-            @(new MarkupString(markdownHtml)) 
+            @(new MarkupString(markdownHtml))
         </div>
 
         @if (hasMore && ReadAllUrl != null)
@@ -35,10 +36,11 @@
     protected override void OnInitialized()
     {
         var pipeline = new MarkdownPipelineBuilder()
-            .Use<MoreSeparatorExtension>()
             .UseAdvancedExtensions()
-        .UseAutoIdentifiers()
-        .UseEmojiAndSmiley() 
+            .UseAutoIdentifiers()
+            .UseEmojiAndSmiley()
+            .Use<MarkdownSectionPreCodeExtension>()
+            .Use<MoreSeparatorExtension>()
             .Build();
 
 
@@ -52,7 +54,16 @@
         }
     }
 
-    public (string Summary, bool HasMore) ParseContent(string markdown, MarkdownPipeline pipeline)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("bammemo.highlight.highlight");
+            await JSRuntime.InvokeVoidAsync("bammemo.highlight.addCopyButton");
+        }
+    }
+
+    public (string summary, bool hasMore) ParseContent(string markdown, MarkdownPipeline pipeline)
     {
         var document = Markdown.Parse(markdown, pipeline);
         var summary = new StringBuilder();
@@ -67,6 +78,7 @@
             }
 
             var renderer = new Markdig.Renderers.HtmlRenderer(new StringWriter(summary));
+            pipeline.Setup(renderer);
             renderer.Write(block);
         }
 

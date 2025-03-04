@@ -17,3 +17,44 @@
         overflow-wrap: break-word;
     }
 
+/* Fluent UI Blazor CodeSnippet.razor.css */
+
+::deep .snippet {
+    margin-bottom: 0.5rem;
+    border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
+    border-radius: calc(var(--control-corner-radius) * 1px);
+    overflow-y: auto;
+    font-size: 14px;
+    font-weight: normal;
+}
+
+::deep .hljs {
+    background-color: var(--neutral-layer-2);
+}
+
+::deep .hljs-copy {
+    cursor: pointer;
+    border-color: var(--neutral-stroke-rest);
+    border-radius: calc(var(--control-corner-radius) * 1px);
+    color: var(--accent-fill-rest);
+    background-color: var(--neutral-layer-2);
+    top: 0.4rem;
+}
+
+::deep .hljs-copy {
+    position: absolute;
+    transform: translateX(calc(100% + 1.125em));
+    right: 1em;
+    transition: background-color 200ms ease, transform 200ms ease-out;
+}
+
+::deep .hljs-copy-wrapper  {
+    position: relative;
+    overflow: hidden
+}
+
+    ::deep .hljs-copy-wrapper:hover .hljs-copy {
+        transform: translateX(0);
+    }
+
+/* Fluent UI Blazor CodeSnippet.razor.css end*/

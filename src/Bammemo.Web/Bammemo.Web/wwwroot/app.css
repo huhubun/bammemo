@@ -5,6 +5,14 @@
     src: url("/fonts/Bammemo Serif.woff2") format("woff2"), url("/fonts/Bammemo Serif.ttf") format("ttf");
 }
 
+:root, pre, code, kbd, samp {
+    --font-monospace: "JetBrains Mono", ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+}
+
+pre, code, kbd, samp {
+    font-size: 14px;
+}
+
 .bammemo-font-text {
     font-family: "Bammemo Serif" !important;
 }
@@ -152,7 +160,7 @@ blockquote {
 
 @media (max-width: 600px) {
     .body-content {
-        height: calc(100dvh - 64px) !important; 
+        height: calc(100dvh - 64px) !important;
     }
 
     .body-stack {
@@ -162,7 +170,7 @@ blockquote {
 
 
     .content {
-        padding: 0 1.5rem; 
+        padding: 0 1.5rem;
     }
 
     .header-gutters {

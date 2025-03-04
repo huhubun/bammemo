@@ -1,8 +1,7 @@
-﻿using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Blocks;
-using Markdig.Parsers;
+﻿using Markdig.Parsers;
 using Markdig.Syntax;
 
-namespace Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Parsers;
+namespace Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator;
 
 public class MoreSeparatorParser : BlockParser
 {

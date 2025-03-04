@@ -1,7 +1,7 @@
 ﻿using Markdig.Parsers;
 using Markdig.Syntax;
 
-namespace Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator.Blocks;
+namespace Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator;
 
 public class MoreSeparatorBlock : LeafBlock
 {
