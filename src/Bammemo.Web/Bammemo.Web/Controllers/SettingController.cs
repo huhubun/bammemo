@@ -3,9 +3,9 @@ using Bammemo.Service.Abstractions.WebApiModels.Settings;
 using Bammemo.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bammemo.WebApi.Controllers;
+namespace Bammemo.Web.Controllers;
 
-[Route("settings")]
+[Route("api/settings")]
 [ApiController]
 public class SettingController(
     IMapper mapper,

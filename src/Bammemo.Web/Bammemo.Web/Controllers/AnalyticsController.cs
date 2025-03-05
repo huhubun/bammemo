@@ -2,9 +2,9 @@
 using Bammemo.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bammemo.WebApi.Controllers;
+namespace Bammemo.Web.Controllers;
 
-[Route("analytics")]
+[Route("api/analytics")]
 public class AnalyticsController(
     ISlipService slipService) : BammemoControllerBase
 {

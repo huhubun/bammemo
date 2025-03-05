@@ -13,17 +13,6 @@ builder.Configuration.AddEnvironmentVariables();
 
 var bammemoOptions = builder.Configuration.GetSection(BammemoOptions.Position).Get<BammemoOptions>() ?? throw new NullReferenceException(nameof(BammemoOptions));
 
-builder.Services.AddCors(
-    options => options.AddDefaultPolicy(
-        policy =>
-        {
-            var origins = new List<string?> { bammemoOptions.ApiUrlAuthority, bammemoOptions.WebUrlAuthority };
-
-            policy.WithOrigins([.. origins.Where(o => !String.IsNullOrEmpty(o)).Distinct().Cast<string>()])
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-        }));
-
 // Add services to the container.
 builder.Services.AddDbContext<BammemoDbContext>(options =>
 

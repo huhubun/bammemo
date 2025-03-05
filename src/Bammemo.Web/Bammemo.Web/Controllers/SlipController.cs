@@ -5,9 +5,9 @@ using Bammemo.Service.Abstractions.WebApiModels.Slips;
 using Bammemo.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Bammemo.WebApi.Controllers;
+namespace Bammemo.Web.Controllers;
 
-[Route("slips")]
+[Route("api/slips")]
 [ApiController]
 public class SlipController(
     IMapper mapper,

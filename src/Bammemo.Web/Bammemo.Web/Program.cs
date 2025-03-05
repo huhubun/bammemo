@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,16 +19,32 @@ builder.Configuration.AddEnvironmentVariables();
 
 var bammemoOptions = builder.Configuration.GetSection(BammemoOptions.Position).Get<BammemoOptions>() ?? throw new NullReferenceException(nameof(BammemoOptions));
 
+// Web
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents()
     .AddAuthenticationStateSerialization();
 
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(option => { option.DetailedErrors = true; });
+
+builder.Services.AddFluentUIComponents();
+
+builder.Services.Configure<HubOptions>(options =>
+{
+    options.MaximumReceiveMessageSize = null;
+});
+
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAntiforgery(options => options.Cookie.Name = ".bammemo.anti");
+
+// Api
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+
+// Identity
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
-
 builder.Services.AddIdentity<BammemoUser, BammemoRole>()
     .AddUserManager<BammemoUserManager>()
     .AddDefaultTokenProviders();
@@ -40,14 +57,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddTransient<IUserStore<BammemoUser>, BammemoUserStore>();
 builder.Services.AddTransient<IRoleStore<BammemoRole>, BammemoRoleStore>();
 
+// Common
 builder.Services.AddMemoryCache();
-builder.Services.AddFluentUIComponents();
-
-builder.Services.Configure<HubOptions>(options =>
-{
-    options.MaximumReceiveMessageSize = null;
-});
-
 builder.Services.AddDbContext<BammemoDbContext>(options =>
     options.UseSqlite(bammemoOptions.ConnectionString)
 );
@@ -55,8 +66,6 @@ builder.Services.AddDbContext<BammemoDbContext>(options =>
 builder.Services.Configure<BammemoOptions>(
     builder.Configuration.GetSection(BammemoOptions.Position));
 
-builder.Services.AddServerSideBlazor()
-    .AddCircuitOptions(option => { option.DetailedErrors = true; });
 
 builder.Services.AddBammemoAutoMapper(
     typeof(Program).Assembly,
@@ -83,6 +92,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+    app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 else
 {
@@ -90,11 +101,10 @@ else
 }
 
 app.UseAntiforgery();
-
 app.MapStaticAssets();
-
+app.UseAuthorization();
+app.MapControllers();
 app.UseStatusCodePagesWithRedirects("/404");
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()

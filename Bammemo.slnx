@@ -10,5 +10,4 @@
   <Project Path="src/Bammemo.Service/Bammemo.Service.csproj" />
   <Project Path="src/Bammemo.Web/Bammemo.Web.Client/Bammemo.Web.Client.csproj" />
   <Project Path="src/Bammemo.Web/Bammemo.Web/Bammemo.Web.csproj" />
-  <Project Path="src/Bammemo.WebApi/Bammemo.WebApi.csproj" />
 </Solution>

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Bammemo.WebApi.Controllers;
+namespace Bammemo.Web.Controllers;
 
 public abstract class BammemoControllerBase : Controller
 {
