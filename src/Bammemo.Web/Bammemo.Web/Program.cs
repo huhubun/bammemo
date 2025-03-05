@@ -1,9 +1,12 @@
 using Bammemo.Data;
 using Bammemo.Service;
+using Bammemo.Service.Identities;
 using Bammemo.Service.Interfaces;
 using Bammemo.Service.MapperProfiles;
 using Bammemo.Service.Options;
 using Bammemo.Web.Components;
+using Bammemo.Web.Identities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -15,12 +18,30 @@ builder.Configuration.AddEnvironmentVariables();
 
 var bammemoOptions = builder.Configuration.GetSection(BammemoOptions.Position).Get<BammemoOptions>() ?? throw new NullReferenceException(nameof(BammemoOptions));
 
-// Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
-builder.Services.AddFluentUIComponents();
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization();
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAntiforgery(options => options.Cookie.Name = ".bammemo.anti");
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+
+builder.Services.AddIdentity<BammemoUser, BammemoRole>()
+    .AddUserManager<BammemoUserManager>()
+    .AddDefaultTokenProviders();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.Name = ".bammemo.identity";
+    options.LoginPath = "/login";
+    options.LogoutPath = "/logout";
+});
+builder.Services.AddTransient<IUserStore<BammemoUser>, BammemoUserStore>();
+builder.Services.AddTransient<IRoleStore<BammemoRole>, BammemoRoleStore>();
+
 builder.Services.AddMemoryCache();
+builder.Services.AddFluentUIComponents();
 
 builder.Services.Configure<HubOptions>(options =>
 {

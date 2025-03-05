@@ -6,6 +6,10 @@ using Microsoft.FluentUI.AspNetCore.Components;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 var bammemoOptions = await AddBammemoWebClientOptionsAsync(builder);
 
+builder.Services.AddAuthorizationCore();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthenticationStateDeserialization();
+
 builder.Services.AddFluentUIComponents();
 
 builder.Services.AddAutoMapper(typeof(Program));

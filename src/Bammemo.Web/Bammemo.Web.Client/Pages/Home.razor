@@ -1,5 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveAuto
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <BammemoPageTitle Title="首页" />
 
@@ -8,8 +9,14 @@
     <meta name="keywords" content="呼呼小笼包,huhubun,bun,bun.plus,技术,软件,开发,个人博客,博客,文章,精品软件,推荐" />
 </HeadContent>
 
-<BammemoSlipHome />
+<BammemoSlipHome IsAdminPage="@isAdmin" />
 
 @code {
+    private bool isAdmin = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isAdmin = state.User.Identity?.IsAuthenticated ?? false;
+    }
 }

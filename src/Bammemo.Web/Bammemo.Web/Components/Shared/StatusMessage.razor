@@ -1,0 +1,39 @@
+﻿@using Bammemo.Web.Identities
+
+@if (!string.IsNullOrEmpty(DisplayMessage))
+{
+    <FluentMessageBar Title="@Title" Intent="@Intent" AllowDismiss="false" Style="@Style">
+        @DisplayMessage
+    </FluentMessageBar>
+}
+
+@code {
+    private string? messageFromCookie;
+
+    [Parameter]
+    public MessageIntent? Intent { get; set; } = MessageIntent.Info;
+
+    [Parameter]
+    public string? Title { get; set; }
+
+    [Parameter]
+    public string? Message { get; set; }
+
+    [Parameter]
+    public string? Style { get; set; }
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private string? DisplayMessage => Message ?? messageFromCookie;
+
+    protected override void OnInitialized()
+    {
+        messageFromCookie = HttpContext.Request.Cookies[IdentityRedirectManager.StatusCookieName];
+
+        if (messageFromCookie is not null)
+        {
+            HttpContext.Response.Cookies.Delete(IdentityRedirectManager.StatusCookieName);
+        }
+    }
+}
