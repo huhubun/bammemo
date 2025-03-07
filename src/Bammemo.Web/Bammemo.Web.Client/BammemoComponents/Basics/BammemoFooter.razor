@@ -15,10 +15,10 @@
         <FluentGridItem xs="@GridItemDisplayType.Left.Xs" lg="@GridItemDisplayType.Left.Lg" xl="@GridItemDisplayType.Left.Xl">
             <FluentStack Orientation="Orientation.Vertical" VerticalGap="@(16/4)">
                 <FluentStack Orientation="Orientation.Horizontal"
-                HorizontalAlignment="HorizontalAlignment.Center"
-                HorizontalGap="10"
-                Class="bammemo-footer-environment-info-wrap"
-                Style="align-items: center;">
+                             HorizontalAlignment="HorizontalAlignment.Center"
+                             HorizontalGap="10"
+                             Class="bammemo-footer-environment-info-wrap"
+                             Style="align-items: center;">
                     <div>
                         @DotNetVersion
                     </div>
@@ -37,20 +37,27 @@
                     </div>
                 </FluentStack>
 
-                @if (filingNumberLinks != null)
+                @if (footerLinks != null)
                 {
                     <FluentStack Orientation="Orientation.Horizontal"
-                    HorizontalAlignment="HorizontalAlignment.Center"
-                    HorizontalGap="10"
-                    Class="bammemo-footer-filing-number-links-wrap"
-                    Style="align-items: center;">
-                        @foreach (var link in filingNumberLinks)
+                                 HorizontalAlignment="HorizontalAlignment.Center"
+                                 HorizontalGap="10"
+                                 Class="bammemo-footer-filing-number-links-wrap"
+                                 Style="align-items: center;">
+                        @foreach (var link in footerLinks)
                         {
                             <div>
-                                <FluentAnchor Href="@link.Url" Appearance="Appearance.Hypertext" Target="_blank">@link.Text</FluentAnchor>
+                                @if (link.Url != null)
+                                {
+                                    <FluentAnchor Href="@link.Url" Appearance="Appearance.Hypertext" Target="_blank">@link.Text</FluentAnchor>
+                                }
+                                else
+                                {
+                                    <FluentLabel Typo="Typography.Body">@link.Text</FluentLabel>
+                                }
                             </div>
 
-                            @if (link != filingNumberLinks.Last())
+                            @if (link != footerLinks.Last())
                             {
                                 <FluentDivider Role="DividerRole.Presentation" Orientation="Orientation.Vertical"></FluentDivider>
                             }
@@ -80,10 +87,11 @@
     private static readonly ReadOnlyCollection<string> oneColumnPagePatterns = new([
             "^/login$",
             "^/about$",
-            "^/links$"
+            "^/links$",
+            "^/settings(/.*)?$"
     ]);
     private PersistingComponentStateSubscription persistingSubscription;
-    private List<TextUrlSetting>? filingNumberLinks;
+    private List<TextUrlSetting>? footerLinks;
 
     private string DotNetVersion => System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
     private string RenderMode => "Blazor " + (OperatingSystem.IsBrowser() ? "WebAssembly" : "Server");
@@ -94,16 +102,16 @@
     {
         persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
 
-        if (!PersistentComponentState.TryTakeFromJson(nameof(filingNumberLinks), out filingNumberLinks))
+        if (!PersistentComponentState.TryTakeFromJson(nameof(footerLinks), out footerLinks))
         {
-            var setting = await CommonSettingService.GetByKeyAsync(SettingKeys.FilingNumberLinks);
-            filingNumberLinks = setting?.Value != null ? JsonSerializer.Deserialize<List<TextUrlSetting>>(setting.Value) : [];
+            var setting = await CommonSettingService.GetByKeyAsync(SettingKeys.FooterLinks);
+            footerLinks = setting?.Value != null ? JsonSerializer.Deserialize<List<TextUrlSetting>>(setting.Value) : [];
         }
     }
 
     private Task PersistData()
     {
-        PersistentComponentState.PersistAsJson(nameof(filingNumberLinks), filingNumberLinks);
+        PersistentComponentState.PersistAsJson(nameof(footerLinks), footerLinks);
         return Task.CompletedTask;
     }
 

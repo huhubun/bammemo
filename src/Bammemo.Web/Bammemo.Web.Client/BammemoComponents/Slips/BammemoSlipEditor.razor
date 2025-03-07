@@ -1,58 +1,70 @@
 ﻿@using Bammemo.Service.Abstractions.Enums
 @using Bammemo.Service.Abstractions.WebApiModels.Slips
 @using Bammemo.Web.Client.Services
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveAuto
 @inject WebApiClient webApiClient
 @inject IMapper mapper
 @inject IJSRuntime jsRuntime
 
-<div style="width: 100%">
-    <FluentStack Orientation="Orientation.Vertical">
-        <textarea style="width: 100%; height: auto; resize: none; overflow: hidden;"
-                  class="slip-editor-input"
-                  @bind="content"
-                  @bind:event="oninput"
-                  @ref="textarea" />
+@if (AssignedRenderMode != InteractiveWebAssembly)
+{
+    <BammemoCard>
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" HorizontalGap="@(16*2)" VerticalAlignment="VerticalAlignment.Center">
+            <FluentProgressRing />
+            编辑器将在 Blazor WebAssembly 加载后可用，若长时间未载入请刷新页面
+        </FluentStack>
+    </BammemoCard>
+}
+else
+{
+    <div style="width: 100%">
+        <FluentStack Orientation="Orientation.Vertical">
+            <textarea style="width: 100%; height: auto; resize: none; overflow: hidden;"
+                      class="slip-editor-input"
+                      @bind="content"
+                      @bind:event="oninput"
+                      @ref="textarea" />
 
-        <FluentToolbar Style="width: 100%;">
-            <FluentButton Appearance="Appearance.Stealth"
-                          IconEnd="@(new Icons.Regular.Size16.NumberSymbol())"
-                          Title="标签" />
-            <FluentButton Appearance="Appearance.Stealth"
-                          IconEnd="@(new Icons.Regular.Size16.Attach())"
-                          Title="上传" />
-            <FluentButton Appearance="Appearance.Stealth"
-                          IconEnd="@(new Icons.Regular.Size16.LinkMultiple())"
-                          Title="链接" />
-        </FluentToolbar>
+            <FluentToolbar Style="width: 100%;">
+                <FluentButton Appearance="Appearance.Stealth"
+                              IconEnd="@(new Icons.Regular.Size16.NumberSymbol())"
+                              Title="标签" />
+                <FluentButton Appearance="Appearance.Stealth"
+                              IconEnd="@(new Icons.Regular.Size16.Attach())"
+                              Title="上传" />
+                <FluentButton Appearance="Appearance.Stealth"
+                              IconEnd="@(new Icons.Regular.Size16.LinkMultiple())"
+                              Title="链接" />
+            </FluentToolbar>
 
-        <FluentDivider Style="width: 100%;" />
+            <FluentDivider Style="width: 100%;" />
 
-        <FluentToolbar Style="width: 100%;">
-            <FluentSelect @bind-Value="status"
-                          TOption="SlipStatus"
-                          Items="Enum.GetValues<SlipStatus>()"
-                          OptionText="@(s => s.ToString())"
-                          OptionValue="@(s => ((int)s).ToString())" />
+            <FluentToolbar Style="width: 100%;">
+                <FluentSelect @bind-Value="status"
+                              TOption="SlipStatus"
+                              Items="Enum.GetValues<SlipStatus>()"
+                              OptionText="@(s => s.ToString())"
+                              OptionValue="@(s => ((int)s).ToString())" />
 
-            @if (IsEdit)
-            {
+                @if (IsEdit)
+                {
+                    <FluentSpacer />
+
+                    <FluentButton Appearance="Appearance.Accent"
+                                  OnClick="@(_ => OnEditCanceled.InvokeAsync(true))"
+                                  Loading="isSaveButtonLoading">Cancel</FluentButton>
+                }
+
                 <FluentSpacer />
 
                 <FluentButton Appearance="Appearance.Accent"
-                              OnClick="@(_ => OnEditCanceled.InvokeAsync(true))"
-                              Loading="isSaveButtonLoading">Cancel</FluentButton>
-            }
-
-            <FluentSpacer />
-
-            <FluentButton Appearance="Appearance.Accent"
-                          OnClick="OnSaveClickAsync"
-                          Disabled="content == null || content.Length == 0"
-                          Loading="isSaveButtonLoading">Save</FluentButton>
-        </FluentToolbar>
-    </FluentStack>
-</div>
+                              OnClick="OnSaveClickAsync"
+                              Disabled="content == null || content.Length == 0"
+                              Loading="isSaveButtonLoading">Save</FluentButton>
+            </FluentToolbar>
+        </FluentStack>
+    </div>
+}
 
 @code {
     private string? content = null;

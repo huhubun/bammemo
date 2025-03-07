@@ -35,7 +35,8 @@ namespace Bammemo.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Source");
+                    b.HasIndex("Source")
+                        .IsUnique();
 
                     b.ToTable("RedirectRules");
                 });
@@ -57,7 +58,6 @@ namespace Bammemo.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Value")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

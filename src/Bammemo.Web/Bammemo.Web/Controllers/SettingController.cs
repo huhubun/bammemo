@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bammemo.Service.Abstractions.WebApiModels.Settings;
 using Bammemo.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bammemo.Web.Controllers;
@@ -31,5 +32,16 @@ public class SettingController(
         {
             Settings = mapper.Map<List<BatchGetSettingByKeyResponse.SettingItemModel>>(settings)
         });
+    }
+
+    [Authorize]
+    [HttpPut("batch")]
+    public async Task<IActionResult> BatchUpdateByKeyAsync([FromBody] BatchUpdateSettingByKeyRequest request)
+    {
+        foreach (var setting in request.Settings)
+        {
+            await settingService.CreateOrUpdateAsync(setting.Key, setting.Value);
+        }
+        return NoContent();
     }
 }

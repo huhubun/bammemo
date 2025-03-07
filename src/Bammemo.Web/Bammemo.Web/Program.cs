@@ -1,23 +1,25 @@
 using Bammemo.Data;
 using Bammemo.Service;
+using Bammemo.Service.Helpers;
 using Bammemo.Service.Identities;
 using Bammemo.Service.Interfaces;
 using Bammemo.Service.MapperProfiles;
 using Bammemo.Service.Options;
+using Bammemo.Web.Client.Extensions;
 using Bammemo.Web.Components;
 using Bammemo.Web.Identities;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
-
-var bammemoOptions = builder.Configuration.GetSection(BammemoOptions.Position).Get<BammemoOptions>() ?? throw new NullReferenceException(nameof(BammemoOptions));
 
 // Web
 builder.Services.AddRazorComponents()
@@ -50,22 +52,38 @@ builder.Services.AddIdentity<BammemoUser, BammemoRole>()
     .AddDefaultTokenProviders();
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.Name = ".bammemo.identity";
     options.LoginPath = "/login";
     options.LogoutPath = "/logout";
+    options.Cookie.Name = ".bammemo.identity";
+    options.Events = new CookieAuthenticationEvents
+    {
+        OnRedirectToLogin = context =>
+        {
+            if (context.Request.Path.StartsWithSegments("/api"))
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            }
+            else
+            {
+                context.Response.Redirect(context.RedirectUri);
+            }
+
+            return Task.CompletedTask;
+        }
+    };
 });
 builder.Services.AddTransient<IUserStore<BammemoUser>, BammemoUserStore>();
 builder.Services.AddTransient<IRoleStore<BammemoRole>, BammemoRoleStore>();
 
 // Common
+var bammemoOptions = builder.Configuration.GetSection(BammemoOptions.Position).Get<BammemoOptions>() ?? throw new NullReferenceException(nameof(BammemoOptions));
+
 builder.Services.AddMemoryCache();
 builder.Services.AddDbContext<BammemoDbContext>(options =>
     options.UseSqlite(bammemoOptions.ConnectionString)
 );
 
-builder.Services.Configure<BammemoOptions>(
-    builder.Configuration.GetSection(BammemoOptions.Position));
-
+builder.Services.Configure<BammemoOptions>(builder.Configuration.GetSection(BammemoOptions.Position));
 
 builder.Services.AddBammemoAutoMapper(
     typeof(Program).Assembly,
@@ -74,7 +92,7 @@ builder.Services.AddBammemoAutoMapper(
 // ‘§≥ œ÷–Ë“™
 builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client =>
 {
-    client.BaseAddress = new Uri(bammemoOptions?.ApiUrl ?? throw new OptionsValidationException(nameof(BammemoOptions.ApiUrl), typeof(BammemoOptions), null));
+    client.BaseAddress = new Uri(bammemoOptions.ApiUrl.NormalizeUrlSlash());
 });
 
 builder.Services.AddScoped<ISettingService, SettingService>();
@@ -88,7 +106,6 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
@@ -100,8 +117,34 @@ else
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var connectionString = new SqliteConnectionStringBuilder(bammemoOptions.ConnectionString);
+
+    if (!File.Exists(connectionString.DataSource))
+    {
+        var directory = Path.GetDirectoryName(connectionString.DataSource);
+        if (!String.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
+        var dbContext = scope.ServiceProvider.GetRequiredService<BammemoDbContext>();
+        dbContext.Database.EnsureCreated();
+
+        var settingService = scope.ServiceProvider.GetRequiredService<ISettingService>();
+
+        var idAlphabet = IdHelper.GenerateIdAlphabet();
+        await settingService.CreateAsync(SettingKeys.IdAlphabet, idAlphabet);
+
+        await settingService.CreateAsync(SettingKeys.SiteName, "Bammemo");
+        await settingService.CreateAsync(SettingKeys.SiteLogoText, "Bam");
+    }
+}
+
 app.UseAntiforgery();
 app.MapStaticAssets();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.UseStatusCodePagesWithRedirects("/404");
@@ -109,5 +152,9 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Bammemo.Web.Client._Imports).Assembly);
-
+app.MapGet("/logout", async ([FromServices] SignInManager<BammemoUser> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return TypedResults.LocalRedirect("~/");
+});
 app.Run();

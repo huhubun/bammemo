@@ -1,6 +1,6 @@
 ﻿@rendermode InteractiveAuto
 
-<div class="bammemo-card @Class" @attributes="attributes">
+<div class="bammemo-card @Class" style="@Style" @attributes="attributes">
     @ChildContent
 </div>
 
@@ -9,6 +9,9 @@
 
     [Parameter]
     public string? Class { get; set; }
+
+    [Parameter]
+    public string? Style { get; set; }
 
     [Parameter]
     public bool HoverBorder { get; set; }

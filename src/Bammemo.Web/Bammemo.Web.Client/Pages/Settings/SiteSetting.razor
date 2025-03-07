@@ -1,0 +1,273 @@
+﻿@page "/settings"
+@page "/settings/site"
+@using Bammemo.Service.Abstractions.SettingModels
+@using System.Text.Json
+@rendermode InteractiveWebAssembly
+@inject WebApiClient WebApiClient
+@inject IToastService ToastService
+
+<BammemoSettingLayout PageTitle="站点">
+    @if (model != null)
+    {
+        <FluentEditForm Model="@model" OnValidSubmit="@HandleValidSubmit" FormName="site_setting" novalidate>
+            <DataAnnotationsValidator />
+
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                <div class="w-full">
+                    <FluentTextField Name="identifier" @bind-Value="model.SiteName" Label="站点名称" Required Class="w-full" />
+                    <FluentValidationMessage For="@(() => model.SiteName)" />
+                </div>
+
+                <div>
+                    <FluentTextField Name="identifier" @bind-Value="model.LogoText" Label="Logo 文字" />
+                    <FluentValidationMessage For="@(() => model.LogoText)" />
+                </div>
+
+                <div class="w-full">
+                    <FluentTextArea Name="identifier" @bind-Value="model.SiteDescription" Label="站点描述" Rows="3" Class="w-full" />
+                    <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                        用于 SEO，会生成在首页的 <code>@("<meta name=\"description\" />")</code> 中。
+                    </FluentLabel>
+                    <FluentValidationMessage For="@(() => model.SiteDescription)" />
+                </div>
+
+                <div class="w-full">
+                    <FluentStack Class="w-full" Orientation="Orientation.Vertical" @key="model.SiteKeywords">
+                        <FluentInputLabel>Keywords</FluentInputLabel>
+
+                        @if (model.SiteKeywords?.Any() ?? false)
+                        {
+                            <FluentStack Orientation="Orientation.Horizontal" Wrap Class="w-full">
+                                @for (var i = 0; i < model.SiteKeywords.Count; i++)
+                                {
+                                    var index = i;
+                                    var keyword = model.SiteKeywords[index];
+
+                                    <BammemoFilterBadge OnClick="@(_ => HandleRemoveSiteKeyword(index))" @key="@($"{index}_{keyword}")">
+                                        @keyword
+                                    </BammemoFilterBadge>
+
+                                }
+                            </FluentStack>
+                        }
+                        else
+                        {
+                            <div class="w-full">请添加</div>
+                        }
+
+                        <FluentStack>
+                            <FluentTextField @bind-Value="inputedKeyword" />
+                            <FluentButton IconStart="@(new Icons.Filled.Size20.Add())" OnClick="HandleAddKeywords" />
+                        </FluentStack>
+
+                        <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                            请勿包含英文逗号“,”，它会导致 keywords 被截断。
+                            <br />
+                            用于 SEO，会生成在首页的 <code>@("<meta name=\"keywords\" />")</code> 中。
+                        </FluentLabel>
+                    </FluentStack>
+                </div>
+
+                <div class="w-full">
+                    <FluentStack Class="w-full" Orientation="Orientation.Vertical" @key="model.FooterLinks">
+                        <FluentInputLabel>页脚</FluentInputLabel>
+
+                        @if (model.FooterLinks != null)
+                        {
+                            for (var i = 0; i < model.FooterLinks.Count; i++)
+                            {
+                                var index = i;
+
+                                <FluentStack Orientation="Orientation.Horizontal" Class="w-full" @key="index">
+                                    <FluentTextField @bind-Value="model.FooterLinks[index].Text" Placeholder="Text" />
+                                    <FluentTextField @bind-Value="model.FooterLinks[index].Url" Placeholder="Url" />
+                                    <FluentButton IconStart="@(new Icons.Filled.Size20.Add())"
+                                                  OnClick="@(_ => HandleAddFooterLinkLine())" />
+                                    <FluentButton IconStart="@(new Icons.Filled.Size20.Subtract())"
+                                                  OnClick="@(_ => HandleRemoveFooterLinkLine(index))"
+                                                  Style="@(model.FooterLinks.Count == 1 ? "visibility: hidden;" : null)" />
+                                </FluentStack>
+                            }
+                        }
+
+                        <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                            显示在 Bammemo 页面底部的内容。仅填写 Text 显示为纯文字，同时填写 Text 和 Url 则生成为超链接。
+                        </FluentLabel>
+                    </FluentStack>
+                </div>
+
+                <FluentDivider Role="DividerRole.Presentation" Class="w-full" />
+
+                <div class="w-full">
+                    <FluentButton Type="ButtonType.Submit" Loading="isSaving" IconStart="new Icons.Regular.Size20.Save()">保存</FluentButton>
+                </div>
+            </FluentStack>
+        </FluentEditForm>
+    }
+    else
+    {
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+            @for (var i = 0; i < 3; i++)
+            {
+                <FluentSkeleton Style="width: 6rem; height: 1.25rem;" />
+                <FluentSkeleton Style="width: 100%; height: 1.25rem;" />
+                <FluentSkeleton Style="width: 12rem; height: 1.25rem;" />
+            }
+        </FluentStack>
+    }
+</BammemoSettingLayout>
+
+<FluentToastProvider />
+
+@code {
+    private readonly static string[] settingKeys = [
+        SettingKeys.SiteName,
+        SettingKeys.SiteLogoText,
+        SettingKeys.SiteDescription,
+        SettingKeys.SiteKeywords,
+        SettingKeys.FooterLinks
+    ];
+    private string? inputedKeyword, inputedFooterLinkName, inputedFooterLinkUrl;
+    private SiteSettingModel? model = null;
+    private bool isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
+            {
+                Keys = settingKeys
+            });
+
+        model = new();
+
+        foreach (var setting in response.Settings)
+        {
+            switch (setting.Key)
+            {
+                case SettingKeys.SiteName:
+                    model.SiteName = setting.Value;
+                    break;
+                case SettingKeys.SiteLogoText:
+                    model.LogoText = setting.Value;
+                    break;
+                case SettingKeys.SiteDescription:
+                    model.SiteDescription = setting.Value;
+                    break;
+                case SettingKeys.SiteKeywords:
+                    model.SiteKeywords = setting.Value != null ? JsonSerializer.Deserialize<List<string>>(setting.Value) : [];
+                    break;
+                case SettingKeys.FooterLinks:
+                    model.FooterLinks = setting.Value != null ? JsonSerializer.Deserialize<List<TextUrlModel>>(setting.Value) : [];
+                    break;
+                default:
+                    throw new NotSupportedException(setting.Key);
+            }
+        }
+
+        if (model.SiteKeywords == null)
+        {
+            // 初始化，方便后续操作
+            model.SiteKeywords = [];
+        }
+
+        if (model.FooterLinks == null || model.FooterLinks.Count == 0)
+        {
+            // 插入一条空白的，以便界面默认显示一行输入框
+            model.FooterLinks = [new TextUrlModel()];
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isSaving = true;
+
+        try
+        {
+            await WebApiClient.Settings.BatchUpdateByKeysAsync(new BatchUpdateSettingByKeyRequest
+                {
+                    Settings = settingKeys.ToDictionary(key => key, key => key switch
+                    {
+                        SettingKeys.SiteName => NormalizeSettingValue(model.SiteName),
+                        SettingKeys.SiteLogoText => NormalizeSettingValue(model.LogoText),
+                        SettingKeys.SiteDescription => NormalizeSettingValue(model.SiteDescription),
+                        SettingKeys.SiteKeywords => model.SiteKeywords != null ? JsonSerializer.Serialize(model.SiteKeywords) : null,
+                        SettingKeys.FooterLinks => model.FooterLinks != null ? JsonSerializer.Serialize(model.FooterLinks.Where(i => !i.IsEmpty)) : null,
+                        _ => throw new NotSupportedException(key)
+                    })
+                });
+
+            ToastService.ShowSuccess("站点设置保存成功，刷新页面后生效。");
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"保存失败：{ex.Message}");
+            Console.WriteLine($"保存 site setting 失败：{ex}");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void HandleAddKeywords()
+    {
+        if (!String.IsNullOrWhiteSpace(inputedKeyword))
+        {
+            model.SiteKeywords.Add(inputedKeyword);
+        }
+
+        inputedKeyword = null;
+    }
+
+    private void HandleRemoveSiteKeyword(int index)
+    {
+        if (model.SiteKeywords.Count > 1)
+        {
+            model.SiteKeywords.RemoveAt(index);
+        }
+        else
+        {
+            model.SiteKeywords.Clear();
+        }
+
+        StateHasChanged();
+    }
+
+    private void HandleAddFooterLinkLine()
+    {
+        model.FooterLinks.Add(new TextUrlModel());
+    }
+
+    private void HandleRemoveFooterLinkLine(int index)
+    {
+        model.FooterLinks.RemoveAt(index);
+    }
+
+    private static string? NormalizeSettingValue(string? value)
+        => String.IsNullOrWhiteSpace(value) ? null : value;
+
+    public class SiteSettingModel
+    {
+        [Required]
+        public string? SiteName { get; set; }
+
+        [MaxLength(3)]
+        public string? LogoText { get; set; }
+
+        public string? SiteDescription { get; set; }
+
+        public List<string>? SiteKeywords { get; set; }
+
+        public List<TextUrlModel>? FooterLinks { get; set; }
+    }
+
+    public class TextUrlModel
+    {
+        [Required]
+        public string? Text { get; set; }
+
+        public string? Url { get; set; }
+
+        public bool IsEmpty => String.IsNullOrWhiteSpace(Text) && String.IsNullOrWhiteSpace(Url);
+    }
+}

@@ -1,3 +1,4 @@
+using Bammemo.Web.Client.Extensions;
 using Bammemo.Web.Client.Options;
 using Bammemo.Web.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -14,7 +15,7 @@ builder.Services.AddFluentUIComponents();
 
 builder.Services.AddAutoMapper(typeof(Program));
 
-builder.Services.AddHttpClient<WebApiClient>(client => client.BaseAddress = new Uri(bammemoOptions.ApiUrl));
+builder.Services.AddHttpClient<WebApiClient>(client => client.BaseAddress = new Uri(bammemoOptions.ApiUrl.NormalizeUrlSlash()));
 
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();

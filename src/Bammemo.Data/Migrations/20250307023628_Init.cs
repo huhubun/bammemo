@@ -32,7 +32,7 @@ namespace Bammemo.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Key = table.Column<string>(type: "TEXT", nullable: false),
-                    Value = table.Column<string>(type: "TEXT", nullable: false),
+                    Value = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<long>(type: "INTEGER", nullable: false),
                     UpdateAt = table.Column<long>(type: "INTEGER", nullable: true)
                 },
@@ -83,7 +83,8 @@ namespace Bammemo.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_RedirectRules_Source",
                 table: "RedirectRules",
-                column: "Source");
+                column: "Source",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Settings_Key",
