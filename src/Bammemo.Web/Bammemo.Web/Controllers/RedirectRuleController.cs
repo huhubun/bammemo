@@ -53,5 +53,4 @@ public class RedirectRuleController(
         var rows = await redirectRuleService.DeleteAsync(id);
         return rows == 0 ? NotFound() : NoContent();
     }
-
 }

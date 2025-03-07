@@ -1,6 +1,5 @@
-﻿namespace Bammemo.Service.Identities
+﻿namespace Bammemo.Service.Identities;
+
+public class BammemoRole
 {
-    public class BammemoRole
-    {
-    }
 }

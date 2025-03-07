@@ -42,6 +42,22 @@ namespace Bammemo.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SiteLinks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Url = table.Column<string>(type: "TEXT", nullable: false),
+                    CreatedAt = table.Column<long>(type: "INTEGER", nullable: false),
+                    UpdateAt = table.Column<long>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SiteLinks", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Slips",
                 columns: table => new
                 {
@@ -115,6 +131,9 @@ namespace Bammemo.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Settings");
+
+            migrationBuilder.DropTable(
+                name: "SiteLinks");
 
             migrationBuilder.DropTable(
                 name: "SlipTags");

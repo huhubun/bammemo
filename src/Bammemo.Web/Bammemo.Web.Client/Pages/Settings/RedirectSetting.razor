@@ -66,7 +66,7 @@
             <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
                 @for (var i = 0; i < 3; i++)
                 {
-                    <BammemoCard Border HoverShadow Class="w-full bammemo-redirect-setting-card">
+                    <BammemoCard Border Class="w-full bammemo-redirect-setting-card">
                         <FluentStack Orientation="Orientation.Vertical">
                             <FluentSkeleton Style="width: 80%; height: 1.25rem;" />
                             <FluentSkeleton Style="width: 6rem; height: 1.25rem;" />
@@ -130,7 +130,7 @@
         if (!result.Cancelled && result.Data != null)
         {
             await LoadDataAsync();
-            ToastService.ShowSuccess("重定向规则已保存");
+            ToastService.ShowSuccess("重定向规则已更新");
         }
     }
 

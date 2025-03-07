@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bammemo.Data.Migrations
 {
     [DbContext(typeof(BammemoDbContext))]
-    [Migration("20250307023628_Init")]
+    [Migration("20250307111507_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -68,6 +68,31 @@ namespace Bammemo.Data.Migrations
                     b.HasIndex("Key");
 
                     b.ToTable("Settings");
+                });
+
+            modelBuilder.Entity("Bammemo.Data.Entities.SiteLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("UpdateAt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SiteLinks");
                 });
 
             modelBuilder.Entity("Bammemo.Data.Entities.Slip", b =>

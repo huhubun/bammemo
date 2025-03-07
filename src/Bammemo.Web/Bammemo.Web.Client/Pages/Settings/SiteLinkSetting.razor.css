@@ -1,0 +1,7 @@
+﻿::deep .bammemo-site-link-card-action-wrap {
+    visibility: hidden;
+}
+
+::deep .bammemo-site-link-card:hover .bammemo-site-link-card-action-wrap {
+    visibility: visible;
+}

@@ -99,6 +99,8 @@ builder.Services.AddScoped<ISettingService, SettingService>();
 builder.Services.AddScoped<ISlipService, SlipService>();
 builder.Services.AddScoped<IIdService, IdService>();
 builder.Services.AddScoped<IRedirectRuleService, RedirectRuleService>();
+builder.Services.AddScoped<ISiteLinkService, SiteLinkService>();
+
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
 

@@ -1,6 +1,5 @@
-﻿namespace Bammemo.Service.Abstractions.SettingModels
+﻿namespace Bammemo.Service.Abstractions.SettingModels;
+
+public abstract class SettingBase
 {
-    public abstract class SettingBase
-    {
-    }
 }
