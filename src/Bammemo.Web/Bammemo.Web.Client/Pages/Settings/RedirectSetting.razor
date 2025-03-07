@@ -1,0 +1,151 @@
+﻿@page "/settings/redirects"
+@using System.Net
+@using Bammemo.Service.Abstractions.WebApiModels.RedirectRules
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
+@inject IDialogService DialogService
+@inject WebApiClient WebApiClient
+@inject IToastService ToastService
+@inject IMapper Mapper
+
+<div>
+    <BammemoSettingLayout PageTitle="重定向">
+        @if (rules != null)
+        {
+            <FluentStack Orientation="Orientation.Vertical" Class="w-full" @key="rules">
+                <div class="w-full">
+                    <FluentButton IconStart="@(new Icons.Filled.Size20.Add())" OnClick="HandleAddRuleAsync">添加</FluentButton>
+                </div>
+
+                @if (rules.Length > 0)
+                {
+                    foreach (var rule in rules)
+                    {
+                        <BammemoCard Border HoverShadow Class="w-full bammemo-redirect-setting-card" @key="rule.Id">
+                            <FluentStack Style="align-items: center;">
+                                <FluentStack Orientation="Orientation.Vertical">
+                                    <FluentStack Orientation="Orientation.Horizontal" Class="w-full" Style="align-items: center;">
+                                        <div style="width: 20px; height: 20px;">
+                                            <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.Globe())" />
+                                        </div>
+                                        <FluentLabel>@rule.Source</FluentLabel>
+                                    </FluentStack>
+
+                                    <FluentStack Orientation="Orientation.Horizontal" Class="w-full" Style="align-items: center;">
+                                        <div style="width: 20px; height: 20px;">
+                                            <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.MoreVertical())" />
+                                        </div>
+                                        <FluentBadge Appearance="Appearance.Neutral">
+                                            @RedirectRuleHelper.GetHttpStatusName(rule.HttpStatus)
+                                        </FluentBadge>
+                                    </FluentStack>
+
+                                    <FluentStack Orientation="Orientation.Horizontal" Class="w-full" Style="align-items: center;">
+                                        <div style="width: 20px; height: 20px;">
+                                            <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.DocumentOnePage())" />
+                                        </div>
+                                        <FluentLabel>@rule.Target</FluentLabel>
+                                    </FluentStack>
+                                </FluentStack>
+                                <FluentStack Orientation="Orientation.Vertical" Class="bammemo-redirect-setting-card-action-wrap" Style="width: calc(20px + 10px);">
+                                    <FluentButton OnClick="@(async _ => await HandleEditRuleAsync(rule))" IconStart="@(new Icons.Regular.Size20.Edit())" />
+                                    <FluentButton OnClick="@(async _ => await HandleDeleteRuleAsync(rule.Id))" IconStart="@(new Icons.Regular.Size20.Delete().WithColor(Color.Error))" />
+                                </FluentStack>
+                            </FluentStack>
+                        </BammemoCard>
+                    }
+                }
+                else
+                {
+                    <BammemoNoData />
+                }
+            </FluentStack>
+        }
+        else
+        {
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                @for (var i = 0; i < 3; i++)
+                {
+                    <BammemoCard Border HoverShadow Class="w-full bammemo-redirect-setting-card">
+                        <FluentStack Orientation="Orientation.Vertical">
+                            <FluentSkeleton Style="width: 80%; height: 1.25rem;" />
+                            <FluentSkeleton Style="width: 6rem; height: 1.25rem;" />
+                            <FluentSkeleton Style="width: 80%; height: 1.25rem;" />
+                        </FluentStack>
+                    </BammemoCard>
+                }
+            </FluentStack>
+        }
+    </BammemoSettingLayout>
+</div>
+
+<FluentToastProvider />
+
+@code {
+    private ListRedirectRuleResponse.RedirectRuleModel[]? rules;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (RendererInfo.Name != BlazorRendererName.WebAssembly)
+        {
+            return;
+        }
+
+        await LoadDataAsync();
+    }
+
+    private async Task HandleAddRuleAsync()
+    {
+        var dialog = await DialogService.ShowDialogAsync(
+            DialogHelper.From<BammemoSettingRedirectRuleEditDialog>(),
+            new BammemoSettingRedirectRuleEditDialog.RedirectRuleModel(),
+            new DialogParameters
+                {
+                    Title = $"添加重定向规则",
+                    PreventDismissOnOverlayClick = true,
+                    PreventScroll = true,
+                });
+
+        var result = await dialog.Result;
+        if (!result.Cancelled && result.Data != null)
+        {
+            await LoadDataAsync();
+            ToastService.ShowSuccess("重定向规则添加成功");
+        }
+    }
+
+    private async Task HandleEditRuleAsync(ListRedirectRuleResponse.RedirectRuleModel model)
+    {
+        var dialog = await DialogService.ShowDialogAsync(
+            DialogHelper.From<BammemoSettingRedirectRuleEditDialog>(),
+            Mapper.Map<BammemoSettingRedirectRuleEditDialog.RedirectRuleModel>(model),
+            new DialogParameters
+                {
+                    Title = $"编辑重定向规则",
+                    PreventDismissOnOverlayClick = true,
+                    PreventScroll = true,
+                });
+
+        var result = await dialog.Result;
+        if (!result.Cancelled && result.Data != null)
+        {
+            await LoadDataAsync();
+            ToastService.ShowSuccess("重定向规则已保存");
+        }
+    }
+
+    private async Task HandleDeleteRuleAsync(int id)
+    {
+        await WebApiClient.RedirectRules.DeleteAsync(id);
+
+        ToastService.ShowSuccess("重定向规则已删除");
+
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        rules = null;
+        rules = (await WebApiClient.RedirectRules.ListAsync()).RedirectRules;
+    }
+}

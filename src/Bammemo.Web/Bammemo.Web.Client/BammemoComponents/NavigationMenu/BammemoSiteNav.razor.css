@@ -60,7 +60,7 @@
     height: 100%;
 }
 
-::deep fluent-dialog .fluent-dialog-footer {
+::deep .site-nav fluent-dialog .fluent-dialog-footer {
     display: none;
 }
 

@@ -20,10 +20,14 @@
     public bool HoverShadow { get; set; }
 
     [Parameter]
+    public bool Border { get; set; }
+
+    [Parameter]
     public RenderFragment? ChildContent { get; set; }
 
     protected override void OnParametersSet()
     {
+        attributes["border"] = Border;
         attributes["hover-border"] = HoverBorder;
         attributes["hover-shadow"] = HoverShadow;
     }

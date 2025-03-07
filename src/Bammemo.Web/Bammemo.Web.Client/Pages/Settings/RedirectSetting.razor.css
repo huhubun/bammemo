@@ -1,0 +1,7 @@
+﻿::deep .bammemo-redirect-setting-card-action-wrap {
+    visibility: hidden;
+}
+
+::deep .bammemo-redirect-setting-card:hover .bammemo-redirect-setting-card-action-wrap {
+    visibility: visible;
+}

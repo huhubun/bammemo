@@ -3,119 +3,122 @@
 @using Bammemo.Service.Abstractions.SettingModels
 @using System.Text.Json
 @rendermode InteractiveWebAssembly
+@attribute [Authorize]
 @inject WebApiClient WebApiClient
 @inject IToastService ToastService
 
-<BammemoSettingLayout PageTitle="站点">
-    @if (model != null)
-    {
-        <FluentEditForm Model="@model" OnValidSubmit="@HandleValidSubmit" FormName="site_setting" novalidate>
-            <DataAnnotationsValidator />
+<div>
+    <BammemoSettingLayout PageTitle="站点">
+        @if (model != null)
+        {
+            <FluentEditForm Model="@model" OnValidSubmit="@HandleValidSubmit" FormName="site_setting" novalidate>
+                <DataAnnotationsValidator />
 
-            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
-                <div class="w-full">
-                    <FluentTextField Name="identifier" @bind-Value="model.SiteName" Label="站点名称" Required Class="w-full" />
-                    <FluentValidationMessage For="@(() => model.SiteName)" />
-                </div>
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                    <div class="w-full">
+                        <FluentTextField Name="identifier" @bind-Value="model.SiteName" Label="站点名称" Required Class="w-full" />
+                        <FluentValidationMessage For="@(() => model.SiteName)" />
+                    </div>
 
-                <div>
-                    <FluentTextField Name="identifier" @bind-Value="model.LogoText" Label="Logo 文字" />
-                    <FluentValidationMessage For="@(() => model.LogoText)" />
-                </div>
+                    <div>
+                        <FluentTextField Name="identifier" @bind-Value="model.LogoText" Label="Logo 文字" />
+                        <FluentValidationMessage For="@(() => model.LogoText)" />
+                    </div>
 
-                <div class="w-full">
-                    <FluentTextArea Name="identifier" @bind-Value="model.SiteDescription" Label="站点描述" Rows="3" Class="w-full" />
-                    <FluentLabel Typo="Typography.Body" Color="Color.Info">
-                        用于 SEO，会生成在首页的 <code>@("<meta name=\"description\" />")</code> 中。
-                    </FluentLabel>
-                    <FluentValidationMessage For="@(() => model.SiteDescription)" />
-                </div>
-
-                <div class="w-full">
-                    <FluentStack Class="w-full" Orientation="Orientation.Vertical" @key="model.SiteKeywords">
-                        <FluentInputLabel>Keywords</FluentInputLabel>
-
-                        @if (model.SiteKeywords?.Any() ?? false)
-                        {
-                            <FluentStack Orientation="Orientation.Horizontal" Wrap Class="w-full">
-                                @for (var i = 0; i < model.SiteKeywords.Count; i++)
-                                {
-                                    var index = i;
-                                    var keyword = model.SiteKeywords[index];
-
-                                    <BammemoFilterBadge OnClick="@(_ => HandleRemoveSiteKeyword(index))" @key="@($"{index}_{keyword}")">
-                                        @keyword
-                                    </BammemoFilterBadge>
-
-                                }
-                            </FluentStack>
-                        }
-                        else
-                        {
-                            <div class="w-full">请添加</div>
-                        }
-
-                        <FluentStack>
-                            <FluentTextField @bind-Value="inputedKeyword" />
-                            <FluentButton IconStart="@(new Icons.Filled.Size20.Add())" OnClick="HandleAddKeywords" />
-                        </FluentStack>
-
+                    <div class="w-full">
+                        <FluentTextArea Name="identifier" @bind-Value="model.SiteDescription" Label="站点描述" Rows="3" Class="w-full" />
                         <FluentLabel Typo="Typography.Body" Color="Color.Info">
-                            请勿包含英文逗号“,”，它会导致 keywords 被截断。
-                            <br />
-                            用于 SEO，会生成在首页的 <code>@("<meta name=\"keywords\" />")</code> 中。
+                            用于 SEO，会生成在首页的 <code>@("<meta name=\"description\" />")</code> 中。
                         </FluentLabel>
-                    </FluentStack>
-                </div>
+                        <FluentValidationMessage For="@(() => model.SiteDescription)" />
+                    </div>
 
-                <div class="w-full">
-                    <FluentStack Class="w-full" Orientation="Orientation.Vertical" @key="model.FooterLinks">
-                        <FluentInputLabel>页脚</FluentInputLabel>
+                    <div class="w-full">
+                        <FluentStack Class="w-full" Orientation="Orientation.Vertical" @key="model.SiteKeywords">
+                            <FluentInputLabel>Keywords</FluentInputLabel>
 
-                        @if (model.FooterLinks != null)
-                        {
-                            for (var i = 0; i < model.FooterLinks.Count; i++)
+                            @if (model.SiteKeywords?.Any() ?? false)
                             {
-                                var index = i;
+                                <FluentStack Orientation="Orientation.Horizontal" Wrap Class="w-full">
+                                    @for (var i = 0; i < model.SiteKeywords.Count; i++)
+                                    {
+                                        var index = i;
+                                        var keyword = model.SiteKeywords[index];
 
-                                <FluentStack Orientation="Orientation.Horizontal" Class="w-full" @key="index">
-                                    <FluentTextField @bind-Value="model.FooterLinks[index].Text" Placeholder="Text" />
-                                    <FluentTextField @bind-Value="model.FooterLinks[index].Url" Placeholder="Url" />
-                                    <FluentButton IconStart="@(new Icons.Filled.Size20.Add())"
-                                                  OnClick="@(_ => HandleAddFooterLinkLine())" />
-                                    <FluentButton IconStart="@(new Icons.Filled.Size20.Subtract())"
-                                                  OnClick="@(_ => HandleRemoveFooterLinkLine(index))"
-                                                  Style="@(model.FooterLinks.Count == 1 ? "visibility: hidden;" : null)" />
+                                        <BammemoFilterBadge OnClick="@(_ => HandleRemoveSiteKeyword(index))" @key="@($"{index}_{keyword}")">
+                                            @keyword
+                                        </BammemoFilterBadge>
+
+                                    }
                                 </FluentStack>
                             }
-                        }
+                            else
+                            {
+                                <div class="w-full">请添加</div>
+                            }
 
-                        <FluentLabel Typo="Typography.Body" Color="Color.Info">
-                            显示在 Bammemo 页面底部的内容。仅填写 Text 显示为纯文字，同时填写 Text 和 Url 则生成为超链接。
-                        </FluentLabel>
-                    </FluentStack>
-                </div>
+                            <FluentStack>
+                                <FluentTextField @bind-Value="inputedKeyword" />
+                                <FluentButton IconStart="@(new Icons.Filled.Size20.Add())" OnClick="HandleAddKeywords" />
+                            </FluentStack>
 
-                <FluentDivider Role="DividerRole.Presentation" Class="w-full" />
+                            <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                                请勿包含英文逗号“,”，它会导致 keywords 被截断。
+                                <br />
+                                用于 SEO，会生成在首页的 <code>@("<meta name=\"keywords\" />")</code> 中。
+                            </FluentLabel>
+                        </FluentStack>
+                    </div>
 
-                <div class="w-full">
-                    <FluentButton Type="ButtonType.Submit" Loading="isSaving" IconStart="new Icons.Regular.Size20.Save()">保存</FluentButton>
-                </div>
+                    <div class="w-full">
+                        <FluentStack Class="w-full" Orientation="Orientation.Vertical" @key="model.FooterLinks">
+                            <FluentInputLabel>页脚</FluentInputLabel>
+
+                            @if (model.FooterLinks != null)
+                            {
+                                for (var i = 0; i < model.FooterLinks.Count; i++)
+                                {
+                                    var index = i;
+
+                                    <FluentStack Orientation="Orientation.Horizontal" Class="w-full" @key="index">
+                                        <FluentTextField @bind-Value="model.FooterLinks[index].Text" Placeholder="Text" />
+                                        <FluentTextField @bind-Value="model.FooterLinks[index].Url" Placeholder="Url" />
+                                        <FluentButton IconStart="@(new Icons.Filled.Size20.Add())"
+                                                      OnClick="@(_ => HandleAddFooterLinkLine())" />
+                                        <FluentButton IconStart="@(new Icons.Filled.Size20.Subtract())"
+                                                      OnClick="@(_ => HandleRemoveFooterLinkLine(index))"
+                                                      Style="@(model.FooterLinks.Count == 1 ? "visibility: hidden;" : null)" />
+                                    </FluentStack>
+                                }
+                            }
+
+                            <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                                显示在 Bammemo 页面底部的内容。仅填写 Text 显示为纯文字，同时填写 Text 和 Url 则生成为超链接。
+                            </FluentLabel>
+                        </FluentStack>
+                    </div>
+
+                    <FluentDivider Role="DividerRole.Presentation" Class="w-full" />
+
+                    <div class="w-full">
+                        <FluentButton Type="ButtonType.Submit" Loading="isSaving" IconStart="new Icons.Regular.Size20.Save()">保存</FluentButton>
+                    </div>
+                </FluentStack>
+            </FluentEditForm>
+        }
+        else
+        {
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                @for (var i = 0; i < 3; i++)
+                {
+                    <FluentSkeleton Style="width: 6rem; height: 1.25rem;" />
+                    <FluentSkeleton Style="width: 100%; height: 1.25rem;" />
+                    <FluentSkeleton Style="width: 12rem; height: 1.25rem;" />
+                }
             </FluentStack>
-        </FluentEditForm>
-    }
-    else
-    {
-        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
-            @for (var i = 0; i < 3; i++)
-            {
-                <FluentSkeleton Style="width: 6rem; height: 1.25rem;" />
-                <FluentSkeleton Style="width: 100%; height: 1.25rem;" />
-                <FluentSkeleton Style="width: 12rem; height: 1.25rem;" />
-            }
-        </FluentStack>
-    }
-</BammemoSettingLayout>
+        }
+    </BammemoSettingLayout>
+</div>
 
 <FluentToastProvider />
 
@@ -133,6 +136,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine("current " + RendererInfo.Name);
+
+        if (RendererInfo.Name != BlazorRendererName.WebAssembly)
+        {
+            return;
+        }
+
         var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
             {
                 Keys = settingKeys
