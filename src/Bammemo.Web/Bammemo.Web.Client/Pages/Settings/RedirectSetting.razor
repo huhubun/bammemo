@@ -23,7 +23,7 @@
                     {
                         <BammemoCard Border HoverShadow Class="w-full bammemo-redirect-setting-card" @key="rule.Id">
                             <FluentStack Style="align-items: center;">
-                                <FluentStack Orientation="Orientation.Vertical">
+                                <FluentStack Orientation="Orientation.Vertical" Style="width: 0; flex: 1;">
                                     <FluentStack Orientation="Orientation.Horizontal" Class="w-full" Style="align-items: center;">
                                         <div style="width: 20px; height: 20px;">
                                             <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.Globe())" />
@@ -47,6 +47,7 @@
                                         <FluentLabel>@rule.Target</FluentLabel>
                                     </FluentStack>
                                 </FluentStack>
+
                                 <FluentStack Orientation="Orientation.Vertical" Class="bammemo-redirect-setting-card-action-wrap" Style="width: calc(20px + 10px);">
                                     <FluentButton OnClick="@(async _ => await HandleEditRuleAsync(rule))" IconStart="@(new Icons.Regular.Size20.Edit())" />
                                     <FluentButton OnClick="@(async _ => await HandleDeleteRuleAsync(rule.Id))" IconStart="@(new Icons.Regular.Size20.Delete().WithColor(Color.Error))" />

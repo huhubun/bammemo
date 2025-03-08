@@ -13,7 +13,7 @@
                         <FluentNavLink Icon="@(new Icons.Regular.Size20.LinkMultiple())" Href="/settings/links" Match="NavLinkMatch.All">链接</FluentNavLink>
                         <FluentNavLink Icon="@(new Icons.Regular.Size20.DocumentOnePageLink())" Href="/settings/redirects" Match="NavLinkMatch.All">重定向</FluentNavLink>
                     </FluentNavMenu>
-                    <div style="width: 100%;">
+                    <div class="bammemo-setting-content-wrap">
                         @ChildContent
                     </div>
                 </FluentStack>
@@ -34,7 +34,7 @@
     private static readonly PageStyle normalSizeStyle = new()
         {
             ContentOrientation = Orientation.Horizontal,
-                NavWidthValue = "250px"
+                NavWidthValue = "150px"
         };
     private PageStyle pageStyle = normalSizeStyle;
 

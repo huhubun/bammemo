@@ -1,12 +1,98 @@
 ﻿@page "/links"
+@using Bammemo.Service.Abstractions.WebApiModels.SiteLinks
 @rendermode InteractiveAuto
+@inject WebApiClient WebApiClient
+@inject PersistentComponentState PersistentComponentState
 
 <BammemoPageTitle Title="友情链接" />
 
-<BammemoCard>
-    <FluentLabel Typo="Typography.PageTitle">施工中</FluentLabel>
-</BammemoCard>
+<HeadContent>
+    @if (links != null)
+    {
+        var siteNames = String.Join(",", links.Select(l => l.Name));
+
+        <meta name="description" content="@siteNames" />
+        <meta name="keywords" content="@siteNames" />
+    }
+</HeadContent>
+
+<div>
+    <FluentGrid Class="@($"bammemo-site-link-grid {(fullGrid ? "grid-full" : null)}")" OnBreakpointEnter="HandleBreakpointEnter">
+        @if (links != null)
+        {
+            if (links.Length != 0)
+            {
+                foreach (var link in links)
+                {
+                    <FluentGridItem xs="12" sm="6" md="4" lg="4">
+                        <a href="@link.Url">
+                            <BammemoCard Class="bammemo-site-link-card" HoverShadow HoverBorder>
+                                <FluentStack Orientation="Orientation.Vertical">
+                                    <FluentLabel Typo="Typography.PaneHeader">
+                                        @link.Name
+                                    </FluentLabel>
+                                    <FluentLabel Typo="Typography.Subject">
+                                        @link.Url
+                                    </FluentLabel>
+                                </FluentStack>
+                            </BammemoCard>
+                        </a>
+                    </FluentGridItem>
+                }
+            }
+            else
+            {
+                <BammemoNoData />
+            }
+        }
+        else
+        {
+            @for (var i = 0; i < 3; i++)
+            {
+                <FluentGridItem xs="12" sm="6" md="4" lg="4">
+
+                    <BammemoCard Class="bammemo-site-link-card" HoverShadow HoverBorder>
+                        <FluentStack Orientation="Orientation.Vertical">
+                            <FluentLabel Typo="Typography.PaneHeader">
+                                <FluentSkeleton Style="width: 80%; height: var(--type-ramp-plus-3-font-size);" />
+                            </FluentLabel>
+                            <FluentLabel Typo="Typography.Subject">
+                                <FluentSkeleton Style="width: 50%; height: var(--type-ramp-plus-1-font-size);" />
+                            </FluentLabel>
+                        </FluentStack>
+                    </BammemoCard>
+                </FluentGridItem>
+            }
+        }
+    </FluentGrid>
+</div>
 
 @code {
+    private const string SITE_LINK_PERSITING_KEY = "site_link";
+    private bool fullGrid = false;
+    private ListSiteLinkResponse.SiteLinkModel[]? links;
+    private PersistingComponentStateSubscription persistingSubscription;
 
+    protected override async Task OnInitializedAsync()
+    {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson(SITE_LINK_PERSITING_KEY, out links))
+        {
+            var response = await WebApiClient.SiteLinks.ListAsync();
+            links = response.SiteLinks;
+        }
+    }
+
+    void HandleBreakpointEnter(GridItemSize size) => fullGrid = size switch
+    {
+        GridItemSize.Xs or GridItemSize.Sm or GridItemSize.Md => true,
+        _ => false
+    };
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(SITE_LINK_PERSITING_KEY, links);
+        return Task.CompletedTask;
+    }
 }

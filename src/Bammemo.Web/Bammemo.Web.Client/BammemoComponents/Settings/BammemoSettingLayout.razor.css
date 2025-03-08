@@ -12,6 +12,11 @@
     font-size: 14px !important;
 }
 
+.bammemo-setting-content-wrap {
+    width: 0;
+    flex: 1;
+}
+
 @media (max-width: 600px) {
     ::deep .bammemo-card {
         width: 100%;

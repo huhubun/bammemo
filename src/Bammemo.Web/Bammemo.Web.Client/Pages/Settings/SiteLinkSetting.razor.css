@@ -1,7 +1,20 @@
-﻿::deep .bammemo-site-link-card-action-wrap {
+﻿::deep .bammemo-setting-site-link-card-action-wrap {
     visibility: hidden;
 }
 
-::deep .bammemo-site-link-card:hover .bammemo-site-link-card-action-wrap {
+::deep .bammemo-setting-site-link-card:hover .bammemo-setting-site-link-card-action-wrap {
     visibility: visible;
+}
+
+::deep .bammemo-setting-site-link-card p.fluent-typography, ::deep .bammemo-setting-site-link-card fluent-anchor::part(control) {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+    line-height: 1.5rem;
+}
+
+::deep .bammemo-setting-site-link-card fluent-anchor {
+    border-radius: 0;
 }
