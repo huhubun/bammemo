@@ -12,6 +12,7 @@ public interface ISlipService
     Task<Slip?> GetByLinkNameAsync(string linkName);
     Task<Slip> CreateAsync(Slip slip);
     Task<Slip> UpdateAsync(Slip slip);
+    Task<int> DeleteAsync(int id);
     Task<long[]> GetCreatedTimeWithSlipAsync(long startTime, long endTime);
     Task<string[]> GetAllTagsAsync();
 }

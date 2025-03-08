@@ -20,14 +20,21 @@ public class SlipController(
         [FromQuery] ListSlipQueryRequest? query,
         [FromQuery] CursorPagingRequest<string>? paging)
     {
-        var result = await slipService.ListAsync(
-            query,
-            await paging.DecodeAsync(idService.DecodeAsync) ?? null);
-
-        return Ok(new ListSlipResponse
+        try
         {
-            Data = mapper.Map<ListSlipResponse.SlipModel[]>(result)
-        });
+            var result = await slipService.ListAsync(
+                query,
+                await paging.DecodeAsync(idService.DecodeAsync) ?? null);
+
+            return Ok(new ListSlipResponse
+            {
+                Data = mapper.Map<ListSlipResponse.SlipModel[]>(result)
+            });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Unauthorized();
+        }
     }
 
     [HttpGet("{idOrLinkName}", Name = $"{nameof(SlipController)}_{nameof(GetByIdAsync)}")]
@@ -79,5 +86,15 @@ public class SlipController(
         var result = await slipService.UpdateAsync(entity);
 
         return Ok(mapper.Map<UpdateSlipResponse>(result));
+    }
+
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteAsync([FromRoute] string id)
+    {
+        var rawId = await idService.DecodeAsync(id);
+        var rows = await slipService.DeleteAsync(rawId);
+
+        return rows == 0 ? NotFound() : NoContent();
     }
 }

@@ -58,5 +58,8 @@ public partial class WebApiClient
 
             return response;
         }
+
+        public async Task DeleteAsync(string id)
+            => await httpClient.DeleteAsync($"slips/{id}");
     }
 }

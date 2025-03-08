@@ -6,7 +6,7 @@
 @inject IMapper mapper
 @inject IJSRuntime jsRuntime
 
-@if (AssignedRenderMode != InteractiveWebAssembly)
+@if (RendererInfo.Name != BlazorRendererName.WebAssembly)
 {
     <BammemoCard>
         <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.Center" HorizontalGap="@(16*2)" VerticalAlignment="VerticalAlignment.Center">
@@ -21,47 +21,52 @@ else
         <FluentStack Orientation="Orientation.Vertical">
             <textarea style="width: 100%; height: auto; resize: none; overflow: hidden;"
                       class="slip-editor-input"
+                      placeholder="开始记录…"
                       @bind="content"
                       @bind:event="oninput"
                       @ref="textarea" />
 
-            <FluentToolbar Style="width: 100%;">
+                      @* TODO *@
+@*             <FluentToolbar Class="bammemo-slip-editor-toolbar">
                 <FluentButton Appearance="Appearance.Stealth"
-                              IconEnd="@(new Icons.Regular.Size16.NumberSymbol())"
+                              IconEnd="@(new Icons.Filled.Size20.NumberSymbol())"
                               Title="标签" />
                 <FluentButton Appearance="Appearance.Stealth"
-                              IconEnd="@(new Icons.Regular.Size16.Attach())"
+                              IconEnd="@(new Icons.Filled.Size20.Attach())"
                               Title="上传" />
                 <FluentButton Appearance="Appearance.Stealth"
-                              IconEnd="@(new Icons.Regular.Size16.LinkMultiple())"
+                              IconEnd="@(new Icons.Filled.Size20.LinkMultiple())"
                               Title="链接" />
-            </FluentToolbar>
+            </FluentToolbar> *@
 
             <FluentDivider Style="width: 100%;" />
 
-            <FluentToolbar Style="width: 100%;">
+            <FluentStack Orientation="Orientation.Horizontal" Class="bammemo-slip-editor-actions">
                 <FluentSelect @bind-Value="status"
                               TOption="SlipStatus"
                               Items="Enum.GetValues<SlipStatus>()"
                               OptionText="@(s => s.ToString())"
                               OptionValue="@(s => ((int)s).ToString())" />
 
-                @if (IsEdit)
-                {
-                    <FluentSpacer />
+                <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: right;">
+                    @if (IsEdit)
+                    {
+                        <FluentButton Appearance="Appearance.Outline"
+                                      OnClick="@(_ => OnEditCanceled.InvokeAsync(true))"
+                                      Loading="isSaveButtonLoading">
+                            Cancel
+                        </FluentButton>
+                    }
 
                     <FluentButton Appearance="Appearance.Accent"
-                                  OnClick="@(_ => OnEditCanceled.InvokeAsync(true))"
-                                  Loading="isSaveButtonLoading">Cancel</FluentButton>
-                }
-
-                <FluentSpacer />
-
-                <FluentButton Appearance="Appearance.Accent"
-                              OnClick="OnSaveClickAsync"
-                              Disabled="content == null || content.Length == 0"
-                              Loading="isSaveButtonLoading">Save</FluentButton>
-            </FluentToolbar>
+                                  OnClick="OnSaveClickAsync"
+                                  Disabled="content == null || content.Length == 0"
+                                  Loading="isSaveButtonLoading"
+                                  IconEnd="new Icons.Regular.Size20.Send()">
+                        Save
+                    </FluentButton>
+                </FluentStack>
+            </FluentStack>
         </FluentStack>
     </div>
 }
@@ -97,7 +102,7 @@ else
     {
         if (Data != null)
         {
-            await jsRuntime.InvokeVoidAsync("resizeSlipEditorTextarea", textarea);
+            await jsRuntime.InvokeVoidAsync("bammemo.util.resizeSlipEditorTextarea", textarea);
         }
     }
 

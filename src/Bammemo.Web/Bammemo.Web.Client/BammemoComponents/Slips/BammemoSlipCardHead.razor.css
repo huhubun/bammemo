@@ -31,3 +31,7 @@
     ::deep .bammemo-slip-card-head-more-button::part(control):hover {
         background: var(--neutral-fill-hover);
     }
+
+::deep .bammemo-slip-card-head-delete-button{
+    color: var(--error);
+}

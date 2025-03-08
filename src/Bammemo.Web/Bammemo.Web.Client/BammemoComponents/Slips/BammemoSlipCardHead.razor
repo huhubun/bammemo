@@ -1,16 +1,24 @@
-﻿@rendermode InteractiveAuto
+﻿@using Bammemo.Service.Abstractions.Enums
+@rendermode InteractiveAuto
 @inject IToastService ToastService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IDialogService DialogService
+@inject WebApiClient WebApiClient
 
 <div class="bammemo-slip-card-head-wrap">
     <FluentStack Orientation="Orientation.Horizontal" Class="bammemo-slip-card-head" Style="align-items: center;">
         <BammemoSlipCardTitle Data="Data" />
 
         <div class="bammemo-slip-card-head-action">
-            @if (Data.Status == Service.Abstractions.Enums.SlipStatus.Private)
+            @if (Data.Status == SlipStatus.Private)
             {
                 <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size16.LockClosed())" />
+            }
+            else if (Data.Status == SlipStatus.Archive)
+            {
+                <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size16.Archive())" />
             }
 
             <FluentButton Id="@("slip-card-action-button-" + Data.Id)"
@@ -26,13 +34,14 @@
                         VerticalThreshold="170">
                 @if (isLoggedIn)
                 {
-                    @* <FluentMenuItem OnClick="@(_ => isEditMode = true)">修改</FluentMenuItem> *@
-                    <FluentMenuItem>归档</FluentMenuItem>
+                    <FluentMenuItem OnClick="@(async _ => await OnEditClick.InvokeAsync())" Disabled="@(!IsWebAssembly)">修改</FluentMenuItem>
+                    @* TODO *@
+                    @* <FluentMenuItem>归档</FluentMenuItem> *@
                     <FluentDivider />
                     <FluentMenuItem OnClick="CopySlipUrlAsync">复制链接</FluentMenuItem>
-                    <FluentMenuItem>可读性链接</FluentMenuItem>
+                    @* <FluentMenuItem>高级</FluentMenuItem> *@
                     <FluentDivider />
-                    <FluentMenuItem>删除</FluentMenuItem>
+                    <FluentMenuItem OnClick="HandleDeleteClick" Class="bammemo-slip-card-head-delete-button">删除</FluentMenuItem>
                 }
                 else
                 {
@@ -45,11 +54,23 @@
 
 @code {
     bool isMoreOperationMenuOpen = false;
-    // TODO
     private bool isLoggedIn = false;
 
     [Parameter]
     public required ListSlipDto Data { get; set; }
+
+    [Parameter]
+    public required EventCallback OnEditClick { get; set; }
+
+    [Parameter]
+    public required EventCallback OnAfterDelete { get; set; }
+
+    private bool IsWebAssembly => RendererInfo.Name == BlazorRendererName.WebAssembly;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoggedIn = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity?.IsAuthenticated ?? false;
+    }
 
     private async Task CopySlipUrlAsync()
     {
@@ -64,6 +85,22 @@
         catch (JSException ex)
         {
             ToastService.ShowError($"复制失败：{ex.Message}");
+        }
+    }
+
+    private async Task HandleDeleteClick()
+    {
+        var overviewContent = Data.Title != null ? Data.Title : Data.Content;
+        var isOverviewLengthOverflow = overviewContent.Length > 50;
+        var overview = Data.Content.Substring(0, isOverviewLengthOverflow ? 50 : overviewContent.Length);
+
+        var dialog = await DialogService.ShowConfirmationAsync($"即将删除文章 \"{overview}{(isOverviewLengthOverflow ? "..." : null)}\" 且无法找回，确定要删除吗？", "删除", "取消", "确认删除");
+        var result = await dialog.Result;
+
+        if (!result.Cancelled)
+        {
+            await WebApiClient.Slips.DeleteAsync(Data.Id);
+            await OnAfterDelete.InvokeAsync();
         }
     }
 }
