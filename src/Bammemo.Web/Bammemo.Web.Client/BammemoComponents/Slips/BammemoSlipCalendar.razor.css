@@ -35,6 +35,5 @@
 
 .bammemo-slip-calendar-day-published {
     font-weight: 700;
-    background: var(--neutral-layer-4);
     border-radius: calc(var(--control-corner-radius) * 1px);
 }

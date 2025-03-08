@@ -22,16 +22,16 @@
                 <StatusMessage Intent="MessageIntent.Error" Message="@errorMessage" Style="margin-bottom: 1rem;" />
 
                 <div style="width: 100%;margin-bottom:1rem;">
-                    <InputText @bind-Value="User.Username" Style="width: 100%;" placeholder="Username" />
+                    <InputText @bind-Value="User.Username" placeholder="Username" type="text" />
                     <ValidationMessage For="() => User.Username" class="text-error" />
                 </div>
 
                 <div style="width: 100%;margin-bottom:2rem;">
-                    <InputText @bind-Value="User.Password" Style="width: 100%;" placeholder="Password" type="password" />
+                    <InputText @bind-Value="User.Password" placeholder="Password" type="password" />
                     <ValidationMessage For="() => User.Password" class="text-error" /> 
                 </div>
 
-                <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent" Style="width: 100%;">登录</FluentButton>
+                <button type="submit">登录</button>
             </FluentStack>
         </EditForm>
     </div>
