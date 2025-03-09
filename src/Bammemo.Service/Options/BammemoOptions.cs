@@ -6,6 +6,6 @@ public class BammemoOptions
 
     public required string ConnectionString { get; set; }
     public required string ApiUrl { get; set; }
-
-
+    public required string Username { get; set; }
+    public required string Password { get; set; }
 }

@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Bammemo.Service.Options;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using System.Collections.ObjectModel;
 
 namespace Bammemo.Service.Identities;
 
-public class BammemoUserStore : IUserStore<BammemoUser>
+public class BammemoUserStore(
+    IOptions<BammemoOptions> bammemoOptions) : IUserStore<BammemoUser>
 {
-    private static ReadOnlyCollection<BammemoUser> Users => new(
+    private ReadOnlyCollection<BammemoUser> Users => new(
     [
-        new BammemoUser(SafeGetEnvironmentVariable("BAMMEMO_USERNAME"), SafeGetEnvironmentVariable("BAMMEMO_PASSWORD"))
+        new BammemoUser(bammemoOptions.Value.Username, bammemoOptions.Value.Password)
     ]);
 
     public Task<IdentityResult> CreateAsync(BammemoUser user, CancellationToken cancellationToken)

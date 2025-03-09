@@ -9,9 +9,7 @@
         "applicationUrl": "http://localhost:5146",
         "launchUrl": "",
         "environmentVariables": {
-          "ASPNETCORE_ENVIRONMENT": "Development",
-          "BAMMEMO_USERNAME": "admin",
-          "BAMMEMO_PASSWORD": "YWRtaW4="
+          "ASPNETCORE_ENVIRONMENT": "Development"
         }
       }
     }
