@@ -1,0 +1,102 @@
+﻿@page "/about"
+@using Bammemo.Service.Abstractions.WebApiModels.Settings
+@using System.Text.Json
+@rendermode InteractiveAuto
+@inject WebApiClient WebApiClient
+@inject PersistentComponentState PersistentComponentState
+
+<BammemoPageTitle Title="关于" />
+
+<HeadContent>
+    @if (settingModel != null)
+    {
+        if (settingModel.Description != null)
+        {
+            <meta name="description" content="@settingModel.Description" />
+        }
+
+        if (settingModel.Keywords != null)
+        {
+            <meta name="keywords" content="@String.Join(",", settingModel.Keywords)" />
+        }
+    }
+</HeadContent>
+
+<div>
+    <BammemoContent>
+        <BammemoCard>
+            @if (settingModel != null)
+            {
+                if (settingModel.Content != null)
+                {
+                    <BammemoMarkdownSection Content="@settingModel.Content" />
+                }
+                else
+                {
+                    <BammemoNoData />
+                }
+            }
+            else
+            {
+                <FluentStack Orientation="Orientation.Vertical">
+                    <FluentSkeleton Style="width: 100%; height: 1.25rem;" />
+                    <FluentSkeleton Style="width: 100%; height: 1.25rem;" />
+                    <FluentSkeleton Style="width: 20%; height: 1.25rem;" />
+                </FluentStack>
+            }
+        </BammemoCard>
+    </BammemoContent>
+</div>
+
+@code {
+    private static readonly string[] settingKeys = [
+            SettingKeys.AboutPageDescription,
+            SettingKeys.AboutPageKeywords,
+            SettingKeys.AboutPageContent
+        ];
+    private const string ABOUT_PAGE_PERSITING_KEY = "about_page";
+    private PersistingComponentStateSubscription persistingSubscription;
+    private AboutPageSettingModel? settingModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson(ABOUT_PAGE_PERSITING_KEY, out settingModel))
+        {
+            var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
+                {
+                    Keys = settingKeys
+                });
+
+            settingModel = new();
+
+            foreach (var setting in response.Settings)
+            {
+                switch (setting.Key)
+                {
+                    case SettingKeys.AboutPageDescription:
+                        settingModel.Description = setting.Value;
+                        break;
+                    case SettingKeys.AboutPageKeywords:
+                        if (setting.Value != null)
+                        {
+                            settingModel.Keywords = JsonSerializer.Deserialize<List<string>>(setting.Value);
+                        }
+                        break;
+                    case SettingKeys.AboutPageContent:
+                        settingModel.Content = setting.Value;
+                        break;
+                    default:
+                        throw new NotSupportedException(setting.Key);
+                }
+            }
+        }
+    }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(ABOUT_PAGE_PERSITING_KEY, settingModel);
+        return Task.CompletedTask;
+    }
+}

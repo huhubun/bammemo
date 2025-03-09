@@ -1,0 +1,195 @@
+﻿@page "/settings/about"
+@using Bammemo.Service.Abstractions.SettingModels
+@using System.Text.Json
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
+@inject WebApiClient WebApiClient
+@inject IToastService ToastService
+
+<div>
+    <BammemoSettingLayout PageTitle="关于页">
+        @if (model != null)
+        {
+            <FluentEditForm Model="@model" OnValidSubmit="@HandleValidSubmit" FormName="site_setting" novalidate>
+                <DataAnnotationsValidator />
+
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                    <div class="w-full">
+                        <FluentTextArea Name="identifier" @bind-Value="model.Description" Label="描述" Rows="3" Class="w-full" />
+                        <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                            用于 SEO，会生成在“关于我”页面的 <code>@("<meta name=\"description\" />")</code> 中。
+                        </FluentLabel>
+                        <FluentValidationMessage For="@(() => model.Description)" />
+                    </div>
+
+                    <div class="w-full">
+                        <FluentStack Class="w-full" Orientation="Orientation.Vertical" @key="model.Keywords">
+                            <FluentInputLabel>Keywords</FluentInputLabel>
+
+                            @if (model.Keywords?.Any() ?? false)
+                            {
+                                <FluentStack Orientation="Orientation.Horizontal" Wrap Class="w-full">
+                                    @for (var i = 0; i < model.Keywords.Count; i++)
+                                    {
+                                        var index = i;
+                                        var keyword = model.Keywords[index];
+
+                                        <BammemoFilterBadge OnClick="@(_ => HandleRemoveSiteKeyword(index))" @key="@($"{index}_{keyword}")">
+                                            @keyword
+                                        </BammemoFilterBadge>
+
+                                    }
+                                </FluentStack>
+                            }
+                            else
+                            {
+                                <div class="w-full">请添加</div>
+                            }
+
+                            <FluentStack>
+                                <FluentTextField @bind-Value="inputedKeyword" />
+                                <FluentButton IconStart="@(new Icons.Filled.Size20.Add())" OnClick="HandleAddKeywords" />
+                            </FluentStack>
+
+                            <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                                请勿包含英文逗号“,”，它会导致 keywords 被截断。
+                                <br />
+                                用于 SEO，会生成在“关于我”页面的 <code>@("<meta name=\"keywords\" />")</code> 中。
+                            </FluentLabel>
+                        </FluentStack>
+                    </div>
+
+                    <div class="w-full">
+                        <FluentTextArea @bind-Value="model.Content" Label="页面内容（Markdown 格式）" Rows="50" Class="w-full" />
+                    </div>
+
+                    <FluentDivider Role="DividerRole.Presentation" Class="w-full" />
+
+                    <div class="w-full">
+                        <FluentButton Type="ButtonType.Submit" Loading="isSaving" IconStart="new Icons.Regular.Size20.Save()">保存</FluentButton>
+                    </div>
+                </FluentStack>
+            </FluentEditForm>
+        }
+        else
+        {
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                @for (var i = 0; i < 3; i++)
+                {
+                    <FluentSkeleton Style="width: 6rem; height: 1.25rem;" />
+                    <FluentSkeleton Style="width: 100%; height: 1.25rem;" />
+                    <FluentSkeleton Style="width: 12rem; height: 1.25rem;" />
+                }
+            </FluentStack>
+        }
+    </BammemoSettingLayout>
+</div>
+
+<FluentToastProvider />
+
+@code {
+    private readonly static string[] settingKeys = [
+        SettingKeys.AboutPageDescription,
+        SettingKeys.AboutPageKeywords,
+        SettingKeys.AboutPageContent
+    ];
+    private string? inputedKeyword, inputedFooterLinkName, inputedFooterLinkUrl;
+    private AboutPageSettingModel? model = null;
+    private bool isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (RendererInfo.Name != BlazorRendererName.WebAssembly)
+        {
+            return;
+        }
+
+        var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
+            {
+                Keys = settingKeys
+            });
+
+        model = new();
+
+        foreach (var setting in response.Settings)
+        {
+            switch (setting.Key)
+            {
+                case SettingKeys.AboutPageDescription:
+                    model.Description = setting.Value;
+                    break;
+                case SettingKeys.AboutPageKeywords:
+                    model.Keywords = setting.Value != null ? JsonSerializer.Deserialize<List<string>>(setting.Value) : [];
+                    break;
+                case SettingKeys.AboutPageContent:
+                    model.Content = setting.Value;
+                    break;
+                default:
+                    throw new NotSupportedException(setting.Key);
+            }
+        }
+
+        if (model.Keywords == null)
+        {
+            // 初始化，方便后续操作
+            model.Keywords = [];
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isSaving = true;
+
+        try
+        {
+            await WebApiClient.Settings.BatchUpdateByKeysAsync(new BatchUpdateSettingByKeyRequest
+                {
+                    Settings = settingKeys.ToDictionary(key => key, key => key switch
+                    {
+                        SettingKeys.AboutPageDescription => NormalizeSettingValue(model.Description),
+                        SettingKeys.AboutPageKeywords => model.Keywords != null ? JsonSerializer.Serialize(model.Keywords) : null,
+                        SettingKeys.AboutPageContent => model.Content,
+                        _ => throw new NotSupportedException(key)
+                    })
+                });
+
+            ToastService.ShowSuccess("关于页设置保存成功，刷新页面后生效。");
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"保存失败：{ex.Message}");
+            Console.WriteLine($"保存 about setting setting 失败：{ex}");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void HandleAddKeywords()
+    {
+        if (!String.IsNullOrWhiteSpace(inputedKeyword))
+        {
+            model.Keywords.Add(inputedKeyword);
+        }
+
+        inputedKeyword = null;
+    }
+
+    private void HandleRemoveSiteKeyword(int index)
+    {
+        if (model.Keywords.Count > 1)
+        {
+            model.Keywords.RemoveAt(index);
+        }
+        else
+        {
+            model.Keywords.Clear();
+        }
+
+        StateHasChanged();
+    }
+
+    private static string? NormalizeSettingValue(string? value)
+        => String.IsNullOrWhiteSpace(value) ? null : value;
+}

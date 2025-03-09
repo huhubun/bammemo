@@ -17,7 +17,7 @@
 </HeadContent>
 
 <div>
-    <FluentGrid Class="@($"bammemo-site-link-grid {(fullGrid ? "grid-full" : null)}")" OnBreakpointEnter="HandleBreakpointEnter">
+    <BammemoContent>
         @if (links != null)
         {
             if (links.Length != 0)
@@ -64,12 +64,11 @@
                 </FluentGridItem>
             }
         }
-    </FluentGrid>
+    </BammemoContent>
 </div>
 
 @code {
     private const string SITE_LINK_PERSITING_KEY = "site_link";
-    private bool fullGrid = false;
     private ListSiteLinkResponse.SiteLinkModel[]? links;
     private PersistingComponentStateSubscription persistingSubscription;
 
@@ -83,12 +82,6 @@
             links = response.SiteLinks;
         }
     }
-
-    void HandleBreakpointEnter(GridItemSize size) => fullGrid = size switch
-    {
-        GridItemSize.Xs or GridItemSize.Sm or GridItemSize.Md => true,
-        _ => false
-    };
 
     private Task PersistData()
     {

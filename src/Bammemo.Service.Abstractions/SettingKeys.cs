@@ -8,6 +8,9 @@ public static class SettingKeys
     public const string SiteDescription= nameof(SiteDescription);
     public const string SiteKeywords= nameof(SiteKeywords);
     public const string FooterLinks = nameof(FooterLinks);
+    public const string AboutPageDescription = nameof(AboutPageDescription);
+    public const string AboutPageKeywords = nameof(AboutPageKeywords);
+    public const string AboutPageContent= nameof(AboutPageContent);
 
     public static bool VerifyKey(string key)
         => VerifyKeys([key]);

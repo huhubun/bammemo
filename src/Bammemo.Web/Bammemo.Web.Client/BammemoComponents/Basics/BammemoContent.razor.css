@@ -1,0 +1,8 @@
+﻿::deep .bammemo-content-grid {
+    width: 1180px;
+    margin: 0 auto;
+}
+
+    ::deep .bammemo-content-grid.grid-full {
+        width: 100%;
+    }

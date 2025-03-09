@@ -1,13 +1,4 @@
-﻿::deep .bammemo-site-link-grid {
-    width: 1180px;
-    margin: 0 auto;
-}
-
-    ::deep .bammemo-site-link-grid.grid-full {
-        width: 100%;
-    }
-
-::deep .bammemo-site-link-card h4, ::deep .bammemo-site-link-card h6 {
+﻿::deep .bammemo-site-link-card h4, ::deep .bammemo-site-link-card h6 {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;

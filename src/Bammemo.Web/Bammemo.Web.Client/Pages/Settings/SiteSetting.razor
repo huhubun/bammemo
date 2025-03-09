@@ -28,7 +28,7 @@
                     <div class="w-full">
                         <FluentTextArea Name="identifier" @bind-Value="model.SiteDescription" Label="站点描述" Rows="3" Class="w-full" />
                         <FluentLabel Typo="Typography.Body" Color="Color.Info">
-                            用于 SEO，会生成在首页的 <code>@("<meta name=\"description\" />")</code> 中。
+                            用于 SEO，会生成在“首页”的 <code>@("<meta name=\"description\" />")</code> 中。
                         </FluentLabel>
                         <FluentValidationMessage For="@(() => model.SiteDescription)" />
                     </div>
@@ -65,7 +65,7 @@
                             <FluentLabel Typo="Typography.Body" Color="Color.Info">
                                 请勿包含英文逗号“,”，它会导致 keywords 被截断。
                                 <br />
-                                用于 SEO，会生成在首页的 <code>@("<meta name=\"keywords\" />")</code> 中。
+                                用于 SEO，会生成在“首页”的 <code>@("<meta name=\"keywords\" />")</code> 中。
                             </FluentLabel>
                         </FluentStack>
                     </div>
@@ -136,8 +136,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("current " + RendererInfo.Name);
-
         if (RendererInfo.Name != BlazorRendererName.WebAssembly)
         {
             return;

@@ -12,13 +12,9 @@
         <BammemoSlipCardTitle Data="Data" />
 
         <div class="bammemo-slip-card-head-action">
-            @if (Data.Status == SlipStatus.Private)
+            @if (Icon != null)
             {
-                <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size16.LockClosed())" />
-            }
-            else if (Data.Status == SlipStatus.Archive)
-            {
-                <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size16.Archive())" />
+                <FluentIcon Value="Icon" />
             }
 
             <FluentButton Id="@("slip-card-action-button-" + Data.Id)"
@@ -66,6 +62,14 @@
     public required EventCallback OnAfterDelete { get; set; }
 
     private bool IsWebAssembly => RendererInfo.Name == BlazorRendererName.WebAssembly;
+
+    private Icon? Icon => Data.Status switch
+    {
+        SlipStatus.Private => new Icons.Regular.Size16.LockClosed(),
+        SlipStatus.Archive => new Icons.Regular.Size16.Archive(),
+        SlipStatus.Draft => new Icons.Regular.Size16.Drafts(),
+        _ => null
+    };
 
     protected override async Task OnInitializedAsync()
     {
