@@ -5,6 +5,10 @@
   <Folder Name="/解决方案项/">
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/解决方案项/scripts/" Id="02ea681e-c7d8-13c7-8484-4ac65e1b71e8">
+    <File Path="commands.json" />
+    <File Path="scripts/clean.bat" />
+  </Folder>
   <Project Path="src/Bammemo.Data/Bammemo.Data.csproj" />
   <Project Path="src/Bammemo.Service.Abstractions/Bammemo.Service.Abstractions.csproj" />
   <Project Path="src/Bammemo.Service/Bammemo.Service.csproj" />
