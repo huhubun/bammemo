@@ -16,7 +16,7 @@ public class SettingService(
     public async Task<List<Setting>> GetByKeysAsync(IEnumerable<string> keys)
         => await dbContext.Settings.AsNoTracking().Where(s => keys.Contains(s.Key)).ToListAsync();
 
-    public async Task CreateOrUpdateAsync(string key, string value)
+    public async Task CreateOrUpdateAsync(string key, string? value)
     {
         var setting = await dbContext.Settings.SingleOrDefaultAsync(s => s.Key == key);
         if (setting == null)
@@ -26,23 +26,25 @@ public class SettingService(
         else
         {
             await UpdateAsync(key, value);
-            memoryCache.Remove(GetCacheKey(key));
         }
+
+        memoryCache.Remove(GetCacheKey(key));
     }
 
-    public async Task CreateAsync(string key, string value)
+    public async Task CreateAsync(string key, string? value)
     {
         await dbContext.Settings.AddAsync(new Setting
         {
             Key = key,
             Value = value,
-            CreatedAt = DateTime.UtcNow.Ticks
+            CreatedAt = DateTime.UtcNow.Ticks,
+            UpdateAt = DateTime.UtcNow.Ticks
         });
 
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync(string key, string value)
+    public async Task UpdateAsync(string key, string? value)
     {
         var entity = await dbContext.Settings.SingleAsync(s => s.Key == key);
 
@@ -52,6 +54,14 @@ public class SettingService(
         await dbContext.SaveChangesAsync();
 
         memoryCache.Remove(GetCacheKey(key));
+    }
+
+    public async Task DeleteAsync(Setting setting)
+    {
+        dbContext.Settings.Remove(setting);
+        await dbContext.SaveChangesAsync();
+
+        memoryCache.Remove(GetCacheKey(setting.Key));
     }
 
     private static string GetCacheKey(string key) => $"settings_{key.ToLower()}";

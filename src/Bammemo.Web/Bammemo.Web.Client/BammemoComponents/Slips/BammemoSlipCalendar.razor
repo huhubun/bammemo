@@ -3,7 +3,7 @@
 @rendermode InteractiveAuto
 @implements IDisposable
 @inject PersistentComponentState PersistentComponentState
-@inject WebApiClient webApiClient
+@inject ICommonAnalyticsService CommonAnalyticsService
 
 <div class="bammemo-slip-calendar">
 <FluentCalendar Value="SelectedTime"
@@ -58,7 +58,7 @@
     {
         if (!PersistentComponentState.TryTakeFromJson(nameof(publishedTimes), out publishedTimes))
         {
-            publishedTimes = (await webApiClient.Analytics.GetSlipTimesAsync(new GetSlipTimesRequest
+            publishedTimes = (await CommonAnalyticsService.GetSlipTimesAsync(new GetSlipTimesRequest
                 {
                     StartTime = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks,
                     EndTime = TimeZoneInfo.ConvertTimeToUtc(dateTime.AddMonths(1)).Ticks

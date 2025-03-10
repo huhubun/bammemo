@@ -1,15 +1,68 @@
 ﻿@page "/"
+@using Bammemo.Service.Abstractions.WebApiModels.Settings
+@using System.Text.Json
 @rendermode InteractiveAuto
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject PersistentComponentState PersistentComponentState
+@inject ICommonSettingService CommonSettingService
 
 <BammemoPageTitle Title="首页" />
 
 <HeadContent>
-    <meta name="description" content="欢迎访问呼呼小笼包 (huhubun) 的个人博客。这里的文章包含了前后端软件开发技术博文、精品软件推荐等内容。欢迎大家一起学习、成长。也欢迎关注微信公众号 bundev 交流。" />
-    <meta name="keywords" content="呼呼小笼包,huhubun,bun,bun.plus,技术,软件,开发,个人博客,博客,文章,精品软件,推荐" />
+    @foreach (var meta in metas ?? Enumerable.Empty<KeyValuePair<string, string?>>())
+    {
+        <meta name="@meta.Key" content="@meta.Value" />
+    }
 </HeadContent>
 
-<BammemoSlipHome />
+<BammemoSlipHome IsAdmin="@isLoggedIn" />
 
 @code {
+    private const string HOME_HEAD_PERSITING_KEY = "home_head";
+    private PersistingComponentStateSubscription persistingSubscription;
+    private Dictionary<string, string?>? metas;
+    private bool isLoggedIn = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson(HOME_HEAD_PERSITING_KEY, out metas))
+        {
+            var response = await CommonSettingService.GetByKeysAsync([SettingKeys.SiteDescription, SettingKeys.SiteKeywords]);
+
+            metas = new();
+
+            foreach (var setting in response.Settings)
+            {
+                switch (setting.Key)
+                {
+                    case SettingKeys.SiteDescription:
+                        metas["description"] = setting.Value;
+                        break;
+                    case SettingKeys.SiteKeywords:
+                        if (setting.Value != null)
+                        {
+                            var keywords = JsonSerializer.Deserialize<List<string>>(setting.Value);
+                            if (keywords != null)
+                            {
+                                metas["keywords"] = String.Join(",", keywords);
+                            }
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException(setting.Key);
+                }
+            }
+        }
+
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isLoggedIn = state.User.Identity?.IsAuthenticated ?? false;
+    }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(HOME_HEAD_PERSITING_KEY, metas);
+        return Task.CompletedTask;
+    }
 }

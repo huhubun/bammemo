@@ -1,0 +1,143 @@
+﻿@page "/settings/links"
+@using System.Net
+@using Bammemo.Service.Abstractions.WebApiModels.SiteLinks
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
+@inject IDialogService DialogService
+@inject WebApiClient WebApiClient
+@inject IToastService ToastService
+@inject IMapper Mapper
+
+<div>
+    <BammemoSettingLayout PageTitle="友情链接">
+        @if (siteLinks != null)
+        {
+            <FluentStack Orientation="Orientation.Vertical" Class="w-full" @key="siteLinks">
+                <div class="w-full">
+                    <FluentButton IconStart="@(new Icons.Filled.Size20.Add())" OnClick="HandleAddRuleAsync">添加</FluentButton>
+                </div>
+
+                @if (siteLinks.Length > 0)
+                {
+                    foreach (var siteLink in siteLinks)
+                    {
+                        <BammemoCard Border HoverShadow Class="bammemo-setting-site-link-card" @key="siteLink.Id">
+                            <FluentStack Style="align-items: center;">
+
+                                <FluentStack Orientation="Orientation.Vertical" Style="width: 0; flex:1;">
+                                    <FluentStack Orientation="Orientation.Horizontal" Class="w-full" Style="align-items: center;">
+                                        <div style="width: 20px; height: 20px;">
+                                            <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.WindowHeaderHorizontal())" />
+                                        </div>
+                                        <FluentLabel>@siteLink.Name</FluentLabel>
+                                    </FluentStack>
+
+                                    <FluentStack Orientation="Orientation.Horizontal" Class="w-full" Style="align-items: center;">
+                                        <div style="width: 20px; height: 20px;">
+                                            <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.Link())" />
+                                        </div>
+                                        <FluentAnchor Href="@siteLink.Url" Appearance="Appearance.Hypertext" Target="_blank">@siteLink.Url</FluentAnchor>
+                                    </FluentStack>
+                                </FluentStack>
+
+                                <FluentStack Orientation="Orientation.Vertical" Class="bammemo-setting-site-link-card-action-wrap" Style="width: calc(20px + 10px);">
+                                    <FluentButton OnClick="@(async _ => await HandleEditRuleAsync(siteLink))" IconStart="@(new Icons.Regular.Size20.Edit())" />
+                                    <FluentButton OnClick="@(async _ => await HandleDeleteRuleAsync(siteLink.Id))" IconStart="@(new Icons.Regular.Size20.Delete().WithColor(Color.Error))" />
+                                </FluentStack>
+                            </FluentStack>
+                        </BammemoCard>
+                    }
+                }
+                else
+                {
+                    <BammemoNoData />
+                }
+            </FluentStack>
+        }
+        else
+        {
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                @for (var i = 0; i < 3; i++)
+                {
+                    <BammemoCard Border Class="w-full bammemo-setting-site-link-card">
+                        <FluentStack Orientation="Orientation.Vertical">
+                            <FluentSkeleton Style="width: 50%; height: 1.25rem;" />
+                            <FluentSkeleton Style="width: 80%; height: 1.25rem;" />
+                        </FluentStack>
+                    </BammemoCard>
+                }
+            </FluentStack>
+        }
+    </BammemoSettingLayout>
+</div>
+
+<FluentToastProvider />
+
+@code {
+    private ListSiteLinkResponse.SiteLinkModel[]? siteLinks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (RendererInfo.Name != BlazorRendererName.WebAssembly)
+        {
+            return;
+        }
+
+        await LoadDataAsync();
+    }
+
+    private async Task HandleAddRuleAsync()
+    {
+        var dialog = await DialogService.ShowDialogAsync(
+            DialogHelper.From<BammemoSettingSiteLinkEditDialog>(),
+            new BammemoSettingSiteLinkEditDialog.SiteLinkModel(),
+            new DialogParameters
+                {
+                    Title = $"添加友情链接",
+                    PreventDismissOnOverlayClick = true,
+                    PreventScroll = true,
+                });
+
+        var result = await dialog.Result;
+        if (!result.Cancelled && result.Data != null)
+        {
+            await LoadDataAsync();
+            ToastService.ShowSuccess("友情链接添加成功");
+        }
+    }
+
+    private async Task HandleEditRuleAsync(ListSiteLinkResponse.SiteLinkModel model)
+    {
+        var dialog = await DialogService.ShowDialogAsync(
+            DialogHelper.From<BammemoSettingSiteLinkEditDialog>(),
+            Mapper.Map<BammemoSettingSiteLinkEditDialog.SiteLinkModel>(model),
+            new DialogParameters
+                {
+                    Title = $"编辑友情链接",
+                    PreventDismissOnOverlayClick = true,
+                    PreventScroll = true,
+                });
+
+        var result = await dialog.Result;
+        if (!result.Cancelled && result.Data != null)
+        {
+            await LoadDataAsync();
+            ToastService.ShowSuccess("友情链接已更新");
+        }
+    }
+
+    private async Task HandleDeleteRuleAsync(int id)
+    {
+        await WebApiClient.SiteLinks.DeleteAsync(id);
+
+        ToastService.ShowSuccess("友情链接已删除");
+
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        siteLinks = null;
+        siteLinks = (await WebApiClient.SiteLinks.ListAsync()).SiteLinks;
+    }
+}

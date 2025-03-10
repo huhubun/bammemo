@@ -1,7 +1,7 @@
 ﻿@rendermode InteractiveAuto
 @implements IDisposable
 @inject PersistentComponentState PersistentComponentState
-@inject WebApiClient webApiClient
+@inject ICommonAnalyticsService CommonAnalyticsService
 
 <div class="bammemo-slip-tag-list">
     <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" VerticalGap="@(16/4)" Wrap>
@@ -33,7 +33,7 @@
 
         if (!PersistentComponentState.TryTakeFromJson(nameof(popularTags), out popularTags))
         {
-            popularTags = (await webApiClient.Analytics.GetSlipTagsAsync()).Tags;
+            popularTags = (await CommonAnalyticsService.GetSlipTagsAsync()).Tags;
         }
     }
 

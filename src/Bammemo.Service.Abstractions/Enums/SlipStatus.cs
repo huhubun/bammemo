@@ -20,5 +20,5 @@ public enum SlipStatus
     /// <summary>
     /// 归档（仅自己可见）
     /// </summary>
-    Article
+    Archive
 }

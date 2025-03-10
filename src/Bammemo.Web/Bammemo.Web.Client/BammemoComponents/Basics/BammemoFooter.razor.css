@@ -16,7 +16,7 @@
         border-color: var(--neutral-stroke-rest);
     }
 
-::deep fluent-anchor::part(control) {
+::deep fluent-anchor::part(control), ::deep .bammemo-footer-filing-number-links-wrap p[typo=body] {
     text-decoration: none;
     color: var(--accent-foreground-active);
 }
@@ -27,7 +27,7 @@
     }
 
 @media (max-width: 600px) {
-    ::deep .bammemo-footer-environment-info-wrap{
+    ::deep .bammemo-footer-environment-info-wrap {
         flex-direction: column !important;
     }
 

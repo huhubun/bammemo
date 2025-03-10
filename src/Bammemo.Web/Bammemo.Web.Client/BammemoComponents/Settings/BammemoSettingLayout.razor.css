@@ -1,0 +1,26 @@
+﻿.bammemo-setting-layout-wrap {
+    width: 100%;
+}
+
+::deep .bammemo-card {
+    min-width: 400px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.bammemo-setting-layout-wrap ::deep .fluent-typography {
+    font-size: 14px !important;
+}
+
+.bammemo-setting-content-wrap {
+    width: 0;
+    flex: 1;
+}
+
+@media (max-width: 600px) {
+    ::deep .bammemo-card {
+        width: 100%;
+        min-width: 100%;
+        max-width: 100%;
+    }
+}

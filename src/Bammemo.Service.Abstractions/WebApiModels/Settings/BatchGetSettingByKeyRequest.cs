@@ -2,5 +2,5 @@
 
 public class BatchGetSettingByKeyRequest
 {
-    public required IEnumerable<string> Keys { get; set; }
+    public required string[] Keys { get; set; }
 }

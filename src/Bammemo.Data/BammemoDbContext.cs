@@ -9,4 +9,5 @@ public class BammemoDbContext(DbContextOptions<BammemoDbContext> options) : DbCo
     public DbSet<SlipTag> SlipTags { get; set; }
     public DbSet<Setting> Settings { get; set; }
     public DbSet<RedirectRule> RedirectRules { get; set; }
+    public DbSet<SiteLink> SiteLinks { get; set; }
 }

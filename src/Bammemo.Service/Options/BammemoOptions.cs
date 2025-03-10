@@ -6,11 +6,6 @@ public class BammemoOptions
 
     public required string ConnectionString { get; set; }
     public required string ApiUrl { get; set; }
-    public string? WebUrl { get; set; }
-
-    public string ApiUrlAuthority => GetUrlAuthority(ApiUrl);
-    public string? WebUrlAuthority => WebUrl != null ? GetUrlAuthority(WebUrl) : null;
-
-    private static string GetUrlAuthority(string url)
-        => new Uri(url).GetLeftPart(UriPartial.Authority);
+    public required string Username { get; set; }
+    public required string Password { get; set; }
 }

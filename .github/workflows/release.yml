@@ -13,16 +13,7 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        project: [webapi, web] 
-        include:
-          - project: webapi
-            dockerfile: ./src/Bammemo.WebApi/Dockerfile
-            image_name: huhubun/bammemo-webapi
-          - project: web
-            dockerfile: ./src/Bammemo.Web/Bammemo.Web/Dockerfile
-            image_name: huhubun/bammemo-web
+
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
       contents: read
@@ -45,7 +36,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
         with:
-          images: ${{ env.REGISTRY }}/${{ matrix.image_name }}
+          images: ${{ env.REGISTRY }}/huhubun/bammemo
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -68,7 +59,7 @@ jobs:
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
           context: .
-          file: ${{ matrix.dockerfile }}
+          file: ./src/Bammemo.Web/Bammemo.Web/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -79,7 +70,7 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: ${{ env.REGISTRY }}/${{ matrix.image_name }}
+          subject-name: ${{ env.REGISTRY }}/huhubun/bammemo
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
       

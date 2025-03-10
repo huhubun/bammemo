@@ -14,17 +14,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        project: [webapi, web] 
-        include:
-          - project: webapi
-            dockerfile: ./src/Bammemo.WebApi/Dockerfile
-            image_name: huhubun/bammemo-webapi
-          - project: web
-            dockerfile: ./src/Bammemo.Web/Bammemo.Web/Dockerfile
-            image_name: huhubun/bammemo-web
-
     steps:
     - uses: actions/checkout@v4
 
@@ -32,7 +21,7 @@ jobs:
       uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
       with:
         context: .
-        file: ${{ matrix.dockerfile }} 
+        file: ./src/Bammemo.Web/Bammemo.Web/Dockerfile
         push: false
-        tags: ${{ env.REGISTRY }}/${{ matrix.image_name }}:ci-build
+        tags: ${{ env.REGISTRY }}/huhubun/bammemo:ci-build
         target: build

@@ -1,0 +1,18 @@
+﻿<div>
+    <FluentGrid Class="@($"bammemo-content-grid {(fullGrid ? "grid-full" : null)}")" OnBreakpointEnter="HandleBreakpointEnter" Spacing="0">
+        @ChildContent
+    </FluentGrid>
+</div>
+
+@code {
+    private bool fullGrid = false;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    void HandleBreakpointEnter(GridItemSize size) => fullGrid = size switch
+    {
+        GridItemSize.Xs or GridItemSize.Sm or GridItemSize.Md => true,
+        _ => false
+    };
+}

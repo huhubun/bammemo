@@ -1,0 +1,15 @@
+﻿::deep .bammemo-redirect-setting-card-action-wrap {
+    visibility: hidden;
+}
+
+::deep .bammemo-redirect-setting-card:hover .bammemo-redirect-setting-card-action-wrap {
+    visibility: visible;
+}
+
+
+::deep .bammemo-redirect-setting-card p.fluent-typography {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

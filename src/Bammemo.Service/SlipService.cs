@@ -1,18 +1,18 @@
-﻿using AutoMapper;
-using Bammemo.Data;
+﻿using Bammemo.Data;
 using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Enums;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Abstractions.WebApiModels.Slips;
-using Bammemo.Service.Interfaces;
 using Bammemo.Service.Helpers;
+using Bammemo.Service.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bammemo.Service;
 
 public class SlipService(
     BammemoDbContext dbContext,
-    IMapper mapper) : ISlipService
+    IHttpContextAccessor httpContext) : ISlipService
 {
     public async Task<Slip[]> ListAsync(
         ListSlipQueryRequest? query,
@@ -39,6 +39,21 @@ public class SlipService(
             }
         }
 
+        if (query?.Status == null)
+        {
+            slips = slips.Where(s => s.Status == (int)SlipStatus.Public);
+        }
+        else
+        {
+            var needAuthorizeSlipStatus = GetNeedAuthorizeSlipStatus(query.Status);
+            if (needAuthorizeSlipStatus.Any() && !IsAuthenticated)
+            {
+                throw new UnauthorizedAccessException($"Slip status: {String.Join(", ", needAuthorizeSlipStatus.Cast<SlipStatus>())}.");
+            }
+
+            slips = slips.Where(s => query.Status.Contains(s.Status));
+        }
+
         var take = paging?.Take ?? 5;
 
         if (paging != null)
@@ -51,12 +66,20 @@ public class SlipService(
 
     public async Task<Slip?> GetByIdAsync(int id)
     {
-        return await dbContext.Slips.SingleOrDefaultAsync(s => s.Id == id);
+        var slip = await dbContext.Slips.SingleOrDefaultAsync(s => s.Id == id);
+
+        SlipAuthorizeGuardian(slip);
+
+        return slip;
     }
 
     public async Task<Slip?> GetByIdNoTrackingAsync(int id)
     {
-        return await dbContext.Slips.AsNoTracking().Include(s => s.Tags).SingleOrDefaultAsync(s => s.Id == id);
+        var slip = await dbContext.Slips.AsNoTracking().Include(s => s.Tags).SingleOrDefaultAsync(s => s.Id == id);
+
+        SlipAuthorizeGuardian(slip);
+
+        return slip;
     }
 
     public async Task<Slip?> GetByLinkNameAsync(string linkName)
@@ -70,10 +93,10 @@ public class SlipService(
 
         if (tags.Length > 0)
         {
-            entity.Tags = tags.Select(t => new SlipTag
+            entity.Tags = [.. tags.Select(t => new SlipTag
             {
                 Tag = t
-            }).ToArray();
+            })];
         }
 
         await dbContext.Slips.AddAsync(entity);
@@ -112,6 +135,9 @@ public class SlipService(
         return entity;
     }
 
+    public async Task<int> DeleteAsync(int id)
+        => await dbContext.Slips.Where(s => s.Id == id).ExecuteDeleteAsync();
+
     public async Task<long[]> GetCreatedTimeWithSlipAsync(long startTime, long endTime)
         => await dbContext.Slips
             .AsNoTracking()
@@ -128,4 +154,19 @@ public class SlipService(
             .Distinct()
             .ToArrayAsync();
 
+    public bool IsAuthenticated => httpContext.HttpContext.User.Identity?.IsAuthenticated ?? false;
+
+    private void SlipAuthorizeGuardian(Slip? slip)
+    {
+        if (slip != null && IsNeedAuthorizeSlipStatus(slip.Status) && !IsAuthenticated)
+        {
+            throw new UnauthorizedAccessException($"Slip status: {(SlipStatus)slip.Status}.");
+        }
+    }
+
+    private static IEnumerable<int> GetNeedAuthorizeSlipStatus(IEnumerable<int> slipStatus)
+        => slipStatus.Except([(int)SlipStatus.Public]);
+
+    private static bool IsNeedAuthorizeSlipStatus(int slipStatus)
+        => GetNeedAuthorizeSlipStatus([slipStatus]).Any();
 }

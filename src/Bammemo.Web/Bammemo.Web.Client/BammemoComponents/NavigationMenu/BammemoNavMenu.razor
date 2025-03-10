@@ -1,5 +1,6 @@
 ﻿@rendermode InteractiveAuto
 @inject IDialogService DialogService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <div class="bammemo-nav-menu-wrap @Class">
     <FluentDesignTheme StorageName="theme" @bind-Mode="designThemeMode" />
@@ -89,44 +90,77 @@
 </div>
 
 @code {
-    private DesignThemeModes designThemeMode;
-    private bool expanded = true;
-
-    private BammemoSiteNavItem[] NavItems => new BammemoSiteNavItem[]
-    {
-        new()
+    private static readonly BammemoSiteNavItem spacerItem = new()
+        {
+            Type = BammemoNavMenuItemType.Spacer
+        };
+    private static readonly BammemoSiteNavItem indexItem = new()
         {
             Text = "首页",
             IconRest = new Icons.Regular.Size24.Home(),
             IconActive = new Icons.Filled.Size24.Home(),
             Href = "/"
-        },
-        new()
+        };
+    private static readonly BammemoSiteNavItem linksItem = new()
         {
             Text = "链接",
             IconRest = new Icons.Regular.Size24.LinkMultiple(),
             IconActive = new Icons.Filled.Size24.LinkMultiple(),
             Href = "/links"
-        },
-        new()
+        };
+    private static readonly BammemoSiteNavItem aboutItem = new()
         {
             Text = "关于",
             IconRest = new Icons.Regular.Size24.Info(),
             IconActive = new Icons.Filled.Size24.Info(),
             Href = "/about"
-        },
-        new()
+        };
+    private static readonly BammemoSiteNavItem settingItem = new()
         {
-            Type = BammemoNavMenuItemType.Spacer
-        },
-        new()
+            Text = "设置",
+            IconRest = new Icons.Regular.Size24.Settings(),
+            IconActive = new Icons.Filled.Size24.Settings(),
+            Href = "/settings",
+            Match = NavLinkMatch.Prefix
+        };
+    private static readonly BammemoSiteNavItem loginItem = new()
         {
-            Text = $"色彩模式： {ColorModeText}",
-            IconRest = ColorModeIcon,
-            Type = BammemoNavMenuItemType.Button,
-            OnClick = SwitchColorMode
+            Text = "登录",
+            IconRest = new Icons.Regular.Size20.PersonCircle(),
+            Href = "/login"
+        };
+    private static readonly BammemoSiteNavItem logoutItem = new()
+        {
+            Text = "登出",
+            IconRest = new Icons.Regular.Size20.ArrowExit(),
+            Href = "/logout"
+        };
+    private static readonly BammemoSiteNavItem[] topItems = [indexItem,
+                linksItem,
+                aboutItem];
+
+    private DesignThemeModes designThemeMode;
+    private bool expanded = true;
+    private bool isLoggedIn = false;
+
+    private IEnumerable<BammemoSiteNavItem> NavItems
+    {
+        get
+        {
+            yield return indexItem;
+            yield return linksItem;
+            yield return aboutItem;
+            if (isLoggedIn)
+            {
+                yield return settingItem;
+            }
+
+            yield return spacerItem;
+
+            yield return ColorModeItem;
+            yield return isLoggedIn ? logoutItem : loginItem;
         }
-    };
+    }
 
     [Parameter]
     public BammenoNavMenuType Type { get; set; }
@@ -134,6 +168,19 @@
     [Parameter]
     public string? Class { get; set; }
 
+    public BammemoSiteNavItem ColorModeItem => new()
+        {
+            Text = $"色彩模式： {ColorModeText}",
+            IconRest = ColorModeIcon,
+            Type = BammemoNavMenuItemType.Button,
+            OnClick = SwitchColorMode
+        };
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        isLoggedIn = state.User.Identity?.IsAuthenticated ?? false;
+    }
 
     public Icon ColorModeIcon => designThemeMode switch
     {
@@ -152,8 +199,9 @@
     private void SwitchColorMode()
     {
         designThemeMode = (DesignThemeModes)(((int)designThemeMode + 1) % Enum.GetValues<DesignThemeModes>().Length);
-    }
 
+        StateHasChanged();
+    }
 
     public record BammemoSiteNavItem
     {
@@ -165,7 +213,4 @@
         public BammemoNavMenuItemType Type { get; set; } = BammemoNavMenuItemType.Link;
         public Action? OnClick { get; set; }
     }
-
-
-
 }

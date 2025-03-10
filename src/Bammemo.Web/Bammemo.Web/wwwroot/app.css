@@ -158,6 +158,14 @@ blockquote {
         margin: 0;
     }
 
+.text-error{
+    color: var(--error);
+}
+
+.w-full{
+    width: 100%;
+}
+
 @media (max-width: 600px) {
     .body-content {
         height: calc(100dvh - 64px) !important;

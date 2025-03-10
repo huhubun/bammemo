@@ -1,0 +1,68 @@
+﻿@page "/login"
+@using Bammemo.Service.Identities
+@using Bammemo.Web.Identities
+@using Bammemo.Web.Models
+@using Microsoft.AspNetCore.Identity
+
+@layout SigninLayout
+@inject ILogger<Login> Logger
+@inject SignInManager<BammemoUser> SignInManager
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>Log in</PageTitle>
+
+<div style="height: 100%; width:100%;align-items: center; align-content: center; justify-items: center; justify-content: center; display: flex;">
+    <div style="min-width: 300px; max-width: 340px; padding: 1rem">
+        <EditForm method="POST" Model="User" OnValidSubmit="LoginUser" FormName="login" novalidate>
+            <DataAnnotationsValidator />
+
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="0">
+                <FluentLabel Typo="Typography.PageTitle" Class="bammemo-font-text" Style="margin-bottom:2rem; text-align: center; width: 100%; text-align: center;">Bammemo 竹箋</FluentLabel>
+
+                <StatusMessage Intent="MessageIntent.Error" Message="@errorMessage" Style="margin-bottom: 1rem;" />
+
+                <div style="width: 100%;margin-bottom:1rem;">
+                    <InputText @bind-Value="User.Username" placeholder="Username" type="text" />
+                    <ValidationMessage For="() => User.Username" class="text-error" />
+                </div>
+
+                <div style="width: 100%;margin-bottom:2rem;">
+                    <InputText @bind-Value="User.Password" placeholder="Password" type="password" />
+                    <ValidationMessage For="() => User.Password" class="text-error" /> 
+                </div>
+
+                <button type="submit">登录</button>
+            </FluentStack>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private string? errorMessage;
+
+    [SupplyParameterFromForm]
+    private LoginModel User { get; set; } = new();
+
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+
+    public async Task LoginUser()
+    {
+        if (User.Username == null || User.Password == null)
+        {
+            errorMessage = "请输入用户名和密码";
+            return;
+        }
+
+        var result = await SignInManager.PasswordSignInAsync(User.Username, User.Password, false, lockoutOnFailure: false);
+        if (result.Succeeded)
+        {
+            Logger.LogInformation("User logged in.");
+            RedirectManager.RedirectTo(ReturnUrl);
+        }
+        else
+        {
+            errorMessage = "Error: Invalid login attempt.";
+        }
+    }
+}

@@ -35,7 +35,8 @@ namespace Bammemo.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Source");
+                    b.HasIndex("Source")
+                        .IsUnique();
 
                     b.ToTable("RedirectRules");
                 });
@@ -57,7 +58,6 @@ namespace Bammemo.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Value")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -65,6 +65,31 @@ namespace Bammemo.Data.Migrations
                     b.HasIndex("Key");
 
                     b.ToTable("Settings");
+                });
+
+            modelBuilder.Entity("Bammemo.Data.Entities.SiteLink", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("UpdateAt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SiteLinks");
                 });
 
             modelBuilder.Entity("Bammemo.Data.Entities.Slip", b =>

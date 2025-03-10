@@ -1,0 +1,23 @@
+﻿::deep input[type=text],
+::deep input[type=password] {
+    border: 1px solid var(--neutral-stroke-strong-rest);
+    line-height: 2rem;
+    border-radius: 5px;
+    padding: 2px 6px;
+    width: 100%;
+}
+
+
+::deep button[type=submit] {
+    background: padding-box linear-gradient(var(--accent-fill-rest), var(--accent-fill-rest)), border-box var(--accent-stroke-control-rest);
+    color: var(--foreground-on-accent-rest);
+    width: 100%;
+    line-height: 2rem;
+    padding: 2px 6px;
+    border-radius: 5px;
+    border: none;
+}
+
+::deep button[type=submit]:hover{
+    opacity: 0.8;
+}

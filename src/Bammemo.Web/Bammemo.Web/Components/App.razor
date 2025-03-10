@@ -29,7 +29,7 @@
             autoResizeSlipEditorTextarea: function (event) {
                 if (event.target instanceof HTMLTextAreaElement
                     && event.target.classList.contains('slip-editor-input')) {
-                    resizeSlipEditorTextarea(event.target);
+                    bammemo.util.resizeSlipEditorTextarea(event.target);
                 }
             },
             resizeSlipEditorTextarea: function (element) {
