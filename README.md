@@ -13,7 +13,7 @@ docker pull ghcr.io/huhubun/bammemo:0.1.1-alpha.1
 
 ### 配置项
 
-#### 服务器端配置
+#### 服务器端
 
 `appsettings.Production.json`
 
@@ -28,16 +28,16 @@ docker pull ghcr.io/huhubun/bammemo:0.1.1-alpha.1
 }
 ```
 
-使用时建议通过环境变量进行设置 `Bammemo__{名称}`（注意是两个下划线），环境变量会覆盖文件配置：
+使用时建议通过环境变量进行设置 `Bammemo__{名称}`（注意是两个下划线），环境变量会覆盖配置文件：
 
 ```bash
 export Bammemo__ApiUrl="https://example.com/api/"
 ```
 
 
-#### 前端配置
+# 前端
 
-`wwwroot/bammemo.json`
+通过 HTTP 请求从服务器端获取 `GET /bammemo.json`
 
 ```json
 {
@@ -47,7 +47,7 @@ export Bammemo__ApiUrl="https://example.com/api/"
 }
 ```
 
-使用时建议直接覆盖文件。
+前端配置中的值由服务器端自动生成，无需进行干预。
 
 #### 释义
 
@@ -65,6 +65,21 @@ export Bammemo__ApiUrl="https://example.com/api/"
 ```bash
 dotnet run --project ./src/Bammemo.Web/Bammemo.Web/Bammemo.Web.csproj
 ```
+
+由于对前端（WebAssembly）启用了 [AOT](https://learn.microsoft.com/en-us/aspnet/core/blazor/webassembly-build-tools-and-aot?view=aspnetcore-9.0) 和[剪裁](https://learn.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/configure-trimmer?view=aspnetcore-9.0)，请**务必**在本地进行测试，以确保功能能够正常使用（在 PowerShell 中，需将 `\` 替换为 `\``）：
+
+```bash
+docker build -t bammemo:local-dev -f src/Bammemo.Web/Bammemo.Web/Dockerfile .
+docker run -v C:\bammemo:/data/bammemo \
+          -e Bammemo__ConnectionString="Data Source=/data/bammemo/bammemo.db" \
+          -e Bammemo__ApiUrl=http://localhost:8080/api/ \
+          -e Bammemo__Username=admin \
+          -e Bammemo__Password="BASE64_ENCODE_PASSWORD" \
+          -p 8080:8080 \
+          bammemo:local-dev
+```
+
+请注意，如果在执行 `docker build` 前，曾经对代码进行过编译、运行或发布操作，请移除所有项目的 `obj` 和 `bin` 文件夹，否则会导致容器中打包失败。可以运行 `scripts` 目录下的 `clean.bat` 或在 Visual Studio 中安装 [Command Task Runner](https://marketplace.visualstudio.com/items?itemName=MadsKristensen.CommandTaskRunner64) 扩展，并通过“视图”—“其他窗口”—“任务运行程序资源管理器”执行 `clean` 任务。
 
 ### Db Migration 
 
