@@ -19,17 +19,19 @@ builder.Services.AddHttpClient<WebApiClient>(client => client.BaseAddress = new 
 
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
+builder.Services.AddScoped<ICommonSiteLinkService, CommonSiteLinkService>();
+builder.Services.AddScoped<ICommonAnalyticsService, CommonAnalyticsService>();
 
 await builder.Build().RunAsync();
 
 static async Task<BammemoWebClientOptions> AddBammemoWebClientOptionsAsync(WebAssemblyHostBuilder builder)
 {
-    var http = new HttpClient()
+    var httpClient = new HttpClient()
     {
         BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
     };
 
-    using var response = await http.GetAsync(BammemoWebClientOptions.FileName);
+    using var response = await httpClient.GetAsync(BammemoWebClientOptions.FileName);
     using var stream = await response.Content.ReadAsStreamAsync();
 
     builder.Configuration.AddJsonStream(stream);

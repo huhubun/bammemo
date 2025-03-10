@@ -9,7 +9,7 @@ public partial class WebApiClient
     {
         public async Task<ListSiteLinkResponse> ListAsync()
         {
-            var response = await httpClient.GetFromJsonAsync<ListSiteLinkResponse>($"siteLinks");
+            var response = await httpClient.GetFromJsonAsync($"siteLinks", SourceGenerationContext.Default.ListSiteLinkResponse);
 
             ArgumentNullException.ThrowIfNull(response);
 
@@ -18,13 +18,13 @@ public partial class WebApiClient
 
         public async Task<CreateSiteLinkResponse?> CreateAsync(CreateSiteLinkRequest request)
         {
-            var responseMessage = await httpClient.PostAsJsonAsync($"siteLinks", request);
-            return await responseMessage.Content.ReadFromJsonAsync<CreateSiteLinkResponse>();
+            var responseMessage = await httpClient.PostAsJsonAsync($"siteLinks", request, SourceGenerationContext.Default.CreateSiteLinkRequest);
+            return await responseMessage.Content.ReadFromJsonAsync<CreateSiteLinkResponse>(SourceGenerationContext.Default.CreateSiteLinkResponse);
         }
 
         public async Task UpdateAsync(int id, UpdateSiteLinkRequest request)
         {
-            await httpClient.PutAsync($"siteLinks/{id}", JsonContent.Create(request));
+            await httpClient.PutAsync($"siteLinks/{id}", JsonContent.Create(request, SourceGenerationContext.Default.UpdateSiteLinkRequest));
         }
 
         public async Task DeleteAsync(int id)

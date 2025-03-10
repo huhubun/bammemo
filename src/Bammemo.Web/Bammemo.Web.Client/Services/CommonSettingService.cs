@@ -19,7 +19,7 @@ public class CommonSettingService(
     {
         var response = await client.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
         {
-            Keys = keys
+            Keys = keys.ToArray()
         });
 
         return mapper.Map<BatchGetSettingByKeyDto>(response);

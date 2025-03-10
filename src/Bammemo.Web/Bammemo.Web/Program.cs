@@ -6,6 +6,7 @@ using Bammemo.Service.Interfaces;
 using Bammemo.Service.MapperProfiles;
 using Bammemo.Service.Options;
 using Bammemo.Web.Client.Extensions;
+using Bammemo.Web.Client.Options;
 using Bammemo.Web.Components;
 using Bammemo.Web.Identities;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Scalar.AspNetCore;
 
@@ -103,6 +105,8 @@ builder.Services.AddScoped<ISiteLinkService, SiteLinkService>();
 
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
+builder.Services.AddScoped<ICommonSiteLinkService, CommonSiteLinkService>();
+builder.Services.AddScoped<ICommonAnalyticsService, CommonAnalyticsService>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -154,9 +158,24 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Bammemo.Web.Client._Imports).Assembly);
+
 app.MapGet("/logout", async ([FromServices] SignInManager<BammemoUser> signInManager) =>
 {
     await signInManager.SignOutAsync();
     return TypedResults.LocalRedirect("~/");
 });
-app.Run();
+
+app.MapGet("/bammemo.json", async (HttpContext httpContext) =>
+{
+    var bammemoOptions = httpContext.RequestServices.GetRequiredService<IOptions<BammemoOptions>>();
+
+    await httpContext.Response.WriteAsJsonAsync(new
+    {
+        Bammemo = new BammemoWebClientOptions
+        {
+            ApiUrl = bammemoOptions.Value.ApiUrl
+        }
+    });
+});
+
+app.Run(); 

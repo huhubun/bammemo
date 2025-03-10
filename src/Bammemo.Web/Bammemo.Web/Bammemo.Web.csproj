@@ -16,11 +16,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.5" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.11.5" />
-		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.5" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.6" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Emoji" Version="4.11.6" />
+		<PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.6" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.0.15" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.0.26" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

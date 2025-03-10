@@ -2,7 +2,7 @@
 
 public class BatchGetSettingByKeyResponse
 {
-    public required List<SettingItemModel> Settings { get; set; }
+    public required SettingItemModel[] Settings { get; set; }
 
     public class SettingItemModel
     {

@@ -30,7 +30,7 @@ public class SettingController(
         var settings = await settingService.GetByKeysAsync(request.Keys);
         return Ok(new BatchGetSettingByKeyResponse
         {
-            Settings = mapper.Map<List<BatchGetSettingByKeyResponse.SettingItemModel>>(settings)
+            Settings = mapper.Map<BatchGetSettingByKeyResponse.SettingItemModel[]>(settings)
         });
     }
 

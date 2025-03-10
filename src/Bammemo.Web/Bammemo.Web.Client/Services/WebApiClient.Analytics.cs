@@ -1,4 +1,5 @@
-﻿using Bammemo.Service.Abstractions.WebApiModels.Slips;
+﻿using Bammemo.Service.Abstractions.Dtos.Analytics;
+using Bammemo.Service.Abstractions.WebApiModels.Slips;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Http.Json;
 
@@ -17,7 +18,7 @@ public partial class WebApiClient
                     {nameof(request.StartTime), request.StartTime.ToString() },
                     {nameof(request.EndTime), request.EndTime.ToString() }
                 });
-            var response = await httpClient.GetFromJsonAsync<GetSlipTimesResponse>("analytics/slips/times" + query);
+            var response = await httpClient.GetFromJsonAsync<GetSlipTimesResponse>("analytics/slips/times" + query, SourceGenerationContext.Default.GetSlipTimesResponse);
 
             ArgumentNullException.ThrowIfNull(response);
 
@@ -26,7 +27,7 @@ public partial class WebApiClient
 
         public async Task<GetSlipTagsResponse> GetSlipTagsAsync()
         {
-            var response = await httpClient.GetFromJsonAsync<GetSlipTagsResponse>("analytics/slips/tags");
+            var response = await httpClient.GetFromJsonAsync<GetSlipTagsResponse>("analytics/slips/tags", SourceGenerationContext.Default.GetSlipTagsResponse);
             return response;
         }
     }

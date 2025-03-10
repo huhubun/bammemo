@@ -2,7 +2,7 @@
 @using Bammemo.Service.Abstractions.WebApiModels.Settings
 @using System.Text.Json
 @rendermode InteractiveAuto
-@inject WebApiClient WebApiClient
+@inject ICommonSettingService CommonSettingService
 @inject PersistentComponentState PersistentComponentState
 
 <BammemoPageTitle Title="关于" />
@@ -66,10 +66,7 @@
 
         if (!PersistentComponentState.TryTakeFromJson(ABOUT_PAGE_PERSITING_KEY, out settingModel))
         {
-            var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
-                {
-                    Keys = settingKeys
-                });
+            var response = await CommonSettingService.GetByKeysAsync(settingKeys);
 
             settingModel = new();
 

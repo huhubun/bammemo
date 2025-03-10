@@ -4,7 +4,7 @@
 @rendermode InteractiveAuto
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject PersistentComponentState PersistentComponentState
-@inject WebApiClient WebApiClient
+@inject ICommonSettingService CommonSettingService
 
 <BammemoPageTitle Title="首页" />
 
@@ -29,10 +29,7 @@
 
         if (!PersistentComponentState.TryTakeFromJson(HOME_HEAD_PERSITING_KEY, out metas))
         {
-            var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
-                {
-                    Keys = [SettingKeys.SiteDescription, SettingKeys.SiteKeywords]
-                });
+            var response = await CommonSettingService.GetByKeysAsync([SettingKeys.SiteDescription, SettingKeys.SiteKeywords]);
 
             metas = new();
 

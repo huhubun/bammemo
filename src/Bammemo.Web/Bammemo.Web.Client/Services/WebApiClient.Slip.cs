@@ -32,7 +32,7 @@ public partial class WebApiClient
             }
 
             var queryString = QueryHelpers.AddQueryString(String.Empty, requestParameters);
-            var response = await httpClient.GetFromJsonAsync<ListSlipResponse>("slips" + queryString);
+            var response = await httpClient.GetFromJsonAsync("slips" + queryString, SourceGenerationContext.Default.ListSlipResponse);
 
             return response;
         }
@@ -40,21 +40,21 @@ public partial class WebApiClient
         public async Task<GetSlipByIdResponse?> GetByIdAsync(string idOrLinkName, GetSlipByIdRequest? request = null)
         {
             var queryString = request?.Type != null ? QueryHelpers.AddQueryString(String.Empty, nameof(request.Type), request.Type.Value.ToString()) : null;
-            return await httpClient.GetFromJsonAsync<GetSlipByIdResponse?>($"slips/{idOrLinkName}" + queryString);
+            return await httpClient.GetFromJsonAsync($"slips/{idOrLinkName}" + queryString, SourceGenerationContext.Default.GetSlipByIdResponse);
         }
 
         public async Task<CreateSlipResponse?> CreateAsync(CreateSlipRequest request)
         {
-            var responseMessage = await httpClient.PostAsJsonAsync("slips", request);
-            var response = await responseMessage.Content.ReadFromJsonAsync<CreateSlipResponse>();
+            var responseMessage = await httpClient.PostAsJsonAsync("slips", request, SourceGenerationContext.Default.CreateSlipRequest);
+            var response = await responseMessage.Content.ReadFromJsonAsync(SourceGenerationContext.Default.CreateSlipResponse);
 
             return response;
         }
 
         public async Task<UpdateSlipResponse?> UpdateAsync(string id, UpdateSlipRequest request)
         {
-            var responseMessage = await httpClient.PutAsJsonAsync($"slips/{id}", request);
-            var response = await responseMessage.Content.ReadFromJsonAsync<UpdateSlipResponse>();
+            var responseMessage = await httpClient.PutAsJsonAsync($"slips/{id}", request, SourceGenerationContext.Default.UpdateSlipRequest);
+            var response = await responseMessage.Content.ReadFromJsonAsync(SourceGenerationContext.Default.UpdateSlipResponse);
 
             return response;
         }

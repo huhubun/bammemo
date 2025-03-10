@@ -46,7 +46,8 @@ else
                               TOption="SlipStatus"
                               Items="Enum.GetValues<SlipStatus>()"
                               OptionText="@(s => s.ToString())"
-                              OptionValue="@(s => ((int)s).ToString())" />
+                              OptionValue="@(s => ((int)s).ToString())" 
+                              Width="120px"/>
 
                 <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: right;">
                     @if (IsEdit)

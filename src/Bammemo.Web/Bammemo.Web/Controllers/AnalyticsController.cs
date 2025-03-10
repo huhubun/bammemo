@@ -1,4 +1,5 @@
-﻿using Bammemo.Service.Abstractions.WebApiModels.Slips;
+﻿using Bammemo.Service.Abstractions.Dtos.Analytics;
+using Bammemo.Service.Abstractions.WebApiModels.Slips;
 using Bammemo.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
