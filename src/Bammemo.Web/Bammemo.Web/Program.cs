@@ -17,7 +17,9 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.FluentUI.AspNetCore.Components;
+#if DEBUG
 using Scalar.AspNetCore;
+#endif
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,7 +93,7 @@ builder.Services.AddBammemoAutoMapper(
     typeof(Program).Assembly,
     typeof(SlipProfile).Assembly);
 
-// ‘§≥ œ÷–Ë“™
+// È¢ÑÂä†ËΩΩÈúÄË¶Å
 builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client =>
 {
     client.BaseAddress = new Uri(bammemoOptions.ApiUrl.NormalizeUrlSlash());
@@ -112,16 +114,13 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
+#if DEBUG
     app.UseWebAssemblyDebugging();
     app.MapOpenApi();
     app.MapScalarApiReference();
-}
-else
-{
+#else
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-}
+#endif
 
 using (var scope = app.Services.CreateScope())
 {
