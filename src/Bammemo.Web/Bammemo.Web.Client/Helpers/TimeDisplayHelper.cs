@@ -10,7 +10,7 @@ public static class TimeDisplayHelper
     /// <param name="ticks">UTC time ticks</param>
     /// <returns></returns>
     public static string ToLocalTimeString(this long ticks)
-        => new DateTime(ticks, DateTimeKind.Utc).ToLocalTime().ToString();
+        => new DateTime(ticks, DateTimeKind.Utc).ToLocalTime().ToString("yyyy-MM-dd HH:mm");
 
     /// <summary>
     /// 
