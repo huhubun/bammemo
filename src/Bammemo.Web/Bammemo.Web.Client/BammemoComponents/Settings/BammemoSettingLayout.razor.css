@@ -8,7 +8,7 @@
     margin: 0 auto;
 }
 
-.bammemo-setting-layout-wrap ::deep .fluent-typography {
+.bammemo-setting-layout-wrap ::deep .fluent-typography[typo=body] {
     font-size: 14px !important;
 }
 
