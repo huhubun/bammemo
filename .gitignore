@@ -400,3 +400,4 @@ FodyWeavers.xsd
 *.sln.iml
 /src/Bammemo.Web/Bammemo.Web/bammemo.db-shm
 /src/Bammemo.Web/Bammemo.Web/bammemo.db-wal
+src/Bammemo.Web/Bammemo.Web/appsettings.Development.json
