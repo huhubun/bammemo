@@ -8,7 +8,7 @@
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>full</TrimMode>
-    <RunAOTCompilation>true</RunAOTCompilation>
+    <RunAOTCompilation>false</RunAOTCompilation>
     <WasmCompressionFormat>brotli</WasmCompressionFormat>
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
