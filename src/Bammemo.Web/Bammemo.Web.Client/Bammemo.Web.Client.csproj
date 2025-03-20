@@ -14,13 +14,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.2" />
-    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.6" />
-    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="9.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.3" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.11.7" />
+    <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.11.7" />
+	<PackageReference Include="Microsoft.Kiota.Bundle" Version="1.17.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +36,10 @@
 
     <ItemGroup>
         <TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="WebApis\" />
     </ItemGroup>
 
 </Project>

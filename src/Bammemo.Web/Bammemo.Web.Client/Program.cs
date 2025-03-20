@@ -3,6 +3,7 @@ using Bammemo.Web.Client.Options;
 using Bammemo.Web.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Microsoft.Kiota.Http.HttpClientLibrary;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 var bammemoOptions = await AddBammemoWebClientOptionsAsync(builder);
@@ -17,10 +18,23 @@ builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddHttpClient<WebApiClient>(client => client.BaseAddress = new Uri(bammemoOptions.ApiUrl.NormalizeUrlSlash()));
 
+builder.Services.AddScoped(_ =>
+{
+    var httpClient = KiotaClientFactory.Create(finalHandler: new HttpClientHandler { AllowAutoRedirect = false });
+    var adapter = new HttpClientRequestAdapter(new Microsoft.Kiota.Abstractions.Authentication.AnonymousAuthenticationProvider(), httpClient: httpClient)
+    {
+        BaseUrl = new Uri(bammemoOptions.ApiUrl).GetLeftPart(UriPartial.Authority)
+    };
+    var client = new Bammemo.Web.Client.WebApis.Client.WebApiClient(adapter);
+
+    return client;
+});
+
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
 builder.Services.AddScoped<ICommonSiteLinkService, CommonSiteLinkService>();
 builder.Services.AddScoped<ICommonAnalyticsService, CommonAnalyticsService>();
+
 
 await builder.Build().RunAsync();
 

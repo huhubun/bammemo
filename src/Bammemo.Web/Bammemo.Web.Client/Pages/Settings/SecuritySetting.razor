@@ -1,0 +1,76 @@
+﻿@page "/settings/security"
+@using System.Net
+@using Bammemo.Service.Abstractions.Enums
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
+@inject IMapper Mapper
+
+<div>
+    <BammemoSettingLayout PageTitle="安全">
+        @if (model != null)
+        {
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                <div class="w-full">
+                    <FluentInputLabel>密钥源</FluentInputLabel>
+                    <FluentLabel Typo="Typography.Body">@model.KeySource</FluentLabel>
+                </div>
+            </FluentStack>
+
+            <FluentGrid>
+                <FluentGridItem xs="12" sm="6">
+                    <BammemoCard Border HoverShadow>
+                        <FluentAnchor Href="/settings/security/tencent-cloud" Appearance="Appearance.Hypertext" Style="width: 100%;">
+                            Tencent Cloud
+                        </FluentAnchor>
+                    </BammemoCard>
+                </FluentGridItem>
+            </FluentGrid>
+        }
+        else
+        {
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                @for (var i = 0; i < 3; i++)
+                {
+                    <BammemoCard Border Class="w-full bammemo-setting-site-link-card">
+                        <FluentStack Orientation="Orientation.Vertical">
+                            <FluentSkeleton Style="width: 50%; height: 1.25rem;" />
+                            <FluentSkeleton Style="width: 80%; height: 1.25rem;" />
+                        </FluentStack>
+                    </BammemoCard>
+                }
+            </FluentStack>
+        }
+    </BammemoSettingLayout>
+</div>
+
+<FluentToastProvider />
+
+@code {
+    private SecuritySettingModel? model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (RendererInfo.Name != BlazorRendererName.WebAssembly)
+        {
+            return;
+        }
+
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        var response = await WebApiClient.Api.Settings.Security.KeySource.GetAsync();
+
+        model = new()
+            {
+                KeySource = (KeySource)response.KeySource.Value
+            };
+    }
+
+    class SecuritySettingModel
+    {
+        public KeySource KeySource { get; set; }
+    }
+}

@@ -10,7 +10,8 @@
     <div class="bammemo-site-nav-desktop">
         <div class="bammemo-site-nav-site-logo-wrap">
             <div class="bammemo-site-nav-site-logo">
-                <BammemoSettingValue SettingKey="@SettingKeys.SiteLogoText" EntryPoint="@(nameof(BammemoSiteNav))" />
+                @* <BammemoSettingValue SettingKey="@SettingKeys.SiteLogoText" EntryPoint="@(nameof(BammemoSiteNav))" /> *@
+                <FluentIcon Value="@(Icon.FromImageUrl("/bammemo-favicon-48x48.png"))" Style="width: 48px; height: 48px;" />
             </div>
         </div>
         <BammemoNavMenu Type="BammenoNavMenuType.AppBar" />

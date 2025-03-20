@@ -1,0 +1,29 @@
+{
+  "descriptionHash": "164EEE0391294A54EC47CC63AC3FF117A722168082284BB23B6C6E94EB0655BEF9AE27E2E2C7CEDD176BA7C28334CEF21980A2C1255E8C59C528688A5C1C3CFE",
+  "descriptionLocation": "http://localhost:5146/openapi/v1.json",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.24.1",
+  "clientClassName": "WebApiClient",
+  "typeAccessModifier": "Public",
+  "clientNamespaceName": "Bammemo.Web.Client.WebApis.Client",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": true,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json",
+    "text/plain;q=0.9",
+    "application/x-www-form-urlencoded;q=0.2",
+    "multipart/form-data;q=0.1"
+  ],
+  "includePatterns": [],
+  "excludePatterns": [],
+  "disabledValidationRules": []
+}

@@ -8,13 +8,19 @@ public partial class WebApiClient
 {
     public class SettingClient(HttpClient httpClient)
     {
-        public async Task<GetSettingByKeyResponse> GetByKeyAsync(string key)
+        public async Task<GetSettingByKeyResponse?> GetByKeyAsync(string key)
         {
             var response = await httpClient.GetFromJsonAsync($"settings/{key}", SourceGenerationContext.Default.GetSettingByKeyResponse);
-
-            ArgumentNullException.ThrowIfNull(response);
-
             return response;
+        }
+
+        public async Task UpdateByKeyAsync(string key, UpdateSettingByKeyRequest request)
+        {
+            var response = await httpClient.PutAsync($"settings/{key}", JsonContent.Create(request, SourceGenerationContext.Default.BatchUpdateSettingByKeyRequest));
+            if (!response.IsSuccessStatusCode)
+            {
+                // TODO
+            }
         }
 
         public async Task<BatchGetSettingByKeyResponse> BatchGetByKeysAsync(BatchGetSettingByKeyRequest request)

@@ -91,6 +91,27 @@ dotnet ef database update --startup-project "../Bammemo.Web/Bammemo.Web/Bammemo.
 > [!WARNING]
 > 目前 bammemo 尚未正式发布，数据库结构可能随时更改，并且不会预先通知。
 
+### OpenApi Client
+
+我们使用 [Kiota](https://learn.microsoft.com/zh-cn/openapi/kiota/) 来生成访问 Web Api 的客户端，您需要[安装 Kiota 工具](https://learn.microsoft.com/zh-cn/openapi/kiota/install?tabs=bash)：
+
+```bash
+dotnet tool install --global Microsoft.OpenApi.Kiota
+```
+
+要更新 Web Api 客户端，请执行（在 PowerShell 中，需将 `\` 替换为 `\``）：
+
+```bash
+kiota generate -l CSharp \
+    -c WebApiClient \
+    -n Bammemo.Web.Client.WebApis.Client \
+    -d http://localhost:5146/openapi/v1.json \
+    --serializer Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory \
+    --deserializer Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory \
+    --exclude-backward-compatible \
+    -o ./src/Bammemo.Web/Bammemo.Web.Client/WebApis/Client
+```
+
 ## 第三方资源
 
 在开发 Bammemo 的过程中，我们使用了大量开源类库、字体、工具等，在此由衷感谢所有开源项目的开发者及维护者，你们的奉献、热爱与智慧是人类进步的基石。

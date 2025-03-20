@@ -37,21 +37,28 @@ public class SlipController(
         }
     }
 
-    [HttpGet("{idOrLinkName}", Name = $"{nameof(SlipController)}_{nameof(GetByIdAsync)}")]
-    public async Task<IActionResult> GetByIdAsync([FromRoute] string idOrLinkName, [FromQuery] GetSlipByIdRequest? request)
+    [HttpGet("{id}", Name = $"{nameof(SlipController)}_{nameof(GetByIdAsync)}")]
+    public async Task<IActionResult> GetByIdAsync([FromRoute] string id, [FromQuery] GetSlipByIdRequest? request)
     {
         Slip? slip;
 
         if (request?.Type == SlipIdOrLinkNameType.LinkName)
         {
-            slip = await slipService.GetByLinkNameAsync(idOrLinkName);
+            slip = await slipService.GetByLinkNameAsync(id);
         }
         else
         {
-            slip = await slipService.GetByIdNoTrackingAsync(await idService.DecodeAsync(idOrLinkName));
+            slip = await slipService.GetByIdNoTrackingAsync(await idService.DecodeAsync(id));
         }
 
-        return slip != null ? Ok(mapper.Map<GetSlipByIdResponse>(slip)) : NotFound(idOrLinkName);
+        return slip != null ? Ok(mapper.Map<GetSlipByIdResponse>(slip)) : NotFound(id);
+    }
+
+    [HttpGet("link/{linkName}")]
+    public async Task<IActionResult> GetByLinkNameAsync([FromRoute] string linkName)
+    {
+        var slip = await slipService.GetByLinkNameAsync(linkName);
+        return slip != null ? Ok(mapper.Map<GetSlipByIdResponse>(slip)) : NotFound(linkName);
     }
 
     [Authorize]

@@ -5,6 +5,7 @@ namespace Bammemo.Service.Interfaces;
 public interface ISettingService
 {
     Task<Setting?> GetByKeyFromCacheAsync(string key);
+    Task<Setting?> GetByKeyAsync(string key, bool tracking = false);
     Task<List<Setting>> GetByKeysAsync(IEnumerable<string> keys);
     Task CreateAsync(string key, string? value);
     Task CreateOrUpdateAsync(string key, string? value);

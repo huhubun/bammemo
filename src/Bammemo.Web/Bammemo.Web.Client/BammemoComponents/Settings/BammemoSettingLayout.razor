@@ -7,12 +7,13 @@
     <BammemoCard>
         <FluentGrid OnBreakpointEnter="@OnBreakpointEnterHandler">
             <FluentGridItem xs="12">
-                <FluentStack Class="bammemo-setting-layout-stack" Orientation="@pageStyle.ContentOrientation" HorizontalGap="@(16*2)" VerticalGap="16">
-                    <FluentNavMenu Class="bammemo-setting-nav-menu" Style="@pageStyle.NavWidth">
+                <FluentStack Class="bammemo-setting-layout-stack" Orientation="@pageStyle.ContentOrientation" HorizontalGap="16" VerticalGap="16">
+                    <FluentNavMenu Class="bammemo-setting-nav-menu" Style="@pageStyle.NavStyle">
                         <FluentNavLink Icon="@(new Icons.Regular.Size20.WindowColumnOneFourthLeft())" Href="@SiteSettingUrl" Match="NavLinkMatch.All">站点</FluentNavLink>
                         <FluentNavLink Icon="@(new Icons.Regular.Size20.LinkMultiple())" Href="/settings/links" Match="NavLinkMatch.All">链接</FluentNavLink>
                         <FluentNavLink Icon="@(new Icons.Regular.Size20.Info())" Href="/settings/about" Match="NavLinkMatch.All">关于页</FluentNavLink> 
                         <FluentNavLink Icon="@(new Icons.Regular.Size20.DocumentOnePageLink())" Href="/settings/redirects" Match="NavLinkMatch.All">重定向</FluentNavLink>
+                        <FluentNavLink Icon="@(new Icons.Regular.Size20.ShieldKeyhole())" Href="/settings/security" Match="NavLinkMatch.Prefix">密钥与安全</FluentNavLink>
                     </FluentNavMenu>
                     <div class="bammemo-setting-content-wrap">
                         @ChildContent
@@ -35,7 +36,7 @@
     private static readonly PageStyle normalSizeStyle = new()
         {
             ContentOrientation = Orientation.Horizontal,
-                NavWidthValue = "150px"
+                NavWidthValue = "200px"
         };
     private PageStyle pageStyle = normalSizeStyle;
 
@@ -77,6 +78,6 @@
         public Orientation ContentOrientation { get; set; }
         public string? NavWidthValue { get; set; }
 
-        public string NavWidth => $"width: {NavWidthValue ?? "100%"}";
+        public string NavStyle => $"width: {NavWidthValue ?? "100%"}; flex-basis: {NavWidthValue ?? "100%"};";
     }
 }

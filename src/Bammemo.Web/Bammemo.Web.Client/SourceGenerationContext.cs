@@ -6,6 +6,7 @@ using Bammemo.Service.Abstractions.WebApiModels.RedirectRules;
 using Bammemo.Service.Abstractions.WebApiModels.Settings;
 using Bammemo.Service.Abstractions.WebApiModels.SiteLinks;
 using Bammemo.Service.Abstractions.WebApiModels.Slips;
+using Bammemo.Web.Client.Models.Settings;
 using System.Text.Json.Serialization;
 
 namespace Bammemo.Web.Client;
@@ -38,6 +39,7 @@ namespace Bammemo.Web.Client;
 [JsonSerializable(typeof(ListRedirectRuleResponse.RedirectRuleModel[]))]
 [JsonSerializable(typeof(CreateRedirectRuleResponse))]
 [JsonSerializable(typeof(UpdateRedirectRuleRequest))]
+[JsonSerializable(typeof(UpdateSettingByKeyRequest))]
 [JsonSerializable(typeof(BatchUpdateSettingByKeyRequest))]
 [JsonSerializable(typeof(ListSiteLinkResponse))]
 [JsonSerializable(typeof(ListSiteLinkResponse.SiteLinkModel))]
@@ -62,6 +64,7 @@ namespace Bammemo.Web.Client;
 [JsonSerializable(typeof(BatchGetSettingByKeyRequest))]
 [JsonSerializable(typeof(GetSlipByIdRequest))]
 [JsonSerializable(typeof(ListSlipQueryRequest))]
+[JsonSerializable(typeof(TencentCloudSettingModel))]
 internal partial class SourceGenerationContext : JsonSerializerContext
 {
 }

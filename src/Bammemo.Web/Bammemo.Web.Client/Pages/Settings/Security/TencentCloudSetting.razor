@@ -1,0 +1,138 @@
+﻿@page "/settings/security/tencent-cloud"
+@using System.Text.Json
+@using Bammemo.Web.Client.WebApis.Client.Models
+@using Microsoft.Kiota.Abstractions
+@using System.Net
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
+@inject IToastService ToastService
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
+
+<div>
+    <BammemoSettingLayout PageTitle="Tencent Cloud">
+        @if (_model != null)
+        {
+            <FluentEditForm Model="@_model" OnValidSubmit="@HandleValidSubmit" FormName="tencent_cloud_setting" novalidate>
+                <DataAnnotationsValidator />
+
+                <FluentStack Orientation="Orientation.Vertical">
+                    <div class="w-full">
+                        <FluentLabel Typo="Typography.Header">Tencent Cloud Settings</FluentLabel>
+                        <FluentDivider Style="width: 100%;" Role="DividerRole.Presentation"></FluentDivider>
+                    </div>
+
+                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                        <div class="w-full">
+                            <FluentTextField @bind-Value="_model.AppId" Label="App Id" Required Class="w-full" />
+                            <FluentValidationMessage For="@(() => _model.AppId)" />
+                            <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                                前往<FluentAnchor Appearance="Appearance.Hypertext" Href="https://console.cloud.tencent.com/developer" Target="_blank">账号中心</FluentAnchor>获取。
+                            </FluentLabel>
+                        </div>
+
+                        <div class="w-full">
+                            <FluentTextField @bind-Value="_model.SecretId" Label="Secret Id" Required Class="w-full" />
+                            <FluentValidationMessage For="@(() => _model.SecretId)" />
+                            <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                                前往<FluentAnchor Appearance="Appearance.Hypertext" Href="https://console.cloud.tencent.com/cam/capi" Target="_blank">API密钥管理</FluentAnchor>创建，主账号、子账号均可使用。
+                            </FluentLabel>
+                        </div>
+
+                        <div class="w-full">
+                            <FluentTextField @bind-Value="_model.SecretKey" Label="Secret Key" Required Class="w-full" />
+                            <FluentValidationMessage For="@(() => _model.SecretKey)" />
+                        </div>
+                    </FluentStack>
+
+                    <div class="w-full">
+                        <FluentLabel Typo="Typography.Header">COS</FluentLabel>
+                        <FluentDivider Style="width: 100%;" Role="DividerRole.Presentation"></FluentDivider>
+                    </div>
+
+                    <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                        <div class="w-full">
+                            <FluentCheckbox @bind-Value="_model.EnableCos" Label="Enable COS" Class="w-full" />
+                            <FluentValidationMessage For="@(() => _model.EnableCos)" />
+                        </div>
+
+                        <div class="w-full">
+                            <FluentTextField @bind-Value="_model.Cos.Region" Label="Region" Required="_model.EnableCos" Class="w-full" Disabled="!_model.EnableCos" />
+                            <FluentValidationMessage For="@(() => _model.Cos.Region)" />
+                            <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                                前往<FluentAnchor Appearance="Appearance.Hypertext" Href="https://console.cloud.tencent.com/cos/bucket" Target="_blank">存储桶列表</FluentAnchor>获取，例如 <code>ap-shanghai</code>。
+                            </FluentLabel>
+                        </div>
+
+                        <div class="w-full">
+                            <FluentTextField @bind-Value="_model.Cos.Bucket" Label="Bucket" Required="_model.EnableCos" Class="w-full" Disabled="!_model.EnableCos" />
+                            <FluentValidationMessage For="@(() => _model.Cos.Bucket)" />
+                            <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                                前往<FluentAnchor Appearance="Appearance.Hypertext" Href="https://console.cloud.tencent.com/cos/bucket" Target="_blank">存储桶列表</FluentAnchor>获取，例如 <code>examplebucket-1250000000</code>。
+                            </FluentLabel>
+                        </div>
+                    </FluentStack>
+
+                    <FluentDivider Role="DividerRole.Presentation" Class="w-full" />
+
+                    <div class="w-full">
+                        <FluentButton Type="ButtonType.Submit" Loading="isSaving" IconStart="new Icons.Regular.Size20.Save()">保存</FluentButton>
+                    </div>
+                </FluentStack>
+            </FluentEditForm>
+        }
+        else
+        {
+            <div>loading...</div>
+        }
+    </BammemoSettingLayout>
+</div>
+
+@code {
+    private TencentCloudSettingModel? _model;
+    private bool isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (RendererInfo.Name != BlazorRendererName.WebAssembly)
+        {
+            return;
+        }
+
+        try
+        {
+            var response = await WebApiClient.Api.Settings[SettingKeys.TencentCloud].GetAsync();
+            if (response?.Value != null)
+            {
+                _model = JsonSerializer.Deserialize(response.Value, SourceGenerationContext.Default.TencentCloudSettingModel);
+            }
+        }
+        catch (ApiException apiException) when (apiException.ResponseStatusCode == (int)HttpStatusCode.NotFound)
+        {
+        }
+
+        if (_model == null)
+        {
+            _model = new()
+                {
+                    Cos = new()
+                };
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        isSaving = true;
+
+        try
+        {
+            await WebApiClient.Api.Settings[SettingKeys.TencentCloud].PutAsync(new WebApis.Client.Models.UpdateSettingByKeyRequest
+                {
+                    Value = JsonSerializer.Serialize(_model, SourceGenerationContext.Default.TencentCloudSettingModel)
+                });
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}
