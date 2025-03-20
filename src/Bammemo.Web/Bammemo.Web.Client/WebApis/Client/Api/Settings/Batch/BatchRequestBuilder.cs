@@ -37,7 +37,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Api.Settings.Batch
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
         /// <exception cref="global::Bammemo.Web.Client.WebApis.Client.Models.ProblemDetails">When receiving a 400 status code</exception>
-        /// <exception cref="global::Bammemo.Web.Client.WebApis.Client.Models.ProblemDetails">When receiving a 403 status code</exception>
+        /// <exception cref="global::Bammemo.Web.Client.WebApis.Client.Models.ProblemDetails">When receiving a 401 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task<global::Bammemo.Web.Client.WebApis.Client.Models.BatchGetSettingByKeyResponse?> GetAsync(Action<RequestConfiguration<global::Bammemo.Web.Client.WebApis.Client.Api.Settings.Batch.BatchRequestBuilder.BatchRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -51,7 +51,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Api.Settings.Batch
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
                 { "400", global::Bammemo.Web.Client.WebApis.Client.Models.ProblemDetails.CreateFromDiscriminatorValue },
-                { "403", global::Bammemo.Web.Client.WebApis.Client.Models.ProblemDetails.CreateFromDiscriminatorValue },
+                { "401", global::Bammemo.Web.Client.WebApis.Client.Models.ProblemDetails.CreateFromDiscriminatorValue },
             };
             return await RequestAdapter.SendAsync<global::Bammemo.Web.Client.WebApis.Client.Models.BatchGetSettingByKeyResponse>(requestInfo, global::Bammemo.Web.Client.WebApis.Client.Models.BatchGetSettingByKeyResponse.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }

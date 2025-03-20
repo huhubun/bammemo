@@ -3,8 +3,8 @@
 @using System.Text.Json
 @rendermode InteractiveWebAssembly
 @attribute [Authorize]
-@inject WebApiClient WebApiClient
 @inject IToastService ToastService
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 
 <div>
     <BammemoSettingLayout PageTitle="关于页">
@@ -104,10 +104,7 @@
             return;
         }
 
-        var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
-            {
-                Keys = settingKeys
-            });
+        var response = await WebApiClient.Api.Settings.Batch.GetAsync(requestConfig => requestConfig.QueryParameters.Keys = settingKeys);
 
         model = new();
 
@@ -142,15 +139,18 @@
 
         try
         {
-            await WebApiClient.Settings.BatchUpdateByKeysAsync(new BatchUpdateSettingByKeyRequest
+            await WebApiClient.Api.Settings.Batch.PutAsync(new Bammemo.Web.Client.WebApis.Client.Models.BatchUpdateSettingByKeyRequest
                 {
-                    Settings = settingKeys.ToDictionary(key => key, key => key switch
+                    Settings = new WebApis.Client.Models.BatchUpdateSettingByKeyRequest_settings
                     {
-                        SettingKeys.AboutPageDescription => NormalizeSettingValue(model.Description),
-                        SettingKeys.AboutPageKeywords => model.Keywords != null ? JsonSerializer.Serialize(model.Keywords) : null,
-                        SettingKeys.AboutPageContent => model.Content,
-                        _ => throw new NotSupportedException(key)
-                    })
+                        AdditionalData = settingKeys.ToDictionary(key => key, (string key) => key switch
+                        {
+                            SettingKeys.AboutPageDescription => NormalizeSettingValue(model.Description),
+                            SettingKeys.AboutPageKeywords => model.Keywords != null ? (JsonSerializer.Serialize(model.Keywords)) : (object?)null,
+                            SettingKeys.AboutPageContent => model.Content,
+                            _ => throw new NotSupportedException(key)
+                        })
+                    }
                 });
 
             ToastService.ShowSuccess("关于页设置保存成功，刷新页面后生效。");

@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using Bammemo.Service.Abstractions.WebApiModels.Settings;
 using Bammemo.Service.Interfaces;
+using Bammemo.Web.WebApiModels.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace Bammemo.Web.Controllers;
 
@@ -18,7 +17,7 @@ public class SettingController(
     [ProducesResponseType<GetSettingByKeyResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetByKeyAsync([FromRoute] string key)
     {
         if (!SettingKeys.VerifyKey(key))
@@ -28,7 +27,7 @@ public class SettingController(
 
         if (SettingKeys.CheckProtectedSettingByKey(key) && !(HttpContext.User.Identity?.IsAuthenticated ?? false))
         {
-            return Forbid();
+            return Unauthorized();
         }
 
         var setting = await settingService.GetByKeyFromCacheAsync(key);
@@ -59,7 +58,7 @@ public class SettingController(
     [HttpGet("batch")]
     [ProducesResponseType<BatchGetSettingByKeyResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> BatchGetByKeyAsync([FromQuery] BatchGetSettingByKeyRequest request)
     {
         if (!SettingKeys.VerifyKeys(request.Keys))
@@ -69,7 +68,7 @@ public class SettingController(
 
         if (SettingKeys.CheckProtectedSettingByKeys(request.Keys) && !(HttpContext.User.Identity?.IsAuthenticated ?? false))
         {
-            return Forbid();
+            return Unauthorized();
         }
 
         var settings = await settingService.GetByKeysAsync(request.Keys);

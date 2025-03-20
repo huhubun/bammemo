@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Bammemo.Service.Abstractions.WebApiModels.Slips;
+using Bammemo.Service.Abstractions.Dtos.Slips;
 
 namespace Bammemo.Web.Client.MapperProfiles;
 
@@ -7,14 +7,10 @@ public class SlipProfile : Profile
 {
     public SlipProfile()
     {
-        CreateMap<ListSlipResponse.SlipModel, ListSlipDto>();
-
-        CreateMap<CreateSlipResponse, ListSlipDto>()
-            .IncludeBase<ListSlipResponse.SlipModel, ListSlipDto>();
-
-        CreateMap<UpdateSlipResponse, ListSlipDto>()
-            .IncludeBase<ListSlipResponse.SlipModel, ListSlipDto>();
-
-        CreateMap<GetSlipByIdResponse, SlipDetailDto>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.CreateSlipResponse, ListSlipDto>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.UpdateSlipResponse, ListSlipDto>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.GetSlipByLinkNameResponse, SlipDetailDto>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.SlipModel, SlipDetailDto>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.SlipModel, ListSlipDto>();
     }
 }

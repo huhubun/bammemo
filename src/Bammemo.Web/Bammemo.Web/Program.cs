@@ -97,11 +97,6 @@ builder.Services.AddBammemoAutoMapper(
     typeof(SlipProfile).Assembly);
 
 // 预加载需要
-builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client =>
-{
-    client.BaseAddress = new Uri(bammemoOptions.ApiUrl.NormalizeUrlSlash());
-});
-
 builder.Services.AddSingleton(_ =>
 {
     var adapter = new Microsoft.Kiota.Http.HttpClientLibrary.HttpClientRequestAdapter(new Microsoft.Kiota.Abstractions.Authentication.AnonymousAuthenticationProvider())

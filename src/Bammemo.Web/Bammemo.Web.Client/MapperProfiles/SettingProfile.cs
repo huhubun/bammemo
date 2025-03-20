@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Bammemo.Service.Abstractions.Dtos.Settings;
 using Bammemo.Service.Abstractions.SettingModels;
-using Bammemo.Service.Abstractions.WebApiModels.Settings;
 using Bammemo.Web.Client.Extensions.SettingModels;
 using Bammemo.Web.Client.Models.Settings;
 
@@ -11,10 +10,10 @@ public class SettingProfile : Profile
 {
     public SettingProfile()
     {
-        CreateMap<GetSettingByKeyResponse, GetSettingByKeyDto>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.GetSettingByKeyResponse, GetSettingByKeyDto>();
 
-        CreateMap<BatchGetSettingByKeyResponse, BatchGetSettingByKeyDto>();
-        CreateMap<BatchGetSettingByKeyResponse.SettingItemModel, BatchGetSettingByKeyDto.SettingItemModel>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.BatchGetSettingByKeyResponse, BatchGetSettingByKeyDto>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.SettingItemModel, BatchGetSettingByKeyDto.SettingItemModel>();
 
         CreateMap<TencentCloudSetting, TencentCloudSettingModel>()
             .AfterMap((src, dest) =>

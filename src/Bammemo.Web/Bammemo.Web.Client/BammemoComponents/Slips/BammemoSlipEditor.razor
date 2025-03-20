@@ -1,8 +1,8 @@
-﻿@using Bammemo.Service.Abstractions.Enums
-@using Bammemo.Service.Abstractions.WebApiModels.Slips
+﻿@using Bammemo.Service.Abstractions.Dtos.Slips
+@using Bammemo.Service.Abstractions.Enums
 @using Bammemo.Web.Client.Services
 @rendermode InteractiveAuto
-@inject WebApiClient webApiClient
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 @inject IMapper mapper
 @inject IJSRuntime jsRuntime
 
@@ -117,20 +117,20 @@ else
 
             var editedStatus = Enum.Parse<SlipStatus>(status);
 
-            var updatedSlip = await webApiClient.Slips.UpdateAsync(Data.Id, new UpdateSlipRequest
+            var updatedSlip = await WebApiClient.Api.Slips[Data.Id].PutAsync(new Bammemo.Web.Client.WebApis.Client.Models.UpdateSlipRequest
                 {
                     Content = content,
-                    Status = editedStatus
+                    Status = (int)editedStatus
                 });
 
             await OnSlipSaved.InvokeAsync(mapper.Map<ListSlipDto>(updatedSlip));
         }
         else
         {
-            var createdSlip = await webApiClient.Slips.CreateAsync(new CreateSlipRequest
+            var createdSlip = await WebApiClient.Api.Slips.PostAsync(new Bammemo.Web.Client.WebApis.Client.Models.CreateSlipRequest
                 {
                     Content = content,
-                    Status = Enum.Parse<SlipStatus>(status)
+                    Status = (int)Enum.Parse<SlipStatus>(status)
                 });
 
             await OnSlipSaved.InvokeAsync(mapper.Map<ListSlipDto>(createdSlip));

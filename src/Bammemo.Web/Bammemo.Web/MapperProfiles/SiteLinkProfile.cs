@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Bammemo.Data.Entities;
-using Bammemo.Service.Abstractions.WebApiModels.SiteLinks;
+using Bammemo.Web.WebApiModels.SiteLinks;
 
 namespace Bammemo.Web.MapperProfiles;
 

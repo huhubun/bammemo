@@ -2,5 +2,5 @@
 
 public class GetSlipTimesDto
 {
-    public required long[] CreatedTimes { get; set; }
+    public long[]? CreatedTimes { get; set; }
 }

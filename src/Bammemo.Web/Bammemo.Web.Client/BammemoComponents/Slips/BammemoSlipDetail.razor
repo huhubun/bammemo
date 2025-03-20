@@ -1,5 +1,5 @@
-﻿@using Bammemo.Service.Abstractions.Enums
-@using Bammemo.Service.Abstractions.WebApiModels.Slips
+﻿@using Bammemo.Service.Abstractions.Dtos.Slips
+@using Bammemo.Service.Abstractions.Enums
 @rendermode InteractiveAuto
 @implements IDisposable
 @inject PersistentComponentState PersistentComponentState
@@ -36,7 +36,7 @@
 
         <FluentGridItem xs="12" lg="8" xl="6">
 
-            <BammemoCard  >
+            <BammemoCard>
                 @if (slip != null)
                 {
                     <BammemoMarkdownSection Content="@slip.Content" FullDisplay />
@@ -110,7 +110,6 @@
     public string? LinkName { get; set; }
 
     private SlipIdOrLinkNameType Type => Id != null ? SlipIdOrLinkNameType.Id : (LinkName != null ? SlipIdOrLinkNameType.LinkName : throw new ArgumentNullException("IdOrLinkName"));
-    private string IdOrLinkName => Id != null ? Id : (LinkName != null ? LinkName : throw new ArgumentNullException("IdOrLinkName"));
 
     protected override void OnInitialized()
     {
@@ -121,10 +120,11 @@
     {
         if (!PersistentComponentState.TryTakeFromJson(nameof(slip), out slip))
         {
-            slip = await CommonSlipService.GetByIdOrLinkNameAsync(IdOrLinkName, new GetSlipByIdRequest
-                {
-                    Type = Type
-                });
+            slip = Type switch
+            {
+                SlipIdOrLinkNameType.Id => await CommonSlipService.GetByIdAsync(Id),
+                SlipIdOrLinkNameType.LinkName => await CommonSlipService.GetByLinkNameAsync(LinkName)
+            };
         }
     }
 

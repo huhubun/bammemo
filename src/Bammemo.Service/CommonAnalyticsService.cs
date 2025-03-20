@@ -1,6 +1,5 @@
 ﻿using Bammemo.Service.Abstractions;
 using Bammemo.Service.Abstractions.Dtos.Analytics;
-using Bammemo.Service.Abstractions.WebApiModels.Slips;
 using Bammemo.Service.Interfaces;
 
 namespace Bammemo.Service;
@@ -14,9 +13,9 @@ public class CommonAnalyticsService(
             Tags = await slipService.GetAllTagsAsync()
         };
 
-    public async Task<GetSlipTimesDto> GetSlipTimesAsync(GetSlipTimesRequest request)
+    public async Task<GetSlipTimesDto> GetSlipTimesAsync(long startTime, long endTime)
         => new GetSlipTimesDto
         {
-            CreatedTimes = await slipService.GetCreatedTimeWithSlipAsync(request.StartTime, request.EndTime)
+            CreatedTimes = await slipService.GetCreatedTimeWithSlipAsync(startTime, endTime)
         };
 }

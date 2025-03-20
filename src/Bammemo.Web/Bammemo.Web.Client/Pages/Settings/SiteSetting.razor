@@ -4,7 +4,7 @@
 @using System.Text.Json
 @rendermode InteractiveWebAssembly
 @attribute [Authorize]
-@inject WebApiClient WebApiClient
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 @inject IToastService ToastService
 
 <div>
@@ -141,10 +141,7 @@
             return;
         }
 
-        var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
-            {
-                Keys = settingKeys
-            });
+        var response = await WebApiClient.Api.Settings.Batch.GetAsync(requestConfig => requestConfig.QueryParameters.Keys = settingKeys);
 
         model = new();
 
@@ -191,17 +188,20 @@
 
         try
         {
-            await WebApiClient.Settings.BatchUpdateByKeysAsync(new BatchUpdateSettingByKeyRequest
+            await WebApiClient.Api.Settings.Batch.PutAsync(new Bammemo.Web.Client.WebApis.Client.Models.BatchUpdateSettingByKeyRequest
                 {
-                    Settings = settingKeys.ToDictionary(key => key, key => key switch
+                    Settings = new WebApis.Client.Models.BatchUpdateSettingByKeyRequest_settings
                     {
-                        SettingKeys.SiteName => NormalizeSettingValue(model.SiteName),
-                        SettingKeys.SiteLogoText => NormalizeSettingValue(model.LogoText),
-                        SettingKeys.SiteDescription => NormalizeSettingValue(model.SiteDescription),
-                        SettingKeys.SiteKeywords => model.SiteKeywords != null ? JsonSerializer.Serialize(model.SiteKeywords) : null,
-                        SettingKeys.FooterLinks => model.FooterLinks != null ? JsonSerializer.Serialize(model.FooterLinks.Where(i => !i.IsEmpty)) : null,
-                        _ => throw new NotSupportedException(key)
-                    })
+                        AdditionalData = settingKeys.ToDictionary(key => key, key => key switch
+                        {
+                            SettingKeys.SiteName => NormalizeSettingValue(model.SiteName),
+                            SettingKeys.SiteLogoText => NormalizeSettingValue(model.LogoText),
+                            SettingKeys.SiteDescription => NormalizeSettingValue(model.SiteDescription),
+                            SettingKeys.SiteKeywords => model.SiteKeywords != null ? JsonSerializer.Serialize(model.SiteKeywords) : (object?)null,
+                            SettingKeys.FooterLinks => model.FooterLinks != null ? JsonSerializer.Serialize(model.FooterLinks.Where(i => !i.IsEmpty)) : (object?)null,
+                            _ => throw new NotSupportedException(key)
+                        })
+                    }
                 });
 
             ToastService.ShowSuccess("站点设置保存成功，刷新页面后生效。");

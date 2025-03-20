@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Bammemo.Data.Entities;
-using Bammemo.Service.Abstractions.WebApiModels.Settings;
+using Bammemo.Web.WebApiModels.Settings;
 
 namespace Bammemo.Web.MapperProfiles;
 
