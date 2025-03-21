@@ -99,6 +99,8 @@ public class SlipService(
             })];
         }
 
+        entity.CreatedAt = DateTime.UtcNow.Ticks;
+
         await dbContext.Slips.AddAsync(entity);
         await dbContext.SaveChangesAsync();
 
@@ -128,6 +130,8 @@ public class SlipService(
                 Tag = t
             }));
         }
+
+        entity.UpdateAt = DateTime.UtcNow.Ticks;
 
         dbContext.Slips.Update(entity);
         await dbContext.SaveChangesAsync();

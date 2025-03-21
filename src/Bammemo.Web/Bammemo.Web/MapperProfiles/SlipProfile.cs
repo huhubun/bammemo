@@ -9,8 +9,7 @@ public class SlipProfile : Profile
 {
     public SlipProfile()
     {
-        CreateMap<CreateSlipRequest, Slip>()
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow.Ticks));
+        CreateMap<CreateSlipRequest, Slip>();
 
         CreateMap<Slip, CreateSlipResponse>()
             .IncludeBase<Slip, ListSlipResponse.SlipModel>();
