@@ -167,8 +167,6 @@ using (var scope = app.Services.CreateScope())
         var idAlphabet = IdHelper.GenerateIdAlphabet();
         await settingService.CreateAsync(SettingKeys.IdAlphabet, idAlphabet);
 
-        await settingService.CreateAsync(SettingKeys.KeySource, ((int)keySource).ToString());
-
         await settingService.CreateAsync(SettingKeys.SiteName, "bammemo");
         await settingService.CreateAsync(SettingKeys.SiteLogoText, "bam");
     }

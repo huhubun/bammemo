@@ -15,7 +15,6 @@ public static class SettingKeys
     public const string AboutPageKeywords = nameof(AboutPageKeywords);
     public const string AboutPageContent = nameof(AboutPageContent);
     public const string FaviconUrl = nameof(FaviconUrl);
-    public const string KeySource = nameof(KeySource);
     [ProtectedSetting]
     public const string TencentCloud = nameof(TencentCloud);
 
