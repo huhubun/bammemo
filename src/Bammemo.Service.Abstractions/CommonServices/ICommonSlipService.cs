@@ -1,7 +1,7 @@
 ﻿using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
 
-namespace Bammemo.Service.Abstractions;
+namespace Bammemo.Service.Abstractions.CommonServices;
 
 public interface ICommonSlipService
 {

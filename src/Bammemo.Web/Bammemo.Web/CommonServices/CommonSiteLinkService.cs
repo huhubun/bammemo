@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Bammemo.Service.Abstractions;
+using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Abstractions.Dtos.SiteLinks;
 using Bammemo.Service.Interfaces;
 
-namespace Bammemo.Service;
+namespace Bammemo.Web.CommonServices;
 
 public class CommonSiteLinkService(
     IMapper mapper,

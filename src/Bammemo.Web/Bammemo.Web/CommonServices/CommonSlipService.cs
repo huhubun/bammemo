@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using Bammemo.Service.Abstractions;
+using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Interfaces;
 
-namespace Bammemo.Service;
+namespace Bammemo.Web.CommonServices;
 
 public class CommonSlipService(
     IMapper mapper,

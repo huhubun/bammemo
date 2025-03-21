@@ -1,12 +1,12 @@
 using Bammemo.Data;
 using Bammemo.Service;
+using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Identities;
 using Bammemo.Service.Interfaces;
-using Bammemo.Service.MapperProfiles;
 using Bammemo.Service.Options;
-using Bammemo.Web.Client.Extensions;
 using Bammemo.Web.Client.Options;
+using Bammemo.Web.CommonServices;
 using Bammemo.Web.Components;
 using Bammemo.Web.Identities;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -92,9 +92,7 @@ builder.Services.AddOptions<BammemoOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-builder.Services.AddBammemoAutoMapper(
-    typeof(Program).Assembly,
-    typeof(SlipProfile).Assembly);
+builder.Services.AddBammemoAutoMapper(typeof(Program).Assembly);
 
 // 预加载需要
 builder.Services.AddSingleton(_ =>

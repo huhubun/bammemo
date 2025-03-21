@@ -1,6 +1,6 @@
 ﻿using Bammemo.Service.Abstractions.Dtos.SiteLinks;
 
-namespace Bammemo.Service.Abstractions;
+namespace Bammemo.Service.Abstractions.CommonServices;
 
 public interface ICommonSiteLinkService
 {

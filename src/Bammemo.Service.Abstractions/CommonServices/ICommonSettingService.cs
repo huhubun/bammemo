@@ -1,6 +1,6 @@
 ﻿using Bammemo.Service.Abstractions.Dtos.Settings;
 
-namespace Bammemo.Service.Abstractions;
+namespace Bammemo.Service.Abstractions.CommonServices;
 
 public interface ICommonSettingService
 {

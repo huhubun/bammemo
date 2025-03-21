@@ -1,5 +1,6 @@
+using Bammemo.Service.Abstractions.CommonServices;
+using Bammemo.Web.Client.CommonServices;
 using Bammemo.Web.Client.Options;
-using Bammemo.Web.Client.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Microsoft.Kiota.Http.HttpClientLibrary;

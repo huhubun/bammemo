@@ -1,18 +1,19 @@
 ﻿using AutoMapper;
+using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
 
-namespace Bammemo.Web.Client.Services;
+namespace Bammemo.Web.Client.CommonServices;
 
 public class CommonSlipService(
     IMapper mapper,
-    Bammemo.Web.Client.WebApis.Client.WebApiClient client) : ICommonSlipService
+    WebApis.Client.WebApiClient client) : ICommonSlipService
 {
     public async Task<ListSlipDto[]> ListAsync(
         ListSlipQueryRequestDto? query, 
         CursorPagingRequest<string>? paging = null)
     {
-        var result = await client.Api.Slips.GetAsync(c => c.QueryParameters = new Bammemo.Web.Client.WebApis.Client.Api.Slips.SlipsRequestBuilder.SlipsRequestBuilderGetQueryParameters
+        var result = await client.Api.Slips.GetAsync(c => c.QueryParameters = new WebApis.Client.Api.Slips.SlipsRequestBuilder.SlipsRequestBuilderGetQueryParameters
         {
             StartTime = query.StartTime,
             EndTime = query.EndTime,

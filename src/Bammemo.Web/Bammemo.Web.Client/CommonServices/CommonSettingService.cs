@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Abstractions.Dtos.Settings;
 
-namespace Bammemo.Web.Client.Services;
+namespace Bammemo.Web.Client.CommonServices;
 
 public class CommonSettingService(
     IMapper mapper,
-    Bammemo.Web.Client.WebApis.Client.WebApiClient client
+    WebApis.Client.WebApiClient client
     ) : ICommonSettingService
 {
     public async Task<GetSettingByKeyDto> GetByKeyAsync(string key)

@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Abstractions.Dtos.SiteLinks;
 
-namespace Bammemo.Web.Client.Services;
+namespace Bammemo.Web.Client.CommonServices;
 
 public class CommonSiteLinkService(
     IMapper mapper,
-    Bammemo.Web.Client.WebApis.Client.WebApiClient client
+    WebApis.Client.WebApiClient client
     ) : ICommonSiteLinkService
 {
     public async Task<ListSiteLinkDto> ListAsync()

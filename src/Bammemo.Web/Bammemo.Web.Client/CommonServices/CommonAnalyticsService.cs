@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Abstractions.Dtos.Analytics;
 
-namespace Bammemo.Web.Client.Services;
+namespace Bammemo.Web.Client.CommonServices;
 
 public class CommonAnalyticsService(
     IMapper mapper,
-    Bammemo.Web.Client.WebApis.Client.WebApiClient client) : ICommonAnalyticsService
+    WebApis.Client.WebApiClient client) : ICommonAnalyticsService
 {
     public async Task<GetSlipTagsDto> GetSlipTagsAsync()
         => new GetSlipTagsDto
