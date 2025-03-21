@@ -17,7 +17,7 @@ public class CommonSlipService(
             StartTime = query.StartTime,
             EndTime = query.EndTime,
             Tags = query.Tags,
-            Status = [..query.Status.Cast<int?>()],
+            Status = query.Status?.Cast<int?>().ToArray() ?? null,
             Cursor = paging?.Cursor,
             Take = paging?.Take
         });
