@@ -21,6 +21,7 @@ public class TencentCloudSettingModel
     {
         public string? Region { get; set; }
         public string? Bucket { get; set; }
+        public string? AccessDomain { get; set; }
     }
 
     public class TencentCloudSettingModelValidator

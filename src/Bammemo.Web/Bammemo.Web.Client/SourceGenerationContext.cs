@@ -29,7 +29,10 @@ namespace Bammemo.Web.Client;
 [JsonSerializable(typeof(ListSlipDto))]
 [JsonSerializable(typeof(SlipDetailDto))]
 [JsonSerializable(typeof(SlipTagDto))]
+[JsonSerializable(typeof(TencentCloudSetting))]
+[JsonSerializable(typeof(TencentCloudSetting.CosSetting))]
 [JsonSerializable(typeof(TencentCloudSettingModel))]
+[JsonSerializable(typeof(TencentCloudSettingModel.CosSettingModel))]
 internal partial class SourceGenerationContext : JsonSerializerContext
 {
 }

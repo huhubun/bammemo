@@ -1,5 +1,5 @@
 {
-  "descriptionHash": "8DF743E2556A79A3B9877BFBB9A9B970799E93F794C20BCA80407709C402E5BA6226B63FA7CAD4C7441DCF0132FA2BE7CA4C9202E1576288ECC83BC2FB0DDD64",
+  "descriptionHash": "84E4982049D6E5AF294392EE09E5A02AF1E0C958E87EE8F8DAC19621D1B63B6E5A7BCFF6DD557FE772A9F2FA21DB9DBE7B8DCBAAC609E3979150FEBFB2A76203",
   "descriptionLocation": "http://localhost:5146/openapi/v1.json",
   "lockFileVersion": "1.0.0",
   "kiotaVersion": "1.24.1",
@@ -12,10 +12,15 @@
   "includeAdditionalData": true,
   "disableSSLValidation": false,
   "serializers": [
-    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory"
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Form.FormSerializationWriterFactory",
+    "Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory"
   ],
   "deserializers": [
-    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory"
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Text.TextParseNodeFactory",
+    "Microsoft.Kiota.Serialization.Form.FormParseNodeFactory"
   ],
   "structuredMimeTypes": [
     "application/json",

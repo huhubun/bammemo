@@ -12,5 +12,6 @@ public class TencentCloudSetting : SettingBase
     {
         public string? Region { get; set; }
         public string? Bucket { get; set; }
+        public string? AccessDomain { get; set; }
     }
 }

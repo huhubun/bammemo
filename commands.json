@@ -4,6 +4,11 @@
       "fileName": "cmd.exe",
       "workingDirectory": ".",
       "arguments": "/c scripts\\clean.bat"
+    },
+    "NewOrUpdate-WebApiClient": {
+      "fileName": "powershell.exe",
+      "workingDirectory": ".",
+      "arguments": "-ExecutionPolicy Bypass -NonInteractive -File scripts\\NewOrUpdate-WebApiClient.ps1"
     }
   }
 }
