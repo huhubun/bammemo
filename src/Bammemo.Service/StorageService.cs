@@ -145,6 +145,7 @@ public class StorageService(
     private static string GetPath(FileType fileType) => fileType switch
     {
         FileType.Favicon => "favicon",
+        FileType.SiteLogo => "logo",
         _ => throw new NotSupportedException(fileType.ToString())
     };
 

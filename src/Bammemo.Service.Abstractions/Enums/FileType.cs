@@ -2,5 +2,6 @@
 
 public enum FileType
 {
-    Favicon
+    Favicon,
+    SiteLogo
 }

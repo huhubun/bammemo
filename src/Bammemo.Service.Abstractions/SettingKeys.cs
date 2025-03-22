@@ -7,6 +7,7 @@ public static class SettingKeys
 {
     public const string IdAlphabet = nameof(IdAlphabet);
     public const string SiteName = nameof(SiteName);
+    [Obsolete]
     public const string SiteLogoText = nameof(SiteLogoText);
     public const string SiteDescription = nameof(SiteDescription);
     public const string SiteKeywords = nameof(SiteKeywords);
@@ -18,6 +19,7 @@ public static class SettingKeys
     [ProtectedSetting]
     public const string TencentCloud = nameof(TencentCloud);
     public const string StorageType = nameof(StorageType);
+    public const string SiteLogoUrl = nameof(SiteLogoUrl);
 
     public static bool VerifyKey(string key)
         => VerifyKeys([key]);
