@@ -161,7 +161,6 @@ using (var scope = app.Services.CreateScope())
         await settingService.CreateAsync(SettingKeys.IdAlphabet, idAlphabet);
 
         await settingService.CreateAsync(SettingKeys.SiteName, "bammemo");
-        await settingService.CreateAsync(SettingKeys.SiteLogoText, "bam");
     }
     else
     {

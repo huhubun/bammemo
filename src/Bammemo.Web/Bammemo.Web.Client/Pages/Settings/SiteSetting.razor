@@ -30,9 +30,30 @@
                         <FluentValidationMessage For="@(() => model.SiteDescription)" />
                     </div>
 
-                    <div>
-                        <FluentTextField Name="identifier" @bind-Value="model.LogoText" Label="Logo 文字" />
-                        <FluentValidationMessage For="@(() => model.LogoText)" />
+                    <div class="w-full">
+                        <FluentInputLabel>Logo</FluentInputLabel>
+
+                        @if (model.SiteLogoUrl != null)
+                        {
+                            <img src="@model.SiteLogoUrl" style="width: 48px; margin: 6px 0; display: block;" />
+                            <FluentButton OnClick="@(_ => model.SiteLogoUrl = null)" Style="margin-right: 6px;">Remove</FluentButton>
+                        }
+
+                        <FluentInputFile AnchorId="SiteLogoUploader"
+                                         DragDropZoneVisible="false"
+                                         Mode="InputFileMode.Stream"
+                                         MaximumFileSize="@(1 * 1024 * 1024)"
+                                         Accept=".jpg, .png, .ico"
+                                         OnFileUploaded="@OnSiteLogoUploadedAsync"
+                                         OnCompleted="@(_ => isSiteLogoUploading = false)" />
+
+                            <FluentButton Appearance="Appearance.Accent" Id="SiteLogoUploader" Loading="isSiteLogoUploading">
+                            Upload
+                        </FluentButton>
+
+                        <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                            站点的 Logo，在非移动端页面时显示在左上角，建议不超过1MB，长宽长度一致，不要超过 48px * 48px。
+                        </FluentLabel>
                     </div>
 
                     <div class="w-full">
@@ -50,14 +71,14 @@
                                          MaximumFileSize="@(1 * 1024 * 1024)"
                                          Accept=".jpg, .png, .ico"
                                          OnFileUploaded="@OnFaviconUploadedAsync"
-                                         OnCompleted="@OnFaviconUploadCompleted" />
+                                         OnCompleted="@(_ => isFaviconUploading = false)" />
 
                         <FluentButton Appearance="Appearance.Accent" Id="FaviconUploader" Loading="isFaviconUploading">
                             Upload
                         </FluentButton>
 
                         <FluentLabel Typo="Typography.Body" Color="Color.Info">
-                            建议不超过1MB，长宽长度一致，不要超过 512px * 512px。
+                            显示在浏览器标签或收藏夹中的 Favicon，建议不超过1MB，长宽长度一致，不要超过 512px * 512px。
                         </FluentLabel>
                     </div>
 
@@ -154,7 +175,7 @@
     private readonly static string[] settingKeys = [
         SettingKeys.SiteName,
         SettingKeys.SiteDescription,
-        SettingKeys.SiteLogoText,
+        SettingKeys.SiteLogoUrl,
         SettingKeys.FaviconUrl,
         SettingKeys.SiteKeywords,
         SettingKeys.FooterLinks
@@ -162,6 +183,7 @@
     private string? inputedKeyword, inputedFooterLinkName, inputedFooterLinkUrl;
     private SiteSettingModel? model = null;
     private bool isSaving = false;
+    private bool isSiteLogoUploading = false;
     private bool isFaviconUploading = false;
 
     protected override async Task OnInitializedAsync()
@@ -185,8 +207,8 @@
                 case SettingKeys.SiteDescription:
                     model.SiteDescription = setting.Value;
                     break;
-                case SettingKeys.SiteLogoText:
-                    model.LogoText = setting.Value;
+                case SettingKeys.SiteLogoUrl:
+                    model.SiteLogoUrl = setting.Value;
                     break;
                 case SettingKeys.FaviconUrl:
                     model.FaviconUrl = setting.Value;
@@ -215,6 +237,23 @@
         }
     }
 
+    async Task OnSiteLogoUploadedAsync(FluentInputFileEventArgs file)
+    {
+        isSiteLogoUploading = true;
+
+        using var memoryStream = new MemoryStream();
+        await file.Stream!.CopyToAsync(memoryStream);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+
+        var multipartBody = new Microsoft.Kiota.Abstractions.MultipartBody();
+        multipartBody.AddOrReplacePart<Stream>("File", MediaTypeNames.Application.Octet, memoryStream, file.Name);
+        multipartBody.AddOrReplacePart("Type", MediaTypeNames.Text.Plain, FileType.SiteLogo.ToString());
+        multipartBody.AddOrReplacePart("KeepFileName", MediaTypeNames.Text.Plain, Boolean.TrueString);
+
+        var response = await WebApiClient.Api.Files.PostAsync(multipartBody);
+        model.SiteLogoUrl = response.Url;
+    }
+
     async Task OnFaviconUploadedAsync(FluentInputFileEventArgs file)
     {
         isFaviconUploading = true;
@@ -232,11 +271,6 @@
         model.FaviconUrl = response.Url;
     }
 
-    void OnFaviconUploadCompleted(IEnumerable<FluentInputFileEventArgs> files)
-    {
-        isFaviconUploading = false;
-    }
-
     private async Task HandleValidSubmit()
     {
         isSaving = true;
@@ -251,7 +285,7 @@
                         {
                             SettingKeys.SiteName => NormalizeSettingValue(model.SiteName),
                             SettingKeys.SiteDescription => NormalizeSettingValue(model.SiteDescription),
-                            SettingKeys.SiteLogoText => NormalizeSettingValue(model.LogoText),
+                            SettingKeys.SiteLogoUrl => NormalizeSettingValue(model.SiteLogoUrl),
                             SettingKeys.FaviconUrl => NormalizeSettingValue(model.FaviconUrl),
                             SettingKeys.SiteKeywords => model.SiteKeywords != null ? JsonSerializer.Serialize(model.SiteKeywords) : (object?)null,
                             SettingKeys.FooterLinks => model.FooterLinks != null ? JsonSerializer.Serialize(model.FooterLinks.Where(i => !i.IsEmpty)) : (object?)null,
@@ -315,9 +349,6 @@
         [Required]
         public string? SiteName { get; set; }
 
-        [MaxLength(3)]
-        public string? LogoText { get; set; }
-
         public string? SiteDescription { get; set; }
 
         public List<string>? SiteKeywords { get; set; }
@@ -325,6 +356,8 @@
         public List<TextUrlModel>? FooterLinks { get; set; }
 
         public string? FaviconUrl { get; set; }
+
+        public string? SiteLogoUrl { get; set; }
     }
 
     public class TextUrlModel

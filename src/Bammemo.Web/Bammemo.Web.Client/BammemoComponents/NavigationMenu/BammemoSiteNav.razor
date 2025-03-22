@@ -1,19 +1,20 @@
-﻿@using Microsoft.FluentUI.AspNetCore.Components.DesignTokens
+﻿@using Bammemo.Service.Abstractions.CommonServices
+@using Microsoft.FluentUI.AspNetCore.Components.DesignTokens
 @rendermode InteractiveAuto
+@implements IDisposable
 @inject IDialogService DialogService
 @inject IJSRuntime JSRuntime
 @inject GlobalState GlobalState
 @inject NeutralFillLayerRest NeutralFillLayerRest
 @inject DisabledOpacity DisabledOpacity
+@inject PersistentComponentState PersistentComponentState
+@inject ICommonSettingService CommonSettingService
 
 <div class="site-nav">
     <div class="bammemo-site-nav-desktop">
-        <div class="bammemo-site-nav-site-logo-wrap">
-            <div class="bammemo-site-nav-site-logo">
-                @* <BammemoSettingValue SettingKey="@SettingKeys.SiteLogoText" EntryPoint="@(nameof(BammemoSiteNav))" /> *@
-                <FluentIcon Value="@(Icon.FromImageUrl("/bammemo-favicon-48x48.png"))" Style="width: 48px; height: 48px;" />
-            </div>
-        </div>
+        <a href="/" class="bammemo-site-nav-site-logo-wrap">
+            <img src="@siteLogoUrl" class="bammemo-site-nav-site-logo" />
+        </a>
         <BammemoNavMenu Type="BammenoNavMenuType.AppBar" />
     </div>
 
@@ -36,18 +37,32 @@
                           Color="var(--accent-foreground-rest)"
                           OnClick="@OpenPanelRightAsync"
                           IconStart="new Icons.Regular.Size24.PanelRight()" /> *@ 
-       </FluentStack>
+        </FluentStack>
     </nav>
 
     <FluentDialogProvider />
 </div>
 
 @code {
+    private const string PERSITING_KEY = "site_nav_logo";
+
+    private PersistingComponentStateSubscription persistingSubscription;
+    private string? siteLogoUrl;
     private IDialogReference? _dialog;
 
-    protected override void OnInitialized()
+    public void Dispose() => persistingSubscription.Dispose();
+
+    protected override async Task OnInitializedAsync()
     {
         // GlobalState.OnChange += async () => await JSRuntime.InvokeVoidAsync("bammemo.color.delayedApply");
+
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson(PERSITING_KEY, out siteLogoUrl))
+        {
+            var setting = (await CommonSettingService.GetByKeyAsync(SettingKeys.SiteLogoUrl))?.Value;
+            siteLogoUrl = setting ?? "/bammemo-favicon-128x128.png";
+        }
     }
 
     private async Task OpenPanelRightAsync()
@@ -63,4 +78,9 @@
         DialogResult result = await _dialog.Result;
     }
 
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(PERSITING_KEY, siteLogoUrl);
+        return Task.CompletedTask;
+    }
 }
