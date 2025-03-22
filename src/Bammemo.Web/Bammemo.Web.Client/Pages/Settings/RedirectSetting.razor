@@ -1,10 +1,9 @@
 ﻿@page "/settings/redirects"
 @using System.Net
-@using Bammemo.Service.Abstractions.WebApiModels.RedirectRules
 @rendermode InteractiveWebAssembly
 @attribute [Authorize]
 @inject IDialogService DialogService
-@inject WebApiClient WebApiClient
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 @inject IToastService ToastService
 @inject IMapper Mapper
 
@@ -17,7 +16,7 @@
                     <FluentButton IconStart="@(new Icons.Filled.Size20.Add())" OnClick="HandleAddRuleAsync">添加</FluentButton>
                 </div>
 
-                @if (rules.Length > 0)
+                @if (rules.Count > 0)
                 {
                     foreach (var rule in rules)
                     {
@@ -36,7 +35,7 @@
                                             <FluentIcon Value="@(new Microsoft.FluentUI.AspNetCore.Components.Icons.Regular.Size20.MoreVertical())" />
                                         </div>
                                         <FluentBadge Appearance="Appearance.Neutral">
-                                            @RedirectRuleHelper.GetHttpStatusName(rule.HttpStatus)
+                                            @RedirectRuleHelper.GetHttpStatusName(rule.HttpStatus.Value)
                                         </FluentBadge>
                                     </FluentStack>
 
@@ -50,7 +49,7 @@
 
                                 <FluentStack Orientation="Orientation.Vertical" Class="bammemo-redirect-setting-card-action-wrap" Style="width: calc(20px + 10px);">
                                     <FluentButton OnClick="@(async _ => await HandleEditRuleAsync(rule))" IconStart="@(new Icons.Regular.Size20.Edit())" />
-                                    <FluentButton OnClick="@(async _ => await HandleDeleteRuleAsync(rule.Id))" IconStart="@(new Icons.Regular.Size20.Delete().WithColor(Color.Error))" />
+                                    <FluentButton OnClick="@(async _ => await HandleDeleteRuleAsync(rule.Id.Value))" IconStart="@(new Icons.Regular.Size20.Delete().WithColor(Color.Error))" />
                                 </FluentStack>
                             </FluentStack>
                         </BammemoCard>
@@ -83,7 +82,7 @@
 <FluentToastProvider />
 
 @code {
-    private ListRedirectRuleResponse.RedirectRuleModel[]? rules;
+    private List<Bammemo.Web.Client.WebApis.Client.Models.RedirectRuleModel>? rules;
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,7 +114,7 @@
         }
     }
 
-    private async Task HandleEditRuleAsync(ListRedirectRuleResponse.RedirectRuleModel model)
+    private async Task HandleEditRuleAsync(Bammemo.Web.Client.WebApis.Client.Models.RedirectRuleModel model)
     {
         var dialog = await DialogService.ShowDialogAsync(
             DialogHelper.From<BammemoSettingRedirectRuleEditDialog>(),
@@ -137,7 +136,7 @@
 
     private async Task HandleDeleteRuleAsync(int id)
     {
-        await WebApiClient.RedirectRules.DeleteAsync(id);
+        await WebApiClient.Api.RedirectRules[id].DeleteAsync();
 
         ToastService.ShowSuccess("重定向规则已删除");
 
@@ -147,6 +146,6 @@
     private async Task LoadDataAsync()
     {
         rules = null;
-        rules = (await WebApiClient.RedirectRules.ListAsync()).RedirectRules;
+        rules = (await WebApiClient.Api.RedirectRules.GetAsync())?.RedirectRules;
     }
 }

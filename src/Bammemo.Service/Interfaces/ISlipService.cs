@@ -1,12 +1,12 @@
 ﻿using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
-using Bammemo.Service.Abstractions.WebApiModels.Slips;
 
 namespace Bammemo.Service.Interfaces;
 
 public interface ISlipService
 {
-    Task<Slip[]> ListAsync(ListSlipQueryRequest? query, CursorPagingRequest<int>? paging);
+    Task<Slip[]> ListAsync(ListSlipQueryRequestDto? query, CursorPagingRequest<int>? paging);
     Task<Slip?> GetByIdAsync(int id);
     Task<Slip?> GetByIdNoTrackingAsync(int id);
     Task<Slip?> GetByLinkNameAsync(string linkName);

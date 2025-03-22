@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Bammemo.Data.Entities;
-using Bammemo.Service.Abstractions.WebApiModels.Slips;
+using Bammemo.Service.Abstractions.Dtos.Slips;
+using Bammemo.Web.WebApiModels.Slips;
 
 namespace Bammemo.Web.MapperProfiles;
 
@@ -8,8 +9,7 @@ public class SlipProfile : Profile
 {
     public SlipProfile()
     {
-        CreateMap<CreateSlipRequest, Slip>()
-            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow.Ticks));
+        CreateMap<CreateSlipRequest, Slip>();
 
         CreateMap<Slip, CreateSlipResponse>()
             .IncludeBase<Slip, ListSlipResponse.SlipModel>();
@@ -20,6 +20,11 @@ public class SlipProfile : Profile
         CreateMap<Slip, GetSlipByIdResponse>()
             .IncludeBase<Slip, ListSlipResponse.SlipModel>();
 
+        CreateMap<Slip, GetSlipByLinkNameResponse>()
+            .IncludeBase<Slip, ListSlipResponse.SlipModel>();
+
         CreateMap<UpdateSlipRequest, Slip>();
+
+        CreateMap<ListSlipQueryRequest, ListSlipQueryRequestDto>();
     }
 }

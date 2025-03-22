@@ -1,4 +1,6 @@
-﻿namespace Bammemo.Web.Client.Extensions.Slips;
+﻿using Bammemo.Service.Abstractions.Dtos.Slips;
+
+namespace Bammemo.Web.Client.Extensions.Slips;
 
 public static class ListSlipDtoExtension
 {

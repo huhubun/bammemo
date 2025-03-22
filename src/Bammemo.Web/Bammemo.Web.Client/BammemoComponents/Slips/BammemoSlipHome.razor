@@ -1,13 +1,13 @@
-﻿@using Bammemo.Service.Abstractions.Enums
+﻿@using Bammemo.Service.Abstractions.CommonServices
+@using Bammemo.Service.Abstractions.Dtos.Slips
+@using Bammemo.Service.Abstractions.Enums
 @using Bammemo.Service.Abstractions.Paginations
-@using Bammemo.Service.Abstractions.WebApiModels.Slips
 @rendermode InteractiveAuto
 @implements IDisposable
 @inject PersistentComponentState PersistentComponentState
 @inject NavigationManager NavigationManager
 @inject IToastService ToastService
 @inject ICommonSlipService CommonSlipService
-@inject WebApiClient WebApiClient
 
 <FluentGrid Justify="JustifyContent.Center">
     <FluentGridItem xs="12" lg="8" xl="6" Style="padding: 8px;">
@@ -199,9 +199,9 @@
         OnSelectedTagChanged(tags.ToArray());
     }
 
-    private ListSlipQueryRequest GetListSlipQueryRequest()
+    private ListSlipQueryRequestDto GetListSlipQueryRequest()
     {
-        return new ListSlipQueryRequest
+        return new ListSlipQueryRequestDto
             {
                 StartTime = StartTime,
                 EndTime = EndTime,

@@ -1,10 +1,9 @@
 ﻿@page "/settings/links"
 @using System.Net
-@using Bammemo.Service.Abstractions.WebApiModels.SiteLinks
 @rendermode InteractiveWebAssembly
 @attribute [Authorize]
 @inject IDialogService DialogService
-@inject WebApiClient WebApiClient
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 @inject IToastService ToastService
 @inject IMapper Mapper
 
@@ -17,7 +16,7 @@
                     <FluentButton IconStart="@(new Icons.Filled.Size20.Add())" OnClick="HandleAddRuleAsync">添加</FluentButton>
                 </div>
 
-                @if (siteLinks.Length > 0)
+                @if (siteLinks.Count > 0)
                 {
                     foreach (var siteLink in siteLinks)
                     {
@@ -42,7 +41,7 @@
 
                                 <FluentStack Orientation="Orientation.Vertical" Class="bammemo-setting-site-link-card-action-wrap" Style="width: calc(20px + 10px);">
                                     <FluentButton OnClick="@(async _ => await HandleEditRuleAsync(siteLink))" IconStart="@(new Icons.Regular.Size20.Edit())" />
-                                    <FluentButton OnClick="@(async _ => await HandleDeleteRuleAsync(siteLink.Id))" IconStart="@(new Icons.Regular.Size20.Delete().WithColor(Color.Error))" />
+                                    <FluentButton OnClick="@(async _ => await HandleDeleteRuleAsync(siteLink.Id.Value))" IconStart="@(new Icons.Regular.Size20.Delete().WithColor(Color.Error))" />
                                 </FluentStack>
                             </FluentStack>
                         </BammemoCard>
@@ -74,7 +73,7 @@
 <FluentToastProvider />
 
 @code {
-    private ListSiteLinkResponse.SiteLinkModel[]? siteLinks;
+    private List<Bammemo.Web.Client.WebApis.Client.Models.SiteLinkModel>? siteLinks;
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,7 +105,7 @@
         }
     }
 
-    private async Task HandleEditRuleAsync(ListSiteLinkResponse.SiteLinkModel model)
+    private async Task HandleEditRuleAsync(Bammemo.Web.Client.WebApis.Client.Models.SiteLinkModel model)
     {
         var dialog = await DialogService.ShowDialogAsync(
             DialogHelper.From<BammemoSettingSiteLinkEditDialog>(),
@@ -128,7 +127,7 @@
 
     private async Task HandleDeleteRuleAsync(int id)
     {
-        await WebApiClient.SiteLinks.DeleteAsync(id);
+        await WebApiClient.Api.SiteLinks[id].DeleteAsync();
 
         ToastService.ShowSuccess("友情链接已删除");
 
@@ -138,6 +137,6 @@
     private async Task LoadDataAsync()
     {
         siteLinks = null;
-        siteLinks = (await WebApiClient.SiteLinks.ListAsync()).SiteLinks;
+        siteLinks = (await WebApiClient.Api.SiteLinks.GetAsync())?.SiteLinks;
     }
 }

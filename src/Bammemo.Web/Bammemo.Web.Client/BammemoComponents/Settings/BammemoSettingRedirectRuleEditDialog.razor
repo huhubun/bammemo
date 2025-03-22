@@ -1,9 +1,8 @@
 ﻿@rendermode InteractiveWebAssembly
 @using System.Net
-@using Bammemo.Service.Abstractions.WebApiModels.RedirectRules
 @using System.ComponentModel.DataAnnotations
 @implements IDialogContentComponent<BammemoSettingRedirectRuleEditDialog.RedirectRuleModel>
-@inject WebApiClient WebApiClient
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 @inject IMapper Mapper
 @inject IToastService ToastService
 
@@ -80,11 +79,11 @@
             {
                 if (Content.Id.HasValue)
                 {
-                    await WebApiClient.RedirectRules.UpdateAsync(Content.Id.Value, Mapper.Map<UpdateRedirectRuleRequest>(Content));
+                    await WebApiClient.Api.RedirectRules[Content.Id.Value].PutAsync(Mapper.Map<Bammemo.Web.Client.WebApis.Client.Models.UpdateRedirectRuleRequest>(Content));
                 }
                 else
                 {
-                    await WebApiClient.RedirectRules.CreateAsync(Mapper.Map<CreateRedirectRuleRequest>(Content));
+                    await WebApiClient.Api.RedirectRules.PostAsync(Mapper.Map<Bammemo.Web.Client.WebApis.Client.Models.CreateRedirectRuleRequest>(Content));
                 }
 
                 await Dialog.CloseAsync(Content);

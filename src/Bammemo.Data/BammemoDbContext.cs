@@ -10,4 +10,6 @@ public class BammemoDbContext(DbContextOptions<BammemoDbContext> options) : DbCo
     public DbSet<Setting> Settings { get; set; }
     public DbSet<RedirectRule> RedirectRules { get; set; }
     public DbSet<SiteLink> SiteLinks { get; set; }
+    public DbSet<FileMetadata> FileMetadata { get; set; }
+    public DbSet<FileReference> FileReferences { get; set; }
 }

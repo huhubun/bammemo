@@ -1,8 +1,8 @@
 ﻿using Bammemo.Data;
 using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Enums;
 using Bammemo.Service.Abstractions.Paginations;
-using Bammemo.Service.Abstractions.WebApiModels.Slips;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +15,7 @@ public class SlipService(
     IHttpContextAccessor httpContext) : ISlipService
 {
     public async Task<Slip[]> ListAsync(
-        ListSlipQueryRequest? query,
+        ListSlipQueryRequestDto? query,
         CursorPagingRequest<int>? paging)
     {
         IQueryable<Slip> slips = dbContext.Slips.AsNoTracking().OrderByDescending(s => s.Id);
@@ -99,6 +99,8 @@ public class SlipService(
             })];
         }
 
+        entity.CreatedAt = DateTime.UtcNow.Ticks;
+
         await dbContext.Slips.AddAsync(entity);
         await dbContext.SaveChangesAsync();
 
@@ -128,6 +130,8 @@ public class SlipService(
                 Tag = t
             }));
         }
+
+        entity.UpdateAt = DateTime.UtcNow.Ticks;
 
         dbContext.Slips.Update(entity);
         await dbContext.SaveChangesAsync();

@@ -1,11 +1,12 @@
-﻿@using Bammemo.Service.Abstractions.Enums
+﻿@using Bammemo.Service.Abstractions.Dtos.Slips
+@using Bammemo.Service.Abstractions.Enums
 @rendermode InteractiveAuto
 @inject IToastService ToastService
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IDialogService DialogService
-@inject WebApiClient WebApiClient
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 
 <div class="bammemo-slip-card-head-wrap">
     <FluentStack Orientation="Orientation.Horizontal" Class="bammemo-slip-card-head" Style="align-items: center;">
@@ -103,7 +104,7 @@
 
         if (!result.Cancelled)
         {
-            await WebApiClient.Slips.DeleteAsync(Data.Id);
+            await WebApiClient.Api.Slips[Data.Id].DeleteAsync();
             await OnAfterDelete.InvokeAsync();
         }
     }

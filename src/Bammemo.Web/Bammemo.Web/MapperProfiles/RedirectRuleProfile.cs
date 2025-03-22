@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Bammemo.Data.Entities;
-using Bammemo.Service.Abstractions.WebApiModels.RedirectRules;
+using Bammemo.Web.WebApiModels.RedirectRules;
 
 namespace Bammemo.Web.MapperProfiles;
 

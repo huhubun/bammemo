@@ -1,37 +1,37 @@
-﻿@using Bammemo.Service.Abstractions.WebApiModels.Slips
-@using System.Globalization
+﻿@using System.Globalization
+@using Bammemo.Service.Abstractions.CommonServices
 @rendermode InteractiveAuto
 @implements IDisposable
 @inject PersistentComponentState PersistentComponentState
 @inject ICommonAnalyticsService CommonAnalyticsService
 
 <div class="bammemo-slip-calendar">
-<FluentCalendar Value="SelectedTime"
-                PickerMonthChanged="OnMonthChangedAsync"
-                ValueChanged="OnSelectedDateChangedAsync">
-    <DaysTemplate>
-        @if (!context.IsInactive)
-        {
-            var dayTicks = context.Date.Ticks;
-            var dayEndTicks = context.Date.AddDays(1).Ticks;
-
-            if ((publishedTimes ?? Enumerable.Empty<long>()).Any(t => t >= dayTicks && t < dayEndTicks))
+    <FluentCalendar Value="SelectedTime"
+                    PickerMonthChanged="OnMonthChangedAsync"
+                    ValueChanged="OnSelectedDateChangedAsync">
+        <DaysTemplate>
+            @if (!context.IsInactive)
             {
-                <div class="bammemo-slip-calendar-day-published">
+                var dayTicks = context.Date.Ticks;
+                var dayEndTicks = context.Date.AddDays(1).Ticks;
+
+                if ((publishedTimes ?? Enumerable.Empty<long>()).Any(t => t >= dayTicks && t < dayEndTicks))
+                {
+                    <div class="bammemo-slip-calendar-day-published">
+                        @context.DayNumber
+                    </div>
+                }
+                else
+                {
                     @context.DayNumber
-                </div>
+                }
             }
             else
             {
                 @context.DayNumber
             }
-        }
-        else
-        {
-            @context.DayNumber
-        }
-    </DaysTemplate>
-</FluentCalendar>
+        </DaysTemplate>
+    </FluentCalendar>
 </div>
 
 @code {
@@ -58,11 +58,10 @@
     {
         if (!PersistentComponentState.TryTakeFromJson(nameof(publishedTimes), out publishedTimes))
         {
-            publishedTimes = (await CommonAnalyticsService.GetSlipTimesAsync(new GetSlipTimesRequest
-                {
-                    StartTime = TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks,
-                    EndTime = TimeZoneInfo.ConvertTimeToUtc(dateTime.AddMonths(1)).Ticks
-                }))?.CreatedTimes.Select(t => new DateTime(t).ToLocalTime().Ticks).ToArray() ?? [];
+            publishedTimes = (await CommonAnalyticsService.GetSlipTimesAsync(
+                TimeZoneInfo.ConvertTimeToUtc(dateTime).Ticks,
+                TimeZoneInfo.ConvertTimeToUtc(dateTime.AddMonths(1)).Ticks
+            ))?.CreatedTimes.Select(t => new DateTime(t).ToLocalTime().Ticks).ToArray() ?? [];
         }
     }
 

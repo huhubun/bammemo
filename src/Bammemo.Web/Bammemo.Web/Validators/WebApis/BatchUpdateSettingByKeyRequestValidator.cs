@@ -1,4 +1,4 @@
-﻿using Bammemo.Service.Abstractions.WebApiModels.Settings;
+﻿using Bammemo.Web.WebApiModels.Settings;
 using FluentValidation;
 
 namespace Bammemo.Web.Validators.WebApis;

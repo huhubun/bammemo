@@ -1,10 +1,12 @@
 ﻿@page "/settings"
 @page "/settings/site"
+@using Bammemo.Service.Abstractions.Enums
 @using Bammemo.Service.Abstractions.SettingModels
 @using System.Text.Json
+@using System.Net.Mime
 @rendermode InteractiveWebAssembly
 @attribute [Authorize]
-@inject WebApiClient WebApiClient
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 @inject IToastService ToastService
 
 <div>
@@ -20,17 +22,43 @@
                         <FluentValidationMessage For="@(() => model.SiteName)" />
                     </div>
 
-                    <div>
-                        <FluentTextField Name="identifier" @bind-Value="model.LogoText" Label="Logo 文字" />
-                        <FluentValidationMessage For="@(() => model.LogoText)" />
-                    </div>
-
                     <div class="w-full">
                         <FluentTextArea Name="identifier" @bind-Value="model.SiteDescription" Label="站点描述" Rows="3" Class="w-full" />
                         <FluentLabel Typo="Typography.Body" Color="Color.Info">
                             用于 SEO，会生成在“首页”的 <code>@("<meta name=\"description\" />")</code> 中。
                         </FluentLabel>
                         <FluentValidationMessage For="@(() => model.SiteDescription)" />
+                    </div>
+
+                    <div>
+                        <FluentTextField Name="identifier" @bind-Value="model.LogoText" Label="Logo 文字" />
+                        <FluentValidationMessage For="@(() => model.LogoText)" />
+                    </div>
+
+                    <div class="w-full">
+                        <FluentInputLabel>Favicon</FluentInputLabel>
+
+                        @if (model.FaviconUrl != null)
+                        {
+                            <img src="@model.FaviconUrl" style="width: 48px; margin: 6px 0; display: block;" />
+                            <FluentButton OnClick="@(_ => model.FaviconUrl = null)" Style="margin-right: 6px;">Remove</FluentButton>
+                        }
+
+                        <FluentInputFile AnchorId="FaviconUploader"
+                                         DragDropZoneVisible="false"
+                                         Mode="InputFileMode.Stream"
+                                         MaximumFileSize="@(1 * 1024 * 1024)"
+                                         Accept=".jpg, .png, .ico"
+                                         OnFileUploaded="@OnFaviconUploadedAsync"
+                                         OnCompleted="@OnFaviconUploadCompleted" />
+
+                        <FluentButton Appearance="Appearance.Accent" Id="FaviconUploader" Loading="isFaviconUploading">
+                            Upload
+                        </FluentButton>
+
+                        <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                            建议不超过1MB，长宽长度一致，不要超过 512px * 512px。
+                        </FluentLabel>
                     </div>
 
                     <div class="w-full">
@@ -125,14 +153,16 @@
 @code {
     private readonly static string[] settingKeys = [
         SettingKeys.SiteName,
-        SettingKeys.SiteLogoText,
         SettingKeys.SiteDescription,
+        SettingKeys.SiteLogoText,
+        SettingKeys.FaviconUrl,
         SettingKeys.SiteKeywords,
         SettingKeys.FooterLinks
     ];
     private string? inputedKeyword, inputedFooterLinkName, inputedFooterLinkUrl;
     private SiteSettingModel? model = null;
     private bool isSaving = false;
+    private bool isFaviconUploading = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -141,10 +171,7 @@
             return;
         }
 
-        var response = await WebApiClient.Settings.BatchGetByKeysAsync(new BatchGetSettingByKeyRequest
-            {
-                Keys = settingKeys
-            });
+        var response = await WebApiClient.Api.Settings.Batch.GetAsync(requestConfig => requestConfig.QueryParameters.Keys = settingKeys);
 
         model = new();
 
@@ -155,11 +182,14 @@
                 case SettingKeys.SiteName:
                     model.SiteName = setting.Value;
                     break;
+                case SettingKeys.SiteDescription:
+                    model.SiteDescription = setting.Value;
+                    break;
                 case SettingKeys.SiteLogoText:
                     model.LogoText = setting.Value;
                     break;
-                case SettingKeys.SiteDescription:
-                    model.SiteDescription = setting.Value;
+                case SettingKeys.FaviconUrl:
+                    model.FaviconUrl = setting.Value;
                     break;
                 case SettingKeys.SiteKeywords:
                     model.SiteKeywords = setting.Value != null ? JsonSerializer.Deserialize<List<string>>(setting.Value) : [];
@@ -185,23 +215,49 @@
         }
     }
 
+    async Task OnFaviconUploadedAsync(FluentInputFileEventArgs file)
+    {
+        isFaviconUploading = true;
+
+        using var memoryStream = new MemoryStream();
+        await file.Stream!.CopyToAsync(memoryStream);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+
+        var multipartBody = new Microsoft.Kiota.Abstractions.MultipartBody();
+        multipartBody.AddOrReplacePart<Stream>("File", MediaTypeNames.Application.Octet, memoryStream, file.Name);
+        multipartBody.AddOrReplacePart("Type", MediaTypeNames.Text.Plain, FileType.Favicon.ToString());
+        multipartBody.AddOrReplacePart("KeepFileName", MediaTypeNames.Text.Plain, Boolean.TrueString);
+
+        var response = await WebApiClient.Api.Files.PostAsync(multipartBody);
+        model.FaviconUrl = response.Url;
+    }
+
+    void OnFaviconUploadCompleted(IEnumerable<FluentInputFileEventArgs> files)
+    {
+        isFaviconUploading = false;
+    }
+
     private async Task HandleValidSubmit()
     {
         isSaving = true;
 
         try
         {
-            await WebApiClient.Settings.BatchUpdateByKeysAsync(new BatchUpdateSettingByKeyRequest
+            await WebApiClient.Api.Settings.Batch.PutAsync(new Bammemo.Web.Client.WebApis.Client.Models.BatchUpdateSettingByKeyRequest
                 {
-                    Settings = settingKeys.ToDictionary(key => key, key => key switch
+                    Settings = new WebApis.Client.Models.BatchUpdateSettingByKeyRequest_settings
                     {
-                        SettingKeys.SiteName => NormalizeSettingValue(model.SiteName),
-                        SettingKeys.SiteLogoText => NormalizeSettingValue(model.LogoText),
-                        SettingKeys.SiteDescription => NormalizeSettingValue(model.SiteDescription),
-                        SettingKeys.SiteKeywords => model.SiteKeywords != null ? JsonSerializer.Serialize(model.SiteKeywords) : null,
-                        SettingKeys.FooterLinks => model.FooterLinks != null ? JsonSerializer.Serialize(model.FooterLinks.Where(i => !i.IsEmpty)) : null,
-                        _ => throw new NotSupportedException(key)
-                    })
+                        AdditionalData = settingKeys.ToDictionary(key => key, key => key switch
+                        {
+                            SettingKeys.SiteName => NormalizeSettingValue(model.SiteName),
+                            SettingKeys.SiteDescription => NormalizeSettingValue(model.SiteDescription),
+                            SettingKeys.SiteLogoText => NormalizeSettingValue(model.LogoText),
+                            SettingKeys.FaviconUrl => NormalizeSettingValue(model.FaviconUrl),
+                            SettingKeys.SiteKeywords => model.SiteKeywords != null ? JsonSerializer.Serialize(model.SiteKeywords) : (object?)null,
+                            SettingKeys.FooterLinks => model.FooterLinks != null ? JsonSerializer.Serialize(model.FooterLinks.Where(i => !i.IsEmpty)) : (object?)null,
+                            _ => throw new NotSupportedException(key)
+                        })
+                    }
                 });
 
             ToastService.ShowSuccess("站点设置保存成功，刷新页面后生效。");
@@ -267,6 +323,8 @@
         public List<string>? SiteKeywords { get; set; }
 
         public List<TextUrlModel>? FooterLinks { get; set; }
+
+        public string? FaviconUrl { get; set; }
     }
 
     public class TextUrlModel

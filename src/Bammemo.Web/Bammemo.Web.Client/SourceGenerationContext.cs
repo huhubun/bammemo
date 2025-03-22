@@ -1,11 +1,9 @@
 ﻿using Bammemo.Service.Abstractions.Dtos.Analytics;
 using Bammemo.Service.Abstractions.Dtos.Settings;
 using Bammemo.Service.Abstractions.Dtos.SiteLinks;
+using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.SettingModels;
-using Bammemo.Service.Abstractions.WebApiModels.RedirectRules;
-using Bammemo.Service.Abstractions.WebApiModels.Settings;
-using Bammemo.Service.Abstractions.WebApiModels.SiteLinks;
-using Bammemo.Service.Abstractions.WebApiModels.Slips;
+using Bammemo.Web.Client.Models.Settings;
 using System.Text.Json.Serialization;
 
 namespace Bammemo.Web.Client;
@@ -19,33 +17,6 @@ namespace Bammemo.Web.Client;
 [JsonSerializable(typeof(long[]))]
 [JsonSerializable(typeof(TextUrlSetting))]
 [JsonSerializable(typeof(List<TextUrlSetting>))]
-[JsonSerializable(typeof(ListSlipResponse))]
-[JsonSerializable(typeof(ListSlipResponse.SlipModel))]
-[JsonSerializable(typeof(ListSlipResponse.SlipModel[]))]
-[JsonSerializable(typeof(GetSlipByIdResponse))]
-[JsonSerializable(typeof(CreateSlipRequest))]
-[JsonSerializable(typeof(CreateSlipResponse))]
-[JsonSerializable(typeof(UpdateSlipRequest))]
-[JsonSerializable(typeof(GetSlipTimesRequest))]
-[JsonSerializable(typeof(GetSlipTimesResponse))]
-[JsonSerializable(typeof(GetSlipTagsResponse))]
-[JsonSerializable(typeof(GetSettingByKeyResponse))]
-[JsonSerializable(typeof(BatchGetSettingByKeyResponse))]
-[JsonSerializable(typeof(BatchGetSettingByKeyResponse.SettingItemModel))]
-[JsonSerializable(typeof(BatchGetSettingByKeyResponse.SettingItemModel[]))]
-[JsonSerializable(typeof(ListRedirectRuleResponse))]
-[JsonSerializable(typeof(ListRedirectRuleResponse.RedirectRuleModel))]
-[JsonSerializable(typeof(ListRedirectRuleResponse.RedirectRuleModel[]))]
-[JsonSerializable(typeof(CreateRedirectRuleResponse))]
-[JsonSerializable(typeof(UpdateRedirectRuleRequest))]
-[JsonSerializable(typeof(BatchUpdateSettingByKeyRequest))]
-[JsonSerializable(typeof(ListSiteLinkResponse))]
-[JsonSerializable(typeof(ListSiteLinkResponse.SiteLinkModel))]
-[JsonSerializable(typeof(ListSiteLinkResponse.SiteLinkModel[]))]
-[JsonSerializable(typeof(CreateSiteLinkRequest))]
-[JsonSerializable(typeof(CreateSiteLinkResponse))]
-[JsonSerializable(typeof(UpdateSiteLinkRequest))]
-[JsonSerializable(typeof(UpdateSlipResponse))]
 [JsonSerializable(typeof(ListSiteLinkDto))]
 [JsonSerializable(typeof(ListSiteLinkDto.SiteLinkModel))]
 [JsonSerializable(typeof(ListSiteLinkDto.SiteLinkModel[]))]
@@ -58,10 +29,10 @@ namespace Bammemo.Web.Client;
 [JsonSerializable(typeof(ListSlipDto))]
 [JsonSerializable(typeof(SlipDetailDto))]
 [JsonSerializable(typeof(SlipTagDto))]
-[JsonSerializable(typeof(CreateRedirectRuleRequest))]
-[JsonSerializable(typeof(BatchGetSettingByKeyRequest))]
-[JsonSerializable(typeof(GetSlipByIdRequest))]
-[JsonSerializable(typeof(ListSlipQueryRequest))]
+[JsonSerializable(typeof(TencentCloudSetting))]
+[JsonSerializable(typeof(TencentCloudSetting.CosSetting))]
+[JsonSerializable(typeof(TencentCloudSettingModel))]
+[JsonSerializable(typeof(TencentCloudSettingModel.CosSettingModel))]
 internal partial class SourceGenerationContext : JsonSerializerContext
 {
 }

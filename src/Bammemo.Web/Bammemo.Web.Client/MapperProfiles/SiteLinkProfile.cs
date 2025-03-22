@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Bammemo.Service.Abstractions.Dtos.SiteLinks;
-using Bammemo.Service.Abstractions.WebApiModels.SiteLinks;
 using Bammemo.Web.Client.BammemoComponents.Settings;
 
 namespace Bammemo.Web.Client.MapperProfiles;
@@ -9,11 +8,11 @@ public class SiteLinkProfile : Profile
 {
     public SiteLinkProfile()
     {
-        CreateMap<BammemoSettingSiteLinkEditDialog.SiteLinkModel, CreateSiteLinkRequest>();
-        CreateMap<BammemoSettingSiteLinkEditDialog.SiteLinkModel, UpdateSiteLinkRequest>();
-        CreateMap<ListSiteLinkResponse.SiteLinkModel, BammemoSettingSiteLinkEditDialog.SiteLinkModel>();
+        CreateMap<BammemoSettingSiteLinkEditDialog.SiteLinkModel, Bammemo.Web.Client.WebApis.Client.Models.CreateSiteLinkRequest>();
+        CreateMap<BammemoSettingSiteLinkEditDialog.SiteLinkModel, Bammemo.Web.Client.WebApis.Client.Models.UpdateSiteLinkRequest>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.SiteLinkModel, BammemoSettingSiteLinkEditDialog.SiteLinkModel>();
 
-        CreateMap<ListSiteLinkResponse, ListSiteLinkDto>();
-        CreateMap<ListSiteLinkResponse.SiteLinkModel, ListSiteLinkDto.SiteLinkModel>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.ListSiteLinkResponse, ListSiteLinkDto>();
+        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.SiteLinkModel, ListSiteLinkDto.SiteLinkModel>();
     }
 }

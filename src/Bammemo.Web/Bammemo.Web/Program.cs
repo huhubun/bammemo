@@ -1,14 +1,15 @@
 using Bammemo.Data;
 using Bammemo.Service;
+using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Identities;
 using Bammemo.Service.Interfaces;
-using Bammemo.Service.MapperProfiles;
 using Bammemo.Service.Options;
-using Bammemo.Web.Client.Extensions;
 using Bammemo.Web.Client.Options;
+using Bammemo.Web.CommonServices;
 using Bammemo.Web.Components;
 using Bammemo.Web.Identities;
+using Bammemo.Web.MinimalApis;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -87,16 +88,24 @@ builder.Services.AddDbContext<BammemoDbContext>(options =>
     options.UseSqlite(bammemoOptions.ConnectionString)
 );
 
-builder.Services.Configure<BammemoOptions>(builder.Configuration.GetSection(BammemoOptions.Position));
+builder.Services.AddOptions<BammemoOptions>()
+    .Bind(builder.Configuration.GetSection(BammemoOptions.Position))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
-builder.Services.AddBammemoAutoMapper(
-    typeof(Program).Assembly,
-    typeof(SlipProfile).Assembly);
+builder.Services.AddBammemoAutoMapper(typeof(Program).Assembly);
+builder.Services.AddBammemoStorageProvider();
 
 // 预加载需要
-builder.Services.AddHttpClient<Bammemo.Web.Client.Services.WebApiClient>(client =>
+builder.Services.AddSingleton(_ =>
 {
-    client.BaseAddress = new Uri(bammemoOptions.ApiUrl.NormalizeUrlSlash());
+    var adapter = new Microsoft.Kiota.Http.HttpClientLibrary.HttpClientRequestAdapter(new Microsoft.Kiota.Abstractions.Authentication.AnonymousAuthenticationProvider())
+    {
+        BaseUrl = new Uri(bammemoOptions.ApiUrl).GetLeftPart(UriPartial.Authority)
+    };
+    var client = new Bammemo.Web.Client.WebApis.Client.WebApiClient(adapter);
+
+    return client;
 });
 
 builder.Services.AddScoped<ISettingService, SettingService>();
@@ -104,6 +113,8 @@ builder.Services.AddScoped<ISlipService, SlipService>();
 builder.Services.AddScoped<IIdService, IdService>();
 builder.Services.AddScoped<IRedirectRuleService, RedirectRuleService>();
 builder.Services.AddScoped<ISiteLinkService, SiteLinkService>();
+builder.Services.AddScoped<ISecurityService, SecurityService>();
+builder.Services.AddScoped<IStorageService, StorageService>();
 
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
@@ -115,11 +126,11 @@ builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 #if DEBUG
-    app.UseWebAssemblyDebugging();
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+app.UseWebAssemblyDebugging();
+app.MapOpenApi();
+app.MapScalarApiReference();
 #else
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+app.UseExceptionHandler("/Error", createScopeForErrors: true);
 #endif
 
 using (var scope = app.Services.CreateScope())
@@ -128,6 +139,13 @@ using (var scope = app.Services.CreateScope())
 
     if (!File.Exists(connectionString.DataSource))
     {
+        if (bammemoOptions.Key == null)
+        {
+            var securityService = scope.ServiceProvider.GetRequiredService<ISecurityService>();
+            securityService.GenerateAesKeyToLocalStorage();
+        }
+
+        // Init database
         var directory = Path.GetDirectoryName(connectionString.DataSource);
         if (!String.IsNullOrEmpty(directory))
         {
@@ -135,15 +153,20 @@ using (var scope = app.Services.CreateScope())
         }
 
         var dbContext = scope.ServiceProvider.GetRequiredService<BammemoDbContext>();
-        dbContext.Database.EnsureCreated();
+        await dbContext.Database.MigrateAsync();
 
         var settingService = scope.ServiceProvider.GetRequiredService<ISettingService>();
 
         var idAlphabet = IdHelper.GenerateIdAlphabet();
         await settingService.CreateAsync(SettingKeys.IdAlphabet, idAlphabet);
 
-        await settingService.CreateAsync(SettingKeys.SiteName, "Bammemo");
-        await settingService.CreateAsync(SettingKeys.SiteLogoText, "Bam");
+        await settingService.CreateAsync(SettingKeys.SiteName, "bammemo");
+        await settingService.CreateAsync(SettingKeys.SiteLogoText, "bam");
+    }
+    else
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<BammemoDbContext>();
+        await dbContext.Database.MigrateAsync();
     }
 }
 
@@ -162,7 +185,7 @@ app.MapGet("/logout", async ([FromServices] SignInManager<BammemoUser> signInMan
 {
     await signInManager.SignOutAsync();
     return TypedResults.LocalRedirect("~/");
-});
+}).ExcludeFromDescription();
 
 app.MapGet("/bammemo.json", async (HttpContext httpContext) =>
 {
@@ -175,6 +198,8 @@ app.MapGet("/bammemo.json", async (HttpContext httpContext) =>
             ApiUrl = bammemoOptions.Value.ApiUrl
         }
     });
-});
+}).ExcludeFromDescription();
 
-app.Run(); 
+app.MapFilesApi();
+
+app.Run();

@@ -14,7 +14,79 @@ namespace Bammemo.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.3");
+
+            modelBuilder.Entity("Bammemo.Data.Entities.FileMetadata", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("CreatedAt")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("HashAlgorithm")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("HashValue")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("StorageFileName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("StorageType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long?>("UpdateAt")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Path", "FileName");
+
+                    b.ToTable("FileMetadata");
+                });
+
+            modelBuilder.Entity("Bammemo.Data.Entities.FileReference", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("MetadataId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("SourceType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MetadataId");
+
+                    b.HasIndex("SourceType", "SourceId");
+
+                    b.ToTable("FileReferences");
+                });
 
             modelBuilder.Entity("Bammemo.Data.Entities.RedirectRule", b =>
                 {
@@ -149,6 +221,17 @@ namespace Bammemo.Data.Migrations
                     b.ToTable("SlipTags");
                 });
 
+            modelBuilder.Entity("Bammemo.Data.Entities.FileReference", b =>
+                {
+                    b.HasOne("Bammemo.Data.Entities.FileMetadata", "Metadata")
+                        .WithMany("References")
+                        .HasForeignKey("MetadataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Metadata");
+                });
+
             modelBuilder.Entity("Bammemo.Data.Entities.SlipTag", b =>
                 {
                     b.HasOne("Bammemo.Data.Entities.Slip", "Slip")
@@ -158,6 +241,11 @@ namespace Bammemo.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Slip");
+                });
+
+            modelBuilder.Entity("Bammemo.Data.Entities.FileMetadata", b =>
+                {
+                    b.Navigation("References");
                 });
 
             modelBuilder.Entity("Bammemo.Data.Entities.Slip", b =>
