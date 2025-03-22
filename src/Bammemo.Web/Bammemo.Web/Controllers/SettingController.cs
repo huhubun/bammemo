@@ -6,18 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bammemo.Web.Controllers;
 
+[Authorize]
 [Route("api/settings")]
 [ApiController]
 public class SettingController(
     IMapper mapper,
     ISettingService settingService,
-    ISecurityService securityService) : BammemoControllerBase
+    ISecurityService securityService,
+    IStorageService storageService) : BammemoControllerBase
 {
+    [AllowAnonymous]
     [HttpGet("{key}")]
     [ProducesResponseType<GetSettingByKeyResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByKeyAsync([FromRoute] string key)
     {
         if (!SettingKeys.VerifyKey(key))
@@ -40,7 +43,6 @@ public class SettingController(
         return NotFound();
     }
 
-    [Authorize]
     [HttpPut("{key}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -55,6 +57,7 @@ public class SettingController(
         return NoContent();
     }
 
+    [AllowAnonymous]
     [HttpGet("batch")]
     [ProducesResponseType<BatchGetSettingByKeyResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -78,7 +81,6 @@ public class SettingController(
         });
     }
 
-    [Authorize]
     [HttpPut("batch")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -97,7 +99,6 @@ public class SettingController(
         return NoContent();
     }
 
-    [Authorize]
     [HttpGet("security/key-source")]
     [ProducesResponseType<GetKeySourceResponse>(StatusCodes.Status200OK)]
     public IActionResult GetKeySource()
@@ -105,6 +106,16 @@ public class SettingController(
         return Ok(new GetKeySourceResponse
         {
             KeySource = securityService.GetKeySource()
+        });
+    }
+
+    [HttpGet("storage/types")]
+    [ProducesResponseType<GetStorageTypeInfosResponse>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetStorageTypesAsync()
+    {
+        return Ok(new GetStorageTypeInfosResponse
+        {
+            StorageTypeInfos = mapper.Map<GetStorageTypeInfosResponse.StorageTypeInfoModel[]>(await storageService.GetStorageTypesAsync().ToListAsync())
         });
     }
 }

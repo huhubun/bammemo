@@ -6,6 +6,7 @@
 @rendermode InteractiveWebAssembly
 @attribute [Authorize]
 @inject IToastService ToastService
+@inject IMapper Mapper
 @inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 
 <div>
@@ -34,7 +35,7 @@
                             <FluentTextField @bind-Value="_model.SecretId" Label="Secret Id" Required Class="w-full" />
                             <FluentValidationMessage For="@(() => _model.SecretId)" />
                             <FluentLabel Typo="Typography.Body" Color="Color.Info">
-                                前往<FluentAnchor Appearance="Appearance.Hypertext" Href="https://console.cloud.tencent.com/cam/capi" Target="_blank">API密钥管理</FluentAnchor>创建，主账号、子账号均可使用。
+                                请参考<FluentAnchor Appearance="Appearance.Hypertext" Href="https://cloud.tencent.com/document/product/598/37140" Target="_blank">文档</FluentAnchor>，目前支持“永久密钥”，建议设置子账号。
                             </FluentLabel>
                         </div>
 
@@ -70,6 +71,14 @@
                                 前往<FluentAnchor Appearance="Appearance.Hypertext" Href="https://console.cloud.tencent.com/cos/bucket" Target="_blank">存储桶列表</FluentAnchor>获取，例如 <code>examplebucket-1250000000</code>。
                             </FluentLabel>
                         </div>
+
+                        <div class="w-full">
+                            <FluentTextField @bind-Value="_model.Cos.AccessDomain" Label="访问域名" Required="_model.EnableCos" Class="w-full" Disabled="!_model.EnableCos" />
+                            <FluentValidationMessage For="@(() => _model.Cos.AccessDomain)" />
+                            <FluentLabel Typo="Typography.Body" Color="Color.Info">
+                                用于访问 COS 内容域名，通常为 COS 的公网访问域名或指向该 COS 的 CDN 的域名。例如：https://cdn.example.com。
+                            </FluentLabel>
+                        </div>
                     </FluentStack>
 
                     <FluentDivider Role="DividerRole.Presentation" Class="w-full" />
@@ -103,20 +112,16 @@
             var response = await WebApiClient.Api.Settings[SettingKeys.TencentCloud].GetAsync();
             if (response?.Value != null)
             {
-                _model = JsonSerializer.Deserialize(response.Value, SourceGenerationContext.Default.TencentCloudSettingModel);
+                var setting = JsonSerializer.Deserialize(response.Value, SourceGenerationContext.Default.TencentCloudSetting);
+                _model = Mapper.Map<TencentCloudSettingModel>(setting);
             }
         }
         catch (ApiException apiException) when (apiException.ResponseStatusCode == (int)HttpStatusCode.NotFound)
         {
         }
 
-        if (_model == null)
-        {
-            _model = new()
-                {
-                    Cos = new()
-                };
-        }
+        _model ??= new();
+        _model.Cos ??= new();
     }
 
     private async Task HandleValidSubmit()
@@ -127,8 +132,10 @@
         {
             await WebApiClient.Api.Settings[SettingKeys.TencentCloud].PutAsync(new WebApis.Client.Models.UpdateSettingByKeyRequest
                 {
-                    Value = JsonSerializer.Serialize(_model, SourceGenerationContext.Default.TencentCloudSettingModel)
+                    Value = JsonSerializer.Serialize(Mapper.Map<Service.Abstractions.SettingModels.TencentCloudSetting>(_model), SourceGenerationContext.Default.TencentCloudSetting)
                 });
+
+            ToastService.ShowSuccess("Tencent Cloud 配置保存成功。");
         }
         finally
         {

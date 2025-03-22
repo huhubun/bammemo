@@ -106,8 +106,6 @@ kiota generate -l CSharp \
     -c WebApiClient \
     -n Bammemo.Web.Client.WebApis.Client \
     -d http://localhost:5146/openapi/v1.json \
-    --serializer Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory \
-    --deserializer Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory \
     --exclude-backward-compatible \
     -o ./src/Bammemo.Web/Bammemo.Web.Client/WebApis/Client
 ```

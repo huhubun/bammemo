@@ -3,6 +3,7 @@
 using Bammemo.Web.Client.WebApis.Client.Api.Settings.Batch;
 using Bammemo.Web.Client.WebApis.Client.Api.Settings.Item;
 using Bammemo.Web.Client.WebApis.Client.Api.Settings.Security;
+using Bammemo.Web.Client.WebApis.Client.Api.Settings.Storage;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
 using System.Collections.Generic;
@@ -26,6 +27,11 @@ namespace Bammemo.Web.Client.WebApis.Client.Api.Settings
         public global::Bammemo.Web.Client.WebApis.Client.Api.Settings.Security.SecurityRequestBuilder Security
         {
             get => new global::Bammemo.Web.Client.WebApis.Client.Api.Settings.Security.SecurityRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The storage property</summary>
+        public global::Bammemo.Web.Client.WebApis.Client.Api.Settings.Storage.StorageRequestBuilder Storage
+        {
+            get => new global::Bammemo.Web.Client.WebApis.Client.Api.Settings.Storage.StorageRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>Gets an item from the Bammemo.Web.Client.WebApis.Client.api.settings.item collection</summary>
         /// <param name="position">Unique identifier of the item</param>

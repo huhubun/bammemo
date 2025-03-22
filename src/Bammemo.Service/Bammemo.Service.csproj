@@ -10,6 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="9.0.3" />
     <PackageReference Include="Sqids" Version="3.1.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.44" />
   </ItemGroup>
 
   <ItemGroup>

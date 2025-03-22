@@ -1,0 +1,103 @@
+﻿@page "/settings/storage"
+@using System.Net
+@using Bammemo.Service.Abstractions.Enums
+@rendermode InteractiveWebAssembly
+@attribute [Authorize]
+@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
+@inject IMapper Mapper
+@inject IToastService ToastService
+
+<div>
+    <BammemoSettingLayout PageTitle="存储">
+        <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+            <div class="w-full">
+                <FluentRadioGroup Name="numbers"
+                                  Value="_storageType"
+                                  Label="存储方式"
+                                  Class="w-full"
+                                  ValueChanged="@(async (StorageType? value )=> await UpdateStorageTypeAsync(value.Value))">
+                    @if (storageTypeInfos != null)
+                    {
+                        @foreach (var type in storageTypeInfos.OrderBy(i => i.Key))
+                        {
+                            var isDisabled = !type.Value.IsAvailable.Value;
+                            var message = (StorageTypeErrorType?)type.Value.Error switch
+                            {
+                                StorageTypeErrorType.NotConfigured => "尚未配置",
+                                _ => null
+                            };
+
+                            <FluentRadio Value="type.Key" Disabled="isDisabled">
+                                <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="0">
+                                    @type.Key
+
+                                    @if (message != null)
+                                    {
+                                        <FluentLabel Color="Color.Warning">（@message）</FluentLabel>
+                                    }
+                                </FluentStack>
+                            </FluentRadio>
+                        }
+                    }
+                    else
+                    {
+                        <FluentLabel>Loading options...</FluentLabel>
+                    }
+                </FluentRadioGroup>
+            </div>
+        </FluentStack>
+    </BammemoSettingLayout>
+</div>
+
+<FluentToastProvider />
+
+@code {
+    private StorageType? _storageType;
+    private bool isSaving = false;
+    private Dictionary<StorageType, Bammemo.Web.Client.WebApis.Client.Models.StorageTypeInfoModel>? storageTypeInfos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (RendererInfo.Name != BlazorRendererName.WebAssembly)
+        {
+            return;
+        }
+
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        var response = await WebApiClient.Api.Settings.Storage.Types.GetAsync();
+        storageTypeInfos = new();
+
+        foreach (var storageTypeInfo in response.StorageTypeInfos)
+        {
+            var type = (StorageType)storageTypeInfo.StorageType;
+
+            storageTypeInfos.Add(type, storageTypeInfo);
+
+            if (storageTypeInfo.IsUsed.Value)
+            {
+                _storageType = type;
+            }
+        }
+    }
+
+    private async Task UpdateStorageTypeAsync(StorageType storageType)
+    {
+        _storageType = storageType;
+
+        await WebApiClient.Api.Settings[SettingKeys.StorageType].PutAsync(new WebApis.Client.Models.UpdateSettingByKeyRequest
+            {
+                Value = ((int)storageType).ToString()
+            });
+
+        ToastService.ShowSuccess($"存储方式已切换为 {storageType}。");
+    }
+
+    class StorageSettingModel
+    {
+        public StorageType StorageType { get; set; }
+    }
+}

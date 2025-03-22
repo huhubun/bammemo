@@ -9,6 +9,7 @@ using Bammemo.Web.Client.Options;
 using Bammemo.Web.CommonServices;
 using Bammemo.Web.Components;
 using Bammemo.Web.Identities;
+using Bammemo.Web.MinimalApis;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -93,6 +94,7 @@ builder.Services.AddOptions<BammemoOptions>()
     .ValidateOnStart();
 
 builder.Services.AddBammemoAutoMapper(typeof(Program).Assembly);
+builder.Services.AddBammemoStorageProvider();
 
 // 预加载需要
 builder.Services.AddSingleton(_ =>
@@ -112,6 +114,7 @@ builder.Services.AddScoped<IIdService, IdService>();
 builder.Services.AddScoped<IRedirectRuleService, RedirectRuleService>();
 builder.Services.AddScoped<ISiteLinkService, SiteLinkService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
+builder.Services.AddScoped<IStorageService, StorageService>();
 
 builder.Services.AddScoped<ICommonSlipService, CommonSlipService>();
 builder.Services.AddScoped<ICommonSettingService, CommonSettingService>();
@@ -136,18 +139,10 @@ using (var scope = app.Services.CreateScope())
 
     if (!File.Exists(connectionString.DataSource))
     {
-        // Init AES key
-        KeySource keySource;
         if (bammemoOptions.Key == null)
         {
-            keySource = KeySource.LocalStorage;
-
             var securityService = scope.ServiceProvider.GetRequiredService<ISecurityService>();
             securityService.GenerateAesKeyToLocalStorage();
-        }
-        else
-        {
-            keySource = KeySource.Options;
         }
 
         // Init database
@@ -158,7 +153,7 @@ using (var scope = app.Services.CreateScope())
         }
 
         var dbContext = scope.ServiceProvider.GetRequiredService<BammemoDbContext>();
-        dbContext.Database.EnsureCreated();
+        await dbContext.Database.MigrateAsync();
 
         var settingService = scope.ServiceProvider.GetRequiredService<ISettingService>();
 
@@ -167,6 +162,11 @@ using (var scope = app.Services.CreateScope())
 
         await settingService.CreateAsync(SettingKeys.SiteName, "bammemo");
         await settingService.CreateAsync(SettingKeys.SiteLogoText, "bam");
+    }
+    else
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<BammemoDbContext>();
+        await dbContext.Database.MigrateAsync();
     }
 }
 
@@ -199,5 +199,7 @@ app.MapGet("/bammemo.json", async (HttpContext httpContext) =>
         }
     });
 }).ExcludeFromDescription();
+
+app.MapFilesApi();
 
 app.Run();

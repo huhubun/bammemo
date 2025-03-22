@@ -28,6 +28,7 @@ public class SettingProfile : Profile
                     dest.EnableCos = true;
                 }
             });
+        CreateMap<TencentCloudSetting.CosSetting, TencentCloudSettingModel.CosSettingModel>();
 
         CreateMap<TencentCloudSettingModel, TencentCloudSetting>()
             .AfterMap((src, dest) =>
@@ -37,6 +38,6 @@ public class SettingProfile : Profile
                     dest.Cos = null;
                 }
             });
-
+        CreateMap<TencentCloudSettingModel.CosSettingModel, TencentCloudSetting.CosSetting>();
     }
 }

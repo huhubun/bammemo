@@ -17,6 +17,7 @@ public static class SettingKeys
     public const string FaviconUrl = nameof(FaviconUrl);
     [ProtectedSetting]
     public const string TencentCloud = nameof(TencentCloud);
+    public const string StorageType = nameof(StorageType);
 
     public static bool VerifyKey(string key)
         => VerifyKeys([key]);

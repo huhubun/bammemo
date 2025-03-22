@@ -9,33 +9,67 @@
 </PageTitle>
 
 <HeadContent>
-    <link rel="icon" type="image/png" href="bammemo-favicon-48x48.png" sizes="48x48" />
+    @if (model?.FaviconUrl != null)
+    {
+        <link rel="icon" href="@model?.FaviconUrl" />
+    }
+    else
+    {
+        <link rel="icon" type="image/png" href="bammemo-favicon-128x128.png" sizes="128x128" />
+    }
 </HeadContent>
 
 @code {
+    private const string PERSITING_KEY = "page_title_model";
+    private static readonly string[] settingKeys = [
+        SettingKeys.SiteName,
+        SettingKeys.FaviconUrl
+        ];
     private PersistingComponentStateSubscription persistingSubscription;
-    private string? siteName;
+    private PageTitleModel? model;
 
     [Parameter]
     public string? Title { get; set; }
 
-    public string? TitleSuffix => Title != null ? $" | {siteName}" : siteName;
+    public string? TitleSuffix => Title != null ? (model?.SiteName != null ? $" | {model.SiteName}" : null) : model?.SiteName;
 
     protected override async Task OnInitializedAsync()
     {
         persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
 
-        if (!PersistentComponentState.TryTakeFromJson($"{nameof(siteName)}_{nameof(BammemoPageTitle)}", out siteName))
+        if (!PersistentComponentState.TryTakeFromJson(PERSITING_KEY, out model))
         {
-            siteName = (await CommonSettingService.GetByKeyAsync(SettingKeys.SiteName))?.Value;
+            var result = await CommonSettingService.GetByKeysAsync(settingKeys);
+
+            model = new();
+            foreach (var setting in result.Settings)
+            {
+                switch (setting.Key)
+                {
+                    case SettingKeys.SiteName:
+                        model.SiteName = setting.Value;
+                        break;
+                    case SettingKeys.FaviconUrl:
+                        model.FaviconUrl = setting.Value;
+                        break;
+                    default:
+                        throw new NotSupportedException(setting.Key);
+                }
+            }
         }
     }
 
     private Task PersistData()
     {
-        PersistentComponentState.PersistAsJson($"{nameof(siteName)}_{nameof(BammemoPageTitle)}", siteName);
+        PersistentComponentState.PersistAsJson(PERSITING_KEY, model);
         return Task.CompletedTask;
     }
 
     void IDisposable.Dispose() => persistingSubscription.Dispose();
+
+    class PageTitleModel
+    {
+        public string? SiteName { get; set; }
+        public string? FaviconUrl { get; set; }
+    }
 }
