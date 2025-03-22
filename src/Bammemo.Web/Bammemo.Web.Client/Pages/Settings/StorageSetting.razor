@@ -41,7 +41,10 @@
                     }
                     else
                     {
-                        <FluentLabel>Loading options...</FluentLabel>
+                        <FluentStack Wrap Orientation="Orientation.Horizontal">
+                            <FluentSkeleton Style="width: 8rem; height: 1.25rem;" />
+                            <FluentSkeleton Style="width: 8rem; height: 1.25rem;" />
+                        </FluentStack>
                     }
                 </FluentRadioGroup>
             </div>
