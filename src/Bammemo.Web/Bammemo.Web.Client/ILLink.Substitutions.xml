@@ -1,0 +1,27 @@
+﻿<!-- https://github.com/dotnet/runtime/blob/main/docs/tools/illink/data-formats.md#substitution-format -->
+<linker>
+	<assembly fullname="Microsoft.Kiota.Serialization.Json">
+		<type fullname="Microsoft.Kiota.Serialization.Json.JsonParseNode">
+			<method signature="System.Nullable`1&lt;System.TimeSpan&gt; GetTimeSpanValue()" body="remove" />
+		</type>
+		<type fullname="Microsoft.Kiota.Serialization.Json.JsonSerializationWriter">
+			<method signature="System.Void WriteTimeSpanValue(System.String,System.Nullable`1&lt;System.TimeSpan&gt;)" body="remove" />
+		</type>
+	</assembly>
+	<assembly fullname="System.Private.Xml">
+		<type fullname="System.Xml.XmlConvert">
+			<method signature="System.String ToString(System.TimeSpan)" body="remove" />
+			<method signature="System.TimeSpan ToTimeSpan(System.String)" body="remove" />
+		</type>
+		<!-- 把上面两个方法移除后，突然会冒出来很多嵌入式资源，这里也一并移除 -->
+		<resource name="FxResources.System.Private.Xml.SR.resources" action="remove" />
+		<resource name="ILLink.Substitutions.xml" action="remove" />
+		<resource name="rss-0.91.dtd" action="remove" />
+		<resource name="xhtml1-frameset.dtd" action="remove" />
+		<resource name="xhtml1-strict.dtd" action="remove" />
+		<resource name="xhtml1-transitional.dtd" action="remove" />
+		<resource name="xhtml-lat1.ent" action="remove" />
+		<resource name="xhtml-special.ent" action="remove" />
+		<resource name="xhtml-symbol.ent" action="remove" />
+	</assembly>
+</linker>

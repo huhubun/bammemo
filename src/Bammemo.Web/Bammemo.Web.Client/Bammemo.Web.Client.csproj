@@ -9,8 +9,8 @@
     <PublishTrimmed>true</PublishTrimmed>
     <TrimMode>full</TrimMode>
     <RunAOTCompilation>false</RunAOTCompilation>
-    <WasmCompressionFormat>brotli</WasmCompressionFormat>
     <InvariantGlobalization>true</InvariantGlobalization>
+	<_ExtraTrimmerArgs>--substitutions $(MSBuildThisFileDirectory)ILLink.Substitutions.xml</_ExtraTrimmerArgs>
   </PropertyGroup>
 
   <ItemGroup>
@@ -35,11 +35,6 @@
   </ItemGroup>
 
     <ItemGroup>
-        <TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+		<TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="WebApis\" />
-    </ItemGroup>
-
 </Project>

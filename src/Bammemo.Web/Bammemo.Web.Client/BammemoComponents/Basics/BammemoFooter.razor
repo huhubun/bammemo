@@ -1,15 +1,4 @@
-﻿@using System.Collections.ObjectModel
-@using System.Reflection
-@using System.Text.Json
-@using System.Text.RegularExpressions
-@using Bammemo.Service.Abstractions.CommonServices
-@using Bammemo.Service.Abstractions.SettingModels
-@rendermode InteractiveAuto
-@implements IDisposable
-@inject PersistentComponentState PersistentComponentState
-@inject IMapper Mapper
-@inject ICommonSettingService CommonSettingService
-@inject NavigationManager NavigationManager
+﻿@rendermode InteractiveAuto
 
 <footer class="bammemo-footer">
     <FluentGrid Justify="JustifyContent.Center">
@@ -74,72 +63,3 @@
         }
     </FluentGrid>
 </footer>
-
-@code {
-    private static readonly FooterGridItemDisplayType oneColumn = new()
-        {
-            Left = new(12)
-        };
-    private static readonly FooterGridItemDisplayType twoColumns = new()
-        {
-            Left = new(12, 8, 6),
-            Right = new(null, 3, null)
-        };
-    private static readonly ReadOnlyCollection<string> oneColumnPagePatterns = new([
-            "^/login$",
-            "^/about$",
-            "^/links$",
-            "^/settings(/.*)?$"
-    ]);
-    private PersistingComponentStateSubscription persistingSubscription;
-    private List<TextUrlSetting>? footerLinks;
-
-    private string DotNetVersion => System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription;
-    private string RenderMode => "Blazor " + (OperatingSystem.IsBrowser() ? "WebAssembly" : "Server");
-    private string CurrentPageAbsolutePath => new Uri(NavigationManager.Uri).AbsolutePath;
-    private FooterGridItemDisplayType GridItemDisplayType => oneColumnPagePatterns.Any(p => Regex.IsMatch(CurrentPageAbsolutePath, p)) ? oneColumn : twoColumns;
-
-    protected override async Task OnInitializedAsync()
-    {
-        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
-
-        if (!PersistentComponentState.TryTakeFromJson(nameof(footerLinks), out footerLinks))
-        {
-            var setting = await CommonSettingService.GetByKeyAsync(SettingKeys.FooterLinks);
-            footerLinks = setting?.Value != null ? JsonSerializer.Deserialize<List<TextUrlSetting>>(setting.Value) : [];
-        }
-    }
-
-    private Task PersistData()
-    {
-        PersistentComponentState.PersistAsJson(nameof(footerLinks), footerLinks);
-        return Task.CompletedTask;
-    }
-
-    void IDisposable.Dispose() => persistingSubscription.Dispose();
-
-    record FooterGridItemDisplayType
-    {
-        public required FooterGridItemSpan Left { get; init; }
-        public FooterGridItemSpan? Right { get; init; }
-    }
-
-    record FooterGridItemSpan
-    {
-        public FooterGridItemSpan(int? xs)
-        {
-            Xs = xs;
-        }
-
-        public FooterGridItemSpan(int? xs, int? lg, int? xl)
-        {
-            Xs = xs;
-            Lg = lg;
-            Xl = xl;
-        }
-
-        public int? Xs { get; init; }
-        public int? Lg { get; init; }
-        public int? Xl { get; init; }
-    }
-}
