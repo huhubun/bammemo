@@ -53,6 +53,6 @@ public static partial class MarkdownHelper
         return tags.Distinct().ToArray();
     }
 
-    [GeneratedRegex(@"#([\p{L}\p{N}_-]+)", RegexOptions.IgnoreCase, 1000)]
+    [GeneratedRegex(@"#([\p{L}\p{N}_-]+)", RegexOptions.IgnoreCase, 200)]
     private static partial Regex TagNameRegex();
 }

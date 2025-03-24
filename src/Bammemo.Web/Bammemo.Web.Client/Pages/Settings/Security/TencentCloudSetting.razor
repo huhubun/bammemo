@@ -35,7 +35,7 @@
                             <FluentTextField @bind-Value="_model.SecretId" Label="Secret Id" Required Class="w-full" />
                             <FluentValidationMessage For="@(() => _model.SecretId)" />
                             <FluentLabel Typo="Typography.Body" Color="Color.Info">
-                                请参考<FluentAnchor Appearance="Appearance.Hypertext" Href="https://cloud.tencent.com/document/product/598/37140" Target="_blank">文档</FluentAnchor>，目前支持“永久密钥”，建议设置子账号。
+                                请参考<FluentAnchor Appearance="Appearance.Hypertext" Href="https://cloud.tencent.com/document/product/598/37140" Target="_blank">文档</FluentAnchor>进行设置。
                             </FluentLabel>
                         </div>
 
@@ -91,10 +91,19 @@
         }
         else
         {
-            <div>loading...</div>
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
+                @for (var i = 0; i < 3; i++)
+                {
+                    <FluentSkeleton Style="width: 6rem; height: 1.25rem;" />
+                    <FluentSkeleton Style="width: 100%; height: 1.25rem;" />
+                    <FluentSkeleton Style="width: 12rem; height: 1.25rem;" />
+                }
+            </FluentStack>
         }
     </BammemoSettingLayout>
 </div>
+
+<FluentToastProvider />
 
 @code {
     private TencentCloudSettingModel? _model;

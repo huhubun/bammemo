@@ -36,9 +36,19 @@
     protected override void OnInitialized()
     {
         var pipeline = new MarkdownPipelineBuilder()
-            .UseAdvancedExtensions()
+            // 不使用 UseAdvancedExtensions()，因为这会带入很多用不上的扩展，导致 wasm 文件变大
+            // https://github.com/xoofx/markdig/blob/master/src/Markdig.Tests/Specs/EmphasisExtraSpecs.md
+            .UseEmphasisExtras()
+            // https://github.com/xoofx/markdig/blob/master/src/Markdig.Tests/Specs/AutoIdentifierSpecs.md
             .UseAutoIdentifiers()
+            // https://github.com/xoofx/markdig/blob/master/src/Markdig.Tests/Specs/PipeTableSpecs.md
+            .UsePipeTables()
+            // https://github.com/xoofx/markdig/blob/master/src/Markdig.Tests/Specs/EmojiSpecs.md
             .UseEmojiAndSmiley()
+            // https://github.com/xoofx/markdig/blob/master/src/Markdig.Tests/Specs/FootnotesSpecs.md
+            .UseFootnotes()
+            // https://github.com/xoofx/markdig/issues/774
+            .UseAlertBlocks()
             .Use<MarkdownSectionPreCodeExtension>()
             .Use<MoreSeparatorExtension>()
             .Build();

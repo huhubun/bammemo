@@ -3,7 +3,6 @@
 using Bammemo.Web.Client.WebApis.Client.Api;
 using Microsoft.Kiota.Abstractions.Extensions;
 using Microsoft.Kiota.Abstractions;
-using Microsoft.Kiota.Serialization.Form;
 using Microsoft.Kiota.Serialization.Json;
 using Microsoft.Kiota.Serialization.Multipart;
 using Microsoft.Kiota.Serialization.Text;
@@ -32,11 +31,8 @@ namespace Bammemo.Web.Client.WebApis.Client
         {
             ApiClientBuilder.RegisterDefaultSerializer<JsonSerializationWriterFactory>();
             ApiClientBuilder.RegisterDefaultSerializer<TextSerializationWriterFactory>();
-            ApiClientBuilder.RegisterDefaultSerializer<FormSerializationWriterFactory>();
             ApiClientBuilder.RegisterDefaultSerializer<MultipartSerializationWriterFactory>();
             ApiClientBuilder.RegisterDefaultDeserializer<JsonParseNodeFactory>();
-            ApiClientBuilder.RegisterDefaultDeserializer<TextParseNodeFactory>();
-            ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
             if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
             {
                 RequestAdapter.BaseUrl = "http://localhost:5146";

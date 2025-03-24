@@ -8,7 +8,7 @@ bammemo（/ˌbæmˈmɛmoʊ/，竹笺）是一个融合博客、微博与便笺�
 通过镜像部署：
 
 ```bash
-docker pull ghcr.io/huhubun/bammemo:0.1.1-alpha.1
+docker pull ghcr.io/huhubun/bammemo:0.1.1-alpha.2
 ```
 
 ### 配置项
@@ -23,17 +23,17 @@ docker pull ghcr.io/huhubun/bammemo:0.1.1-alpha.1
     "ConnectionString": "Data Source=/bammemo/bammemo.db",
     "ApiUrl": "https://example.com/api/",
     "Username": "YOUR_USERNAME",
-    "Password": "BASE64_ENCODE_PASSWORD"
+    "Password": "BASE64_ENCODE_PASSWORD",
+    "StoragePath": "/bammemo"
   }
 }
 ```
 
-使用时建议通过环境变量进行设置 `Bammemo__{名称}`（注意是两个下划线），环境变量会覆盖配置文件：
+使用时建议通过环境变量 `Bammemo__{配置项名称}`（注意是**两个下划线**）进行设置 ，环境变量会覆盖配置文件：
 
 ```bash
 export Bammemo__ApiUrl="https://example.com/api/"
 ```
-
 
 # 前端
 
@@ -51,12 +51,14 @@ export Bammemo__ApiUrl="https://example.com/api/"
 
 #### 释义
 
-| Name                  | Scope                 |  Description                                             |
-| --------------------- | --------------------- | -------------------------------------------------------- |
-| ConnectionString      | 服务器                 | sqlite 数据库的路径，db 文件可以不提前创建，首次运行时会自动创建 |
-| ApiUrl                | 服务器、前端            | API 的地址，域名 + `/api/`                                 |
-| Username              | 服务器                 | 管理员登录使用的用户名                                      |
-| Password              | 服务器                 | 管理员登录使用的密码，需要设置为 base64 编码后的值             |
+| Name                  | Required | Scope                 |  Description                                             |
+| --------------------- | -------- | --------------------- | -------------------------------------------------------- |
+| ConnectionString      | ☑️      | 服务器                 | sqlite 数据库的路径，db 文件可以不提前创建，首次运行时会自动创建 |
+| ApiUrl                | ☑️      | 服务器、前端            | API 的地址，域名 + `/api/`                                 |
+| Username              | ☑️      | 服务器                 | 管理员登录使用的用户名                                      |
+| Password              | ☑️      | 服务器                 | 管理员登录使用的密码，需要设置为 base64 编码后的值             |
+| StoragePath           | ☑️      | 服务器                 | 分配给 bammemo 使用的本地存储空间                             |
+| Key                   |          | 服务器                 | bammemo 使用 AES256 保护数据，通过该参数可以手动指定密钥（未测试），如果不指定则在程序首次运行时自动生成并保存在 `StoragePath` 下的 `bammemo_key` 文件中             |
 
 ## 开发
 
@@ -75,6 +77,7 @@ docker run -v C:\bammemo:/data/bammemo \
           -e Bammemo__ApiUrl=http://localhost:8080/api/ \
           -e Bammemo__Username=admin \
           -e Bammemo__Password="BASE64_ENCODE_PASSWORD" \
+          -e Bammemo__StoragePath="/data/bammemo" \
           -p 8080:8080 \
           bammemo:local-dev
 ```
@@ -99,13 +102,17 @@ dotnet ef database update --startup-project "../Bammemo.Web/Bammemo.Web/Bammemo.
 dotnet tool install --global Microsoft.OpenApi.Kiota
 ```
 
-要更新 Web Api 客户端，请执行（在 PowerShell 中，需将 `\` 替换为 `\``）：
+要更新 Web Api 客户端时，请执行（在 PowerShell 中，需将 `\` 替换为 `\``）：
 
 ```bash
 kiota generate -l CSharp \
     -c WebApiClient \
     -n Bammemo.Web.Client.WebApis.Client \
     -d http://localhost:5146/openapi/v1.json \
+    -s Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory \
+    -s Microsoft.Kiota.Serialization.Text.TextSerializationWriterFactory \
+    -s Microsoft.Kiota.Serialization.Multipart.MultipartSerializationWriterFactory \
+    --ds Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory \
     --exclude-backward-compatible \
     -o ./src/Bammemo.Web/Bammemo.Web.Client/WebApis/Client
 ```
