@@ -1,5 +1,7 @@
 <Solution>
   <Folder Name="/Tests/">
+    <Project Path="src/tests/Bammemo.CodeAnalysis.Test.Model/Bammemo.CodeAnalysis.Test.Model.csproj" Id="f4333bb5-6b2c-426d-8a5a-4c1c3d6a36cb" />
+    <Project Path="src/tests/Bammemo.CodeAnalysis.Test/Bammemo.CodeAnalysis.Test.csproj" Id="b951504e-b1bf-4e0b-aba3-6a0afc729e8c" />
     <Project Path="src/tests/Bammemo.Service.Test/Bammemo.Service.Test.csproj" />
   </Folder>
   <Folder Name="/解决方案项/">
@@ -10,6 +12,7 @@
     <File Path="scripts/clean.bat" />
     <File Path="scripts/NewOrUpdate-WebApiClient.ps1" />
   </Folder>
+  <Project Path="src/Bammemo.CodeAnalysis/Bammemo.CodeAnalysis.csproj" Id="9103aeb2-73d6-4cd0-b7a4-f5635dd67e9e" />
   <Project Path="src/Bammemo.Data/Bammemo.Data.csproj" />
   <Project Path="src/Bammemo.Service.Abstractions/Bammemo.Service.Abstractions.csproj" />
   <Project Path="src/Bammemo.Service/Bammemo.Service.csproj" />

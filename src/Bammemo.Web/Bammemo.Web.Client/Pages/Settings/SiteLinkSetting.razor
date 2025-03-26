@@ -109,7 +109,7 @@
     {
         var dialog = await DialogService.ShowDialogAsync(
             DialogHelper.From<BammemoSettingSiteLinkEditDialog>(),
-            Mapper.Map<BammemoSettingSiteLinkEditDialog.SiteLinkModel>(model),
+            model.MapTo<BammemoSettingSiteLinkEditDialog.SiteLinkModel>(),
             new DialogParameters
                 {
                     Title = $"编辑友情链接",
