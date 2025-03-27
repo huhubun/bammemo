@@ -1,5 +1,7 @@
 ﻿<!-- https://github.com/dotnet/runtime/blob/main/docs/tools/illink/data-formats.md#descriptor-format -->
 <linker>
-	<assembly fullname="Bammemo.Web.Client" preserve="all" />
-	<assembly fullname="AutoMapper" preserve="all" />
+	<assembly fullname="Bammemo.Web.Client">
+        <type fullname="Bammemo.Web.Client.Pages.*" preserve="all" />
+        <type fullname="Bammemo.Web.Client.BammemoComponents.*" preserve="all" />
+	</assembly>
 </linker>
