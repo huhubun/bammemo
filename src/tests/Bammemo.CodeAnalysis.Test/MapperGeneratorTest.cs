@@ -93,34 +93,130 @@ public class MapperGeneratorTest
     [Fact]
     public void ListMapTest()
     {
-        var source_1 = new SourceModel
+        var sourceList = new List<SourceModel>
         {
-            Id = 1,
-            Name = "Foo",
-            CreateTime = new DateTime(2025, 2, 10),
-            Remark = nameof(SourceModel.Remark)
+            new()
+            {
+                Id = 1,
+                Name = "Foo",
+                CreateTime = new DateTime(2025, 2, 10),
+                Remark = nameof(SourceModel.Remark)
+            },
+            new()
+            {
+                Id = 2,
+                Name = "Bar",
+                CreateTime = new DateTime(2026, 2, 10),
+                Remark = nameof(SourceModel.Remark) + "2"
+            }
         };
-
-        var source_2 = new SourceModel
-        {
-            Id = 2,
-            Name = "Bar",
-            CreateTime = new DateTime(2026, 2, 10),
-            Remark = nameof(SourceModel.Remark) + "2"
-        };
-
-        var sourceList = new List<SourceModel> { source_1, source_2 };
 
         var targetList = sourceList.MapToList<TargetModel>();
 
         Assert.NotNull(targetList);
         Assert.Equal(sourceList.Count, targetList.Count);
 
-        for (var i = 0; i < sourceList.Count; i++) {
+        for (var i = 0; i < sourceList.Count; i++)
+        {
             Assert.Equal(sourceList[i].Id, targetList[i].Id);
             Assert.Equal(sourceList[i].Name, targetList[i].Name);
             Assert.Equal(sourceList[i].CreateTime, targetList[i].CreateTime);
             Assert.Null(targetList[i].Note);
+        }
+    }
+
+    [Fact]
+    public void ListMapByPropertyTest()
+    {
+        var source = new ListTestSourceModel
+        {
+            SourceModelListToTargetModelList =
+            [
+                new()
+                {
+                    Id = 1,
+                    Name = "Foo",
+                    CreateTime = new DateTime(2025, 2, 10),
+                    Remark = nameof(SourceModel.Remark)
+                },
+                new()
+                {
+                    Id = 2,
+                    Name = "Bar",
+                    CreateTime = new DateTime(2026, 2, 10),
+                    Remark = nameof(SourceModel.Remark) + "2"
+                }
+            ],
+            IntListToIntList = [3, 2, 1],
+            StringListToStringList = ["c", "b", "a"],
+            EnumListToIntList = [TestType.Second, TestType.First],
+            IntListToEnumList = [(int)TestType.Second, (int)TestType.First]
+        };
+
+        var target = source.MapTo<ListTestTargetModel>();
+
+        Assert.NotNull(target);
+        Assert.NotNull(target.SourceModelListToTargetModelList);
+        Assert.Equal(source.SourceModelListToTargetModelList.Count, target.SourceModelListToTargetModelList.Count);
+
+        for (var i = 0; i < source.SourceModelListToTargetModelList.Count; i++)
+        {
+            Assert.Equal(source.SourceModelListToTargetModelList[i].Id, target.SourceModelListToTargetModelList[i].Id);
+            Assert.Equal(source.SourceModelListToTargetModelList[i].Name, target.SourceModelListToTargetModelList[i].Name);
+            Assert.Equal(source.SourceModelListToTargetModelList[i].CreateTime, target.SourceModelListToTargetModelList[i].CreateTime);
+            Assert.Null(target.SourceModelListToTargetModelList[i].Note);
+        }
+
+        Assert.Equal(source.IntListToIntList, target.IntListToIntList);
+        Assert.Equal(source.StringListToStringList, target.StringListToStringList);
+        
+        for(var i = 0;i < source.EnumListToIntList.Count; i++)
+        {
+            Assert.Equal((int)source.EnumListToIntList[i], target.EnumListToIntList[i]);
+        }
+
+        for (var i = 0; i < source.IntListToEnumList.Count; i++)
+        {
+            Assert.Equal(source.IntListToEnumList[i], (int)target.IntListToEnumList[i]);
+        }
+    }
+
+    [Fact]
+    public void ArrayMapByPropertyTest()
+    {
+        var source = new ArrayTestSourceModel
+        {
+            Array =
+            [
+                new()
+                {
+                    Id = 1,
+                    Name = "Foo",
+                    CreateTime = new DateTime(2025, 2, 10),
+                    Remark = nameof(SourceModel.Remark)
+                },
+                new()
+                {
+                    Id = 2,
+                    Name = "Bar",
+                    CreateTime = new DateTime(2026, 2, 10),
+                    Remark = nameof(SourceModel.Remark) + "2"
+                }
+            ]
+        };
+
+        var target = source.MapTo<ArrayTestTargetModel>();
+
+        Assert.NotNull(target);
+        Assert.NotNull(target.Array);
+        Assert.Equal(source.Array.Length, target.Array.Length);
+
+        for (var i = 0; i < source.Array.Length; i++)
+        {
+            Assert.Equal(source.Array[i].Id, target.Array[i].Id);
+            Assert.Equal(source.Array[i].Name, target.Array[i].Name);
+            Assert.Equal(source.Array[i].CreateTime, target.Array[i].CreateTime);
+            Assert.Null(target.Array[i].Note);
         }
     }
 
@@ -130,6 +226,8 @@ public class MapperGeneratorTest
         var source = new EnumTestSourceModel
         {
             TestType = TestType.Second,
+            ToNullableInt = TestType.Second,
+            ToNullableEnum = TestType.Second,
             TestTypeValue = (int)TestType.Second
         };
 
@@ -137,6 +235,10 @@ public class MapperGeneratorTest
 
         Assert.NotNull(target);
         Assert.Equal((int)TestType.Second, target.TestType);
+        Assert.NotNull(target.ToNullableInt);
+        Assert.Equal((int)TestType.Second, target.ToNullableInt.Value);
+        Assert.NotNull(target.ToNullableEnum);
+        Assert.Equal(TestType.Second, target.ToNullableEnum.Value);
         Assert.Equal(TestType.Second, target.TestTypeValue);
     }
 

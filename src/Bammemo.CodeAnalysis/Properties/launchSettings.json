@@ -7,6 +7,10 @@
     "Debug Roslyn Component (Test.Model)": {
       "commandName": "DebugRoslynComponent",
       "targetProject": "..\\tests\\Bammemo.CodeAnalysis.Test.Model\\Bammemo.CodeAnalysis.Test.Model.csproj"
+    },
+    "Debug Roslyn Component (Bammemo.Web)": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\Bammemo.Web\\Bammemo.Web\\Bammemo.Web.csproj"
     }
   }
 }

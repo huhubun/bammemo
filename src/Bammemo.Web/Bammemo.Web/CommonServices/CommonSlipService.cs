@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
@@ -7,7 +7,6 @@ using Bammemo.Service.Interfaces;
 namespace Bammemo.Web.CommonServices;
 
 public class CommonSlipService(
-    IMapper mapper,
     IIdService idService,
     ISlipService slipService) : ICommonSlipService
 {
@@ -15,19 +14,37 @@ public class CommonSlipService(
         ListSlipQueryRequestDto? query,
         CursorPagingRequest<string>? paging = null)
     {
-        var result = await slipService.ListAsync(query, await paging.DecodeAsync(idService.DecodeAsync) ?? null);
-        return mapper.Map<ListSlipDto[]>(result);
+        var slips = await slipService.ListAsync(query, await paging.DecodeAsync(idService.DecodeAsync) ?? null);
+
+        var result = new List<ListSlipDto>();
+        foreach (var item in slips)
+        {
+            var dto = item.MapTo<ListSlipDto>();
+            dto.Id =  await idService.EncodeAsync(item.Id);
+
+            result.Add(dto);
+        }
+
+        return result.ToArray();
     }
 
     public async Task<SlipDetailDto?> GetByIdAsync(string id)
     {
         var slip = await slipService.GetByIdNoTrackingAsync(await idService.DecodeAsync(id));
-        return slip != null ? mapper.Map<SlipDetailDto>(slip) : null;
+        return slip != null ? await ConvertToSlipDetailDto(slip) : null;
     }
 
     public async Task<SlipDetailDto?> GetByLinkNameAsync(string linkName)
     {
         var slip = await slipService.GetByLinkNameAsync(linkName);
-        return slip != null ? mapper.Map<SlipDetailDto>(slip) : null;
+        return slip != null ? await ConvertToSlipDetailDto(slip) : null;
+    }
+
+    private async Task<SlipDetailDto> ConvertToSlipDetailDto(Slip entity)
+    {
+        var dto = entity.MapTo<SlipDetailDto>();
+        dto.Id = await idService.EncodeAsync(entity.Id);
+
+        return dto;
     }
 }

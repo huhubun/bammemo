@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using Bammemo.Service.Abstractions.CommonServices;
+﻿using Bammemo.Service.Abstractions.CommonServices;
 using Bammemo.Service.Abstractions.Dtos.Analytics;
 
 namespace Bammemo.Web.Client.CommonServices;
 
 public class CommonAnalyticsService(
-    IMapper mapper,
     WebApis.Client.WebApiClient client) : ICommonAnalyticsService
 {
     public async Task<GetSlipTagsDto> GetSlipTagsAsync()
@@ -22,5 +20,4 @@ public class CommonAnalyticsService(
                 c.QueryParameters.EndTime = endTime;
             })).CreatedTimes.Cast<long>().ToArray()
         };
-
 }

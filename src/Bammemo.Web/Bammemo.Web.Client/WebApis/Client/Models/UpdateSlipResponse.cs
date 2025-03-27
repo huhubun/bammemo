@@ -40,14 +40,6 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
 #else
         public string FriendlyLinkName { get; set; }
 #endif
-        /// <summary>The id property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
         /// <summary>The status property</summary>
         public int? Status { get; set; }
         /// <summary>The tags property</summary>
@@ -97,7 +89,6 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
                 { "createdAt", n => { CreatedAt = n.GetLongValue(); } },
                 { "excerpt", n => { Excerpt = n.GetStringValue(); } },
                 { "friendlyLinkName", n => { FriendlyLinkName = n.GetStringValue(); } },
-                { "id", n => { Id = n.GetStringValue(); } },
                 { "status", n => { Status = n.GetIntValue(); } },
                 { "tags", n => { Tags = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
                 { "title", n => { Title = n.GetStringValue(); } },
@@ -115,7 +106,6 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
             writer.WriteLongValue("createdAt", CreatedAt);
             writer.WriteStringValue("excerpt", Excerpt);
             writer.WriteStringValue("friendlyLinkName", FriendlyLinkName);
-            writer.WriteStringValue("id", Id);
             writer.WriteIntValue("status", Status);
             writer.WriteCollectionOfPrimitiveValues<string>("tags", Tags);
             writer.WriteStringValue("title", Title);

@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Bammemo.CodeAnalysis\Bammemo.CodeAnalysis.csproj" />
     <ProjectReference Include="..\Bammemo.Data\Bammemo.Data.csproj" />
     <ProjectReference Include="..\Bammemo.Service.Abstractions\Bammemo.Service.Abstractions.csproj" />
   </ItemGroup>

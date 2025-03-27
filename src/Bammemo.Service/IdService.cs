@@ -1,5 +1,4 @@
-﻿using Bammemo.Service.Abstractions;
-using Bammemo.Service.Interfaces;
+﻿using Bammemo.Service.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using Sqids;
 

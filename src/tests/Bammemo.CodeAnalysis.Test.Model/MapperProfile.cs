@@ -3,6 +3,8 @@ using Bammemo.Service.Abstractions.Attributes;
 
 namespace Bammemo.CodeAnalysis.Test.Model;
 
+[Map<ArrayTestSourceModel, ArrayTestTargetModel>]
+[Map<ListTestSourceModel, ListTestTargetModel>]
 [Map<SourceModel, TargetModel>]
 [Map<SourceModel, TargetDifferentPropertyNameModel>]
 [Map<EnumTestSourceModel, EnumTestTargetModel>]

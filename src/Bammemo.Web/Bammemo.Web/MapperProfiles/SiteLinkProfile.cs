@@ -1,19 +1,15 @@
-﻿using AutoMapper;
-using Bammemo.Data.Entities;
+﻿using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Attributes;
 using Bammemo.Service.Abstractions.Dtos.SiteLinks;
 using Bammemo.Web.WebApiModels.SiteLinks;
 
 namespace Bammemo.Web.MapperProfiles;
 
-public class SiteLinkProfile : Profile
+[Map<SiteLink, ListSiteLinkResponse.SiteLinkModel>]
+[Map<CreateSiteLinkRequest, SiteLink>]
+[Map<UpdateSiteLinkRequest, SiteLink>]
+[Map<SiteLink, CreateSiteLinkResponse>]
+[Map<SiteLink, ListSiteLinkDto.SiteLinkModel>]
+public partial class SiteLinkProfile
 {
-    public SiteLinkProfile()
-    {
-        CreateMap<SiteLink, ListSiteLinkResponse.SiteLinkModel>();
-        CreateMap<CreateSiteLinkRequest, SiteLink>();
-        CreateMap<UpdateSiteLinkRequest, SiteLink>();
-        CreateMap<SiteLink, CreateSiteLinkResponse>()
-            .IncludeBase<SiteLink, ListSiteLinkResponse.SiteLinkModel>();
-        CreateMap<SiteLink, ListSiteLinkDto.SiteLinkModel>();
-    }
 }

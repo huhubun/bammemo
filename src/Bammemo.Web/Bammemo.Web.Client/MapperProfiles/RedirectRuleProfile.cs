@@ -2,18 +2,12 @@
 using Bammemo.Web.Client.BammemoComponents.Settings;
 using Bammemo.Web.Client.WebApis.Client.Models;
 
-namespace Bammemo.Web.Client;
+namespace Bammemo.Web.Client.MapperProfiles;
 
-// RedirectRule
 [Map<BammemoSettingRedirectRuleEditDialog.RedirectRuleModel, CreateRedirectRuleRequest>]
 [Map<BammemoSettingRedirectRuleEditDialog.RedirectRuleModel, UpdateRedirectRuleRequest>]
 [Map<RedirectRuleModel, BammemoSettingRedirectRuleEditDialog.RedirectRuleModel>]
-// SiteLink
-[Map<BammemoSettingSiteLinkEditDialog.SiteLinkModel, CreateSiteLinkRequest>]
-[Map<BammemoSettingSiteLinkEditDialog.SiteLinkModel, UpdateSiteLinkRequest>]
-[Map<SiteLinkModel, BammemoSettingSiteLinkEditDialog.SiteLinkModel>]
-
-public static partial class MapperProfile
+public static partial class RedirectRuleProfile
 {
     static partial void AfterMap(BammemoSettingRedirectRuleEditDialog.RedirectRuleModel source, CreateRedirectRuleRequest target)
     {

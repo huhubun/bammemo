@@ -2,7 +2,6 @@
 @using Bammemo.Service.Abstractions.Enums
 @rendermode InteractiveAuto
 @inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
-@inject IMapper mapper
 @inject IJSRuntime jsRuntime
 
 @if (RendererInfo.Name != BlazorRendererName.WebAssembly)
@@ -122,7 +121,7 @@ else
                     Status = (int)editedStatus
                 });
 
-            await OnSlipSaved.InvokeAsync(mapper.Map<ListSlipDto>(updatedSlip));
+            await OnSlipSaved.InvokeAsync(updatedSlip.MapTo<ListSlipDto>());
         }
         else
         {
@@ -132,7 +131,7 @@ else
                     Status = (int)Enum.Parse<SlipStatus>(status)
                 });
 
-            await OnSlipSaved.InvokeAsync(mapper.Map<ListSlipDto>(createdSlip));
+            await OnSlipSaved.InvokeAsync(createdSlip.MapTo<ListSlipDto>());
         }
 
         content = null;

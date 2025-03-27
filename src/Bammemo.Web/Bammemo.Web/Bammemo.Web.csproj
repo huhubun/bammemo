@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Bammemo.CodeAnalysis\Bammemo.CodeAnalysis.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 		<ProjectReference Include="..\..\Bammemo.Data\Bammemo.Data.csproj" />
 		<ProjectReference Include="..\..\Bammemo.Service\Bammemo.Service.csproj" />
 		<ProjectReference Include="..\Bammemo.Web.Client\Bammemo.Web.Client.csproj" />

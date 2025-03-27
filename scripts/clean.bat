@@ -1,6 +1,7 @@
 chcp 65001
 @echo off
 for %%b in (
+    "./src/Bammemo.CodeAnalysis",
     "./src/Bammemo.Data",
     "./src/Bammemo.Service",
     "./src/Bammemo.Service.Abstractions",

@@ -6,7 +6,6 @@
 @rendermode InteractiveWebAssembly
 @attribute [Authorize]
 @inject IToastService ToastService
-@inject IMapper Mapper
 @inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 
 <div>
@@ -122,7 +121,7 @@
             if (response?.Value != null)
             {
                 var setting = JsonSerializer.Deserialize(response.Value, JsonSourceGenerationContext.Default.TencentCloudSetting);
-                _model = Mapper.Map<TencentCloudSettingModel>(setting);
+                _model = setting.MapTo<TencentCloudSettingModel>();
             }
         }
         catch (ApiException apiException) when (apiException.ResponseStatusCode == (int)HttpStatusCode.NotFound)
@@ -141,7 +140,7 @@
         {
             await WebApiClient.Api.Settings[SettingKeys.TencentCloud].PutAsync(new WebApis.Client.Models.UpdateSettingByKeyRequest
                 {
-                    Value = JsonSerializer.Serialize(Mapper.Map<Service.Abstractions.SettingModels.TencentCloudSetting>(_model), JsonSourceGenerationContext.Default.TencentCloudSetting)
+                    Value = JsonSerializer.Serialize(_model.MapTo<Service.Abstractions.SettingModels.TencentCloudSetting>(), JsonSourceGenerationContext.Default.TencentCloudSetting)
                 });
 
             ToastService.ShowSuccess("Tencent Cloud 配置保存成功。");

@@ -93,7 +93,6 @@ builder.Services.AddOptions<BammemoOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
-builder.Services.AddBammemoAutoMapper(typeof(Program).Assembly);
 builder.Services.AddBammemoStorageProvider();
 
 // 预加载需要

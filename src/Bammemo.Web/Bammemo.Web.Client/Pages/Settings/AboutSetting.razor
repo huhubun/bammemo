@@ -67,7 +67,7 @@
 
                     <div class="w-full">
                         @* HACK 由于使用 ButtonType.Button 会导致在 FluentTextArea 内按回车触发提交，因此这里只能用 ButtonType.Button，参见：https://github.com/microsoft/fluentui-blazor/issues/1085 *@
-                        <FluentButton Type="ButtonType.Button" Loading="isSaving" IconStart="new Icons.Regular.Size20.Save()">保存</FluentButton>
+                        <FluentButton Type="ButtonType.Button" Loading="isSaving" IconStart="new Icons.Regular.Size20.Save()" OnClick="HandleValidSubmit">保存</FluentButton>
                     </div>
                 </FluentStack>
             </FluentEditForm>

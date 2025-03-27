@@ -1,30 +1,24 @@
-﻿using AutoMapper;
-using Bammemo.Data.Entities;
+﻿using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Attributes;
 using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Web.WebApiModels.Slips;
 
 namespace Bammemo.Web.MapperProfiles;
 
-public class SlipProfile : Profile
+[Map<CreateSlipRequest, Slip>]
+[Map<Slip, CreateSlipResponse>]
+[Map<Slip, UpdateSlipResponse>]
+[Map<Slip, GetSlipByIdResponse>]
+[Map<Slip, GetSlipByLinkNameResponse>]
+[Map<UpdateSlipRequest, Slip>]
+[Map<ListSlipQueryRequest, ListSlipQueryRequestDto>]
+[Map<Slip, ListSlipDto>]
+[Map<Slip, SlipDetailDto>]
+[Map<Slip, ListSlipResponse.SlipModel>]
+public partial class SlipProfile
 {
-    public SlipProfile()
+    static partial void AfterMap(Slip source, ListSlipResponse.SlipModel target)
     {
-        CreateMap<CreateSlipRequest, Slip>();
-
-        CreateMap<Slip, CreateSlipResponse>()
-            .IncludeBase<Slip, ListSlipResponse.SlipModel>();
-
-        CreateMap<Slip, UpdateSlipResponse>()
-            .IncludeBase<Slip, ListSlipResponse.SlipModel>();
-
-        CreateMap<Slip, GetSlipByIdResponse>()
-            .IncludeBase<Slip, ListSlipResponse.SlipModel>();
-
-        CreateMap<Slip, GetSlipByLinkNameResponse>()
-            .IncludeBase<Slip, ListSlipResponse.SlipModel>();
-
-        CreateMap<UpdateSlipRequest, Slip>();
-
-        CreateMap<ListSlipQueryRequest, ListSlipQueryRequestDto>();
+        target.Tags = source.Tags == null ? [] : source.Tags.Select(t => t.Tag).ToArray();
     }
 }
