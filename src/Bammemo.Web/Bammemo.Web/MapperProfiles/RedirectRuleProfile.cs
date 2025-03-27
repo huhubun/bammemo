@@ -1,17 +1,13 @@
-﻿using AutoMapper;
-using Bammemo.Data.Entities;
+﻿using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Attributes;
 using Bammemo.Web.WebApiModels.RedirectRules;
 
 namespace Bammemo.Web.MapperProfiles;
 
-public class RedirectRuleProfile : Profile
+[Map<RedirectRule, ListRedirectRuleResponse.RedirectRuleModel>]
+[Map<CreateRedirectRuleRequest, RedirectRule>]
+[Map<UpdateRedirectRuleRequest, RedirectRule>]
+[Map<RedirectRule, CreateRedirectRuleResponse>]
+public partial class RedirectRuleProfile 
 {
-    public RedirectRuleProfile()
-    {
-        CreateMap<RedirectRule, ListRedirectRuleResponse.RedirectRuleModel>();
-        CreateMap<CreateRedirectRuleRequest, RedirectRule>();
-        CreateMap<UpdateRedirectRuleRequest, RedirectRule>();
-        CreateMap<RedirectRule, CreateRedirectRuleResponse>()
-            .IncludeBase<RedirectRule, ListRedirectRuleResponse.RedirectRuleModel>();
-    }
 }

@@ -1,16 +1,15 @@
-﻿using AutoMapper;
+﻿using Bammemo.Service.Abstractions.Attributes;
 using Bammemo.Service.Abstractions.Dtos.Slips;
+using Bammemo.Web.Client.WebApis.Client.Models;
 
 namespace Bammemo.Web.Client.MapperProfiles;
 
-public class SlipProfile : Profile
+[Map<CreateSlipResponse, ListSlipDto>]
+[Map<UpdateSlipResponse, ListSlipDto>]
+[Map<GetSlipByIdResponse, SlipDetailDto>]
+[Map<GetSlipByLinkNameResponse, SlipDetailDto>]
+[Map<SlipModel, SlipDetailDto>]
+[Map<SlipModel, ListSlipDto>]
+public static partial class SlipProfile
 {
-    public SlipProfile()
-    {
-        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.CreateSlipResponse, ListSlipDto>();
-        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.UpdateSlipResponse, ListSlipDto>();
-        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.GetSlipByLinkNameResponse, SlipDetailDto>();
-        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.SlipModel, SlipDetailDto>();
-        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.SlipModel, ListSlipDto>();
-    }
 }

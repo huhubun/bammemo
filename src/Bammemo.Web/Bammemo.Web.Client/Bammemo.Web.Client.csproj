@@ -25,9 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Bammemo.Service.Abstractions\Bammemo.Service.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Bammemo.CodeAnalysis\Bammemo.CodeAnalysis.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\..\Bammemo.Service.Abstractions\Bammemo.Service.Abstractions.csproj" />  
   </ItemGroup>
-
+    
   <ItemGroup>
     <Content Include="Layout\MainLayout.razor.js">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

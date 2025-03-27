@@ -1,14 +1,26 @@
-﻿using AutoMapper;
+﻿using Bammemo.Service.Abstractions.Attributes;
 using Bammemo.Web.Client.BammemoComponents.Settings;
+using Bammemo.Web.Client.WebApis.Client.Models;
 
 namespace Bammemo.Web.Client.MapperProfiles;
 
-public class RedirectRuleProfile : Profile
+[Map<BammemoSettingRedirectRuleEditDialog.RedirectRuleModel, CreateRedirectRuleRequest>]
+[Map<BammemoSettingRedirectRuleEditDialog.RedirectRuleModel, UpdateRedirectRuleRequest>]
+[Map<RedirectRuleModel, BammemoSettingRedirectRuleEditDialog.RedirectRuleModel>]
+public static partial class RedirectRuleProfile
 {
-    public RedirectRuleProfile()
+    static partial void AfterMap(BammemoSettingRedirectRuleEditDialog.RedirectRuleModel source, CreateRedirectRuleRequest target)
     {
-        CreateMap<BammemoSettingRedirectRuleEditDialog.RedirectRuleModel, Bammemo.Web.Client.WebApis.Client.Models.CreateRedirectRuleRequest>();
-        CreateMap<BammemoSettingRedirectRuleEditDialog.RedirectRuleModel, Bammemo.Web.Client.WebApis.Client.Models.UpdateRedirectRuleRequest>();
-        CreateMap<Bammemo.Web.Client.WebApis.Client.Models.RedirectRuleModel, BammemoSettingRedirectRuleEditDialog.RedirectRuleModel>();
+        target.HttpStatus = source.HttpStatus != null ? Convert.ToInt32(source.HttpStatus) : null;
+    }
+
+    static partial void AfterMap(BammemoSettingRedirectRuleEditDialog.RedirectRuleModel source, UpdateRedirectRuleRequest target)
+    {
+        target.HttpStatus = source.HttpStatus != null ? Convert.ToInt32(source.HttpStatus) : null;
+    }
+
+    static partial void AfterMap(RedirectRuleModel source, BammemoSettingRedirectRuleEditDialog.RedirectRuleModel target)
+    {
+        target.HttpStatus = source.HttpStatus?.ToString();
     }
 }

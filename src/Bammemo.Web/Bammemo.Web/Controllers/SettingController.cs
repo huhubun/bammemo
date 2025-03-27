@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Bammemo.Service.Interfaces;
+﻿using Bammemo.Service.Interfaces;
 using Bammemo.Web.WebApiModels.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +9,6 @@ namespace Bammemo.Web.Controllers;
 [Route("api/settings")]
 [ApiController]
 public class SettingController(
-    IMapper mapper,
     ISettingService settingService,
     ISecurityService securityService,
     IStorageService storageService) : BammemoControllerBase
@@ -37,7 +35,7 @@ public class SettingController(
 
         if (setting != null)
         {
-            return Ok(mapper.Map<GetSettingByKeyResponse>(setting));
+            return Ok(setting.MapTo<GetSettingByKeyResponse>());
         }
 
         return NotFound();
@@ -77,7 +75,7 @@ public class SettingController(
         var settings = await settingService.GetByKeysAsync(request.Keys);
         return Ok(new BatchGetSettingByKeyResponse
         {
-            Settings = mapper.Map<BatchGetSettingByKeyResponse.SettingItemModel[]>(settings)
+            Settings = settings.MapToArray<BatchGetSettingByKeyResponse.SettingItemModel>()
         });
     }
 
@@ -115,7 +113,7 @@ public class SettingController(
     {
         return Ok(new GetStorageTypeInfosResponse
         {
-            StorageTypeInfos = mapper.Map<GetStorageTypeInfosResponse.StorageTypeInfoModel[]>(await storageService.GetStorageTypesAsync().ToListAsync())
+            StorageTypeInfos = (await storageService.GetStorageTypesAsync().ToListAsync()).MapToArray<GetStorageTypeInfosResponse.StorageTypeInfoModel>()
         });
     }
 }

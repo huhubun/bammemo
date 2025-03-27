@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Bammemo.Data.Entities;
+﻿using Bammemo.Data.Entities;
 using Bammemo.Service.Interfaces;
 using Bammemo.Web.WebApiModels.RedirectRules;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,6 @@ namespace Bammemo.Web.Controllers;
 [Route("api/redirect-rules")]
 [ApiController]
 public class RedirectRuleController(
-    IMapper mapper,
     IRedirectRuleService redirectRuleService) : BammemoControllerBase
 {
     [HttpGet]
@@ -22,7 +20,7 @@ public class RedirectRuleController(
 
         return Ok(new ListRedirectRuleResponse
         {
-            RedirectRules = mapper.Map<ListRedirectRuleResponse.RedirectRuleModel[]>(rules)
+            RedirectRules = rules.MapToArray<ListRedirectRuleResponse.RedirectRuleModel>()
         });
     }
 
@@ -30,8 +28,8 @@ public class RedirectRuleController(
     [ProducesResponseType<CreateRedirectRuleResponse>(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateRedirectRuleRequest request)
     {
-        var entity = await redirectRuleService.CreateAsync(mapper.Map<RedirectRule>(request));
-        return Created((string?)null, mapper.Map<CreateRedirectRuleResponse>(entity));
+        var entity = await redirectRuleService.CreateAsync(request.MapTo<RedirectRule>());
+        return Created((string?)null, entity.MapTo<CreateRedirectRuleResponse>());
     }
 
     [HttpPut("{id:int}")]
@@ -46,7 +44,7 @@ public class RedirectRuleController(
             return NotFound();
         }
 
-        await redirectRuleService.UpdateAsync(mapper.Map(request, entity));
+        await redirectRuleService.UpdateAsync(request.MapTo(entity));
 
         return NoContent();
     }

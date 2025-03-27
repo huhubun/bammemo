@@ -2,7 +2,7 @@
 
 public class ListSlipDto
 {
-    public required string Id { get; set; }
+    public string? Id { get; set; }
     public required string Content { get; set; }
     public long CreatedAt { get; set; }
     public long? UpdateAt { get; set; }

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Bammemo.Data.Entities;
+﻿using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Interfaces;
@@ -12,7 +11,6 @@ namespace Bammemo.Web.Controllers;
 [Route("api/slips")]
 [ApiController]
 public class SlipController(
-    IMapper mapper,
     IIdService idService,
     ISlipService slipService) : BammemoControllerBase
 {
@@ -26,12 +24,21 @@ public class SlipController(
         try
         {
             var result = await slipService.ListAsync(
-                mapper.Map<ListSlipQueryRequestDto>(query),
+                query.MapTo<ListSlipQueryRequestDto>(),
                 await paging.DecodeAsync(idService.DecodeAsync) ?? null);
+
+            var slipModels = new List<ListSlipResponse.SlipModel>();
+            foreach (var item in result)
+            {
+                var model = item.MapTo<ListSlipResponse.SlipModel>();
+                model.Id = await idService.EncodeAsync(item.Id);
+
+                slipModels.Add(model);
+            }
 
             return Ok(new ListSlipResponse
             {
-                Data = mapper.Map<ListSlipResponse.SlipModel[]>(result)
+                Data = [.. slipModels]
             });
         }
         catch (UnauthorizedAccessException)
@@ -46,7 +53,7 @@ public class SlipController(
     public async Task<IActionResult> GetByIdAsync([FromRoute] string id)
     {
         var slip = await slipService.GetByIdNoTrackingAsync(await idService.DecodeAsync(id));
-        return slip != null ? Ok(mapper.Map<GetSlipByIdResponse>(slip)) : NotFound(id);
+        return slip != null ? Ok(slip.MapTo<GetSlipByIdResponse>()) : NotFound(id);
     }
 
     [HttpGet("link/{linkName}")]
@@ -55,7 +62,7 @@ public class SlipController(
     public async Task<IActionResult> GetByLinkNameAsync([FromRoute] string linkName)
     {
         var slip = await slipService.GetByLinkNameAsync(linkName);
-        return slip != null ? Ok(mapper.Map<GetSlipByLinkNameResponse>(slip)) : NotFound(linkName);
+        return slip != null ? Ok(slip.MapTo<GetSlipByLinkNameResponse>()) : NotFound(linkName);
     }
 
     [Authorize]
@@ -63,15 +70,19 @@ public class SlipController(
     [ProducesResponseType<CreateSlipResponse>(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateSlipRequest request)
     {
-        var entity = mapper.Map<Slip>(request);
+        var entity = request.MapTo<Slip>();
 
         var result = await slipService.CreateAsync(entity);
+        var encodedId = await idService.EncodeAsync(result.Id);
+
+        var model = result.MapTo<CreateSlipResponse>();
+        model.Id = encodedId;
 
         return Created(
             nameof(GetByIdAsync),
             nameof(SlipController),
-            await idService.EncodeAsync(result.Id),
-            mapper.Map<CreateSlipResponse>(result));
+            encodedId,
+            model);
     }
 
     [Authorize]
@@ -88,11 +99,11 @@ public class SlipController(
             return NotFound();
         }
 
-        entity = mapper.Map(request, entity);
+        entity = request.MapTo(entity);
 
         var result = await slipService.UpdateAsync(entity);
 
-        return Ok(mapper.Map<UpdateSlipResponse>(result));
+        return Ok(result.MapTo<UpdateSlipResponse>());
     }
 
     [Authorize]

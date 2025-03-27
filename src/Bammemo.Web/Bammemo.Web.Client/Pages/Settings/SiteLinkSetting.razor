@@ -5,7 +5,6 @@
 @inject IDialogService DialogService
 @inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
 @inject IToastService ToastService
-@inject IMapper Mapper
 
 <div>
     <BammemoSettingLayout PageTitle="友情链接">
@@ -109,7 +108,7 @@
     {
         var dialog = await DialogService.ShowDialogAsync(
             DialogHelper.From<BammemoSettingSiteLinkEditDialog>(),
-            Mapper.Map<BammemoSettingSiteLinkEditDialog.SiteLinkModel>(model),
+            model.MapTo<BammemoSettingSiteLinkEditDialog.SiteLinkModel>(),
             new DialogParameters
                 {
                     Title = $"编辑友情链接",

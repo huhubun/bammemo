@@ -33,6 +33,6 @@ namespace Bammemo.Web.Client;
 [JsonSerializable(typeof(TencentCloudSetting.CosSetting))]
 [JsonSerializable(typeof(TencentCloudSettingModel))]
 [JsonSerializable(typeof(TencentCloudSettingModel.CosSettingModel))]
-internal partial class SourceGenerationContext : JsonSerializerContext
+internal partial class JsonSourceGenerationContext : JsonSerializerContext
 {
 }

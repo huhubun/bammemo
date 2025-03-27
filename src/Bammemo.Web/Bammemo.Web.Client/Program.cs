@@ -14,8 +14,6 @@ builder.Services.AddAuthenticationStateDeserialization();
 
 builder.Services.AddFluentUIComponents();
 
-builder.Services.AddAutoMapper(typeof(Program));
-
 builder.Services.AddScoped(_ =>
 {
     var httpClient = KiotaClientFactory.Create(finalHandler: new HttpClientHandler { AllowAutoRedirect = false });

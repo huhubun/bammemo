@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Bammemo.Data.Entities;
+﻿using Bammemo.Data.Entities;
 using Bammemo.Service.Interfaces;
 using Bammemo.Web.WebApiModels.SiteLinks;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +9,6 @@ namespace Bammemo.Web.Controllers;
 [Route("api/siteLinks")]
 [ApiController]
 public class SiteLinkController(
-    IMapper mapper,
     ISiteLinkService siteLinkService) : BammemoControllerBase
 {
     [HttpGet]
@@ -21,7 +19,7 @@ public class SiteLinkController(
 
         return Ok(new ListSiteLinkResponse
         {
-            SiteLinks = mapper.Map<ListSiteLinkResponse.SiteLinkModel[]>(rules)
+            SiteLinks = rules.MapToArray<ListSiteLinkResponse.SiteLinkModel>()
         });
     }
 
@@ -30,8 +28,8 @@ public class SiteLinkController(
     [ProducesResponseType<CreateSiteLinkResponse>(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateAsync([FromBody] CreateSiteLinkRequest request)
     {
-        var entity = await siteLinkService.CreateAsync(mapper.Map<SiteLink>(request));
-        return Created((string?)null, mapper.Map<CreateSiteLinkResponse>(entity));
+        var entity = await siteLinkService.CreateAsync(request.MapTo<SiteLink>());
+        return Created((string?)null, entity.MapTo<CreateSiteLinkResponse>());
     }
 
     [Authorize]
@@ -47,7 +45,7 @@ public class SiteLinkController(
             return NotFound();
         }
 
-        await siteLinkService.UpdateAsync(mapper.Map(request, entity));
+        await siteLinkService.UpdateAsync(request.MapTo(entity));
 
         return NoContent();
     }

@@ -11,6 +11,7 @@ WORKDIR /source
 COPY src/Bammemo.Data/*.csproj ./src/Bammemo.Data/
 COPY src/Bammemo.Service.Abstractions/*.csproj ./src/Bammemo.Service.Abstractions/
 COPY src/Bammemo.Service/*.csproj ./src/Bammemo.Service/
+COPY src/Bammemo.CodeAnalysis/*.csproj ./src/Bammemo.CodeAnalysis/
 RUN dotnet restore --runtime linux-musl-x64 "/source/src/Bammemo.Service/Bammemo.Service.csproj"
 
 COPY src/Bammemo.Web/Bammemo.Web/*.csproj ./src/Bammemo.Web/Bammemo.Web/

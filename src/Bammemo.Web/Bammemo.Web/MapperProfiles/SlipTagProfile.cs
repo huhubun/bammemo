@@ -1,18 +1,11 @@
-﻿using AutoMapper;
-using Bammemo.Data.Entities;
+﻿using Bammemo.Data.Entities;
+using Bammemo.Service.Abstractions.Attributes;
 using Bammemo.Service.Abstractions.Dtos.Slips;
 
 namespace Bammemo.Web.MapperProfiles;
 
-public class SlipTagProfile : Profile
+[Map<SlipTag, SlipTagDto>]
+[Map<SlipTagDto, SlipTag>]
+public partial class SlipTagProfile 
 {
-    public SlipTagProfile()
-    {
-        CreateMap<SlipTag, SlipTagDto>();
-
-        CreateMap<SlipTag, string>()
-            .ConvertUsing(src => src.Tag);
-
-        CreateMap<SlipTagDto, SlipTag>();
-    }
 }
