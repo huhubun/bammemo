@@ -24,8 +24,8 @@ else
                       @bind:event="oninput"
                       @ref="textarea" />
 
-                      @* TODO *@
-@*             <FluentToolbar Class="bammemo-slip-editor-toolbar">
+            @* TODO *@
+            @*             <FluentToolbar Class="bammemo-slip-editor-toolbar">
                 <FluentButton Appearance="Appearance.Stealth"
                               IconEnd="@(new Icons.Filled.Size20.NumberSymbol())"
                               Title="标签" />
@@ -44,8 +44,8 @@ else
                               TOption="SlipStatus"
                               Items="Enum.GetValues<SlipStatus>()"
                               OptionText="@(s => s.ToString())"
-                              OptionValue="@(s => ((int)s).ToString())" 
-                              Width="120px"/>
+                              OptionValue="@(s => ((int)s).ToString())"
+                              Width="120px" />
 
                 <FluentStack Orientation="Orientation.Horizontal" Style="justify-content: right;">
                     @if (IsEdit)
@@ -121,7 +121,11 @@ else
                     Status = (int)editedStatus
                 });
 
-            await OnSlipSaved.InvokeAsync(updatedSlip.MapTo<ListSlipDto>());
+            // Keep slip id here
+            var dto = updatedSlip.MapTo<ListSlipDto>();
+            dto.Id = Data.Id;
+
+            await OnSlipSaved.InvokeAsync(dto);
         }
         else
         {
