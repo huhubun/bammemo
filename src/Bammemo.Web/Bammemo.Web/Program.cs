@@ -11,7 +11,6 @@ using Bammemo.Web.Components;
 using Bammemo.Web.Identities;
 using Bammemo.Web.MinimalApis;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -26,10 +25,6 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
-builder.Services.Configure<ForwardedHeadersOptions>(options =>
-{
-    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-});
 
 // Web
 builder.Services.AddRazorComponents()
@@ -128,8 +123,6 @@ builder.Services.AddScoped<ICommonAnalyticsService, CommonAnalyticsService>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
-
-app.UseForwardedHeaders();
 
 #if DEBUG
 app.UseWebAssemblyDebugging();
