@@ -12,7 +12,7 @@
     <script type="text/javascript">
         window.bammemo = {};
     </script>
-    <script type="text/javascript" src="/js/bammemo-color.js"></script>
+    <script type="text/javascript" src="/js/lozad.min.js"></script>
     <script type="text/javascript" src="/js/bammemo-highlight.js"></script>
 </head>
 
@@ -24,6 +24,8 @@
     <FluentDesignTheme StorageName="theme" customColor="#18181b" />
     <Routes />
     <script>
+        window.bammemo.lozad = lozad();
+
         window.bammemo.util = {
             autoResizeSlipEditorTextarea: function (event) {
                 if (event.target instanceof HTMLTextAreaElement

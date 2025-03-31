@@ -51,6 +51,7 @@
             .UseAlertBlocks()
             .Use<MarkdownSectionPreCodeExtension>()
             .Use<MoreSeparatorExtension>()
+            .Use<LazyImageLoader>()
             .Build();
 
 
@@ -68,6 +69,7 @@
     {
         if (firstRender)
         {
+            await JSRuntime.InvokeVoidAsync("bammemo.lozad.observe");
             await JSRuntime.InvokeVoidAsync("bammemo.highlight.highlight");
             await JSRuntime.InvokeVoidAsync("bammemo.highlight.addCopyButton");
         }
