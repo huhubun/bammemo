@@ -28,7 +28,7 @@ public class LazyImageLoader : IMarkdownExtension
 
                 link.SetAttributes(new HtmlAttributes
                 {
-                    Classes = ["lozad"],
+                    Classes = ["lozad bammemo-slip-content-img"],
                     Properties = [
                         KeyValuePair.Create("data-src", url)
                     ]

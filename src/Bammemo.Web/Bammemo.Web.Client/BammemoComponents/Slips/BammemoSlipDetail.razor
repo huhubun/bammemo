@@ -40,7 +40,7 @@
             <BammemoCard>
                 @if (slip != null)
                 {
-                    <BammemoMarkdownSection Content="@slip.Content" FullDisplay />
+                    <BammemoMarkdownSection Id="@slip.Id" Content="@slip.Content" FullDisplay />
                 }
                 else
                 {

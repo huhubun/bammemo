@@ -18,7 +18,7 @@
                     <BammemoSlipCardHead Data="Data"
                                          OnEditClick="@(_ => isEditMode = true)"
                                          OnAfterDelete="@(_=>isDelete = true)" />
-                    <BammemoMarkdownSection Content="@Data.Content" ReadAllUrl="@Data.GetUrl()" />
+                    <BammemoMarkdownSection Id="@Data.Id" Content="@Data.Content" ReadAllUrl="@Data.GetUrl()" />
                 </FluentStack>
             }
         </BammemoCard>
