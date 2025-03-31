@@ -6,7 +6,6 @@
     max-width: 100%;
     margin: 0 auto;
     display: block;
-    border-radius: calc(var(--layer-corner-radius) * 2px);
 }
 
     .bammemo-markdown-section-content ::deep img:hover {
