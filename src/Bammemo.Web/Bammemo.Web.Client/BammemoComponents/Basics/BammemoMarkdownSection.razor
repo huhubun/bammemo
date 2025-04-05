@@ -9,7 +9,7 @@
 @if (markdownHtml != null)
 {
     <div class="bammemo-markdown-section-wrap">
-        <div class="bammemo-markdown-section-content" id="@Id">
+        <div class="bammemo-markdown-section-content" id="@RendedId">
             @(new MarkupString(markdownHtml))
         </div>
 
@@ -32,6 +32,8 @@
 
     [Parameter]
     public string? ReadAllUrl { get; set; }
+
+    private string RendedId => $"bammemo-markdown-section-{Id}";
 
     private string? markdownHtml = null;
     private bool hasMore = false;
@@ -74,7 +76,7 @@
             await JSRuntime.InvokeVoidAsync("bammemo.lozad.observe");
             await JSRuntime.InvokeVoidAsync(
                 "mediumZoom",
-                $"#{Id} img.bammemo-slip-content-img",
+                $"#{RendedId} img.bammemo-slip-content-img",
                 new MediumZoomOptions
                     {
                         Background = "var(--neutral-fill-layer-rest)"
