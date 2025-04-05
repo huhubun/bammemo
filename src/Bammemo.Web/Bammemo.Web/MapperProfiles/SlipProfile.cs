@@ -15,7 +15,8 @@ namespace Bammemo.Web.MapperProfiles;
 [Map<Slip, ListSlipDto>]
 [Map<Slip, SlipDetailDto>]
 [Map<Slip, ListSlipResponse.SlipModel>]
-public partial class SlipProfile
+[Map<UpdateSlipPropertyRequest, Slip>(ToExistsOnly = true)]
+public static partial class SlipProfile
 {
     static partial void AfterMap(Slip source, ListSlipResponse.SlipModel target)
     {

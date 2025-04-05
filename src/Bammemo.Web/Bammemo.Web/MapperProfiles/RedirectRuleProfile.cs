@@ -8,6 +8,6 @@ namespace Bammemo.Web.MapperProfiles;
 [Map<CreateRedirectRuleRequest, RedirectRule>]
 [Map<UpdateRedirectRuleRequest, RedirectRule>]
 [Map<RedirectRule, CreateRedirectRuleResponse>]
-public partial class RedirectRuleProfile 
+public static partial class RedirectRuleProfile 
 {
 }

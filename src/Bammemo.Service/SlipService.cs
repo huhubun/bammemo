@@ -1,7 +1,6 @@
 ﻿using Bammemo.Data;
 using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Dtos.Slips;
-using Bammemo.Service.Abstractions.Enums;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Interfaces;
@@ -85,6 +84,11 @@ public class SlipService(
     public async Task<Slip?> GetByLinkNameAsync(string linkName)
     {
         return await dbContext.Slips.AsNoTracking().Include(s => s.Tags).SingleOrDefaultAsync(s => s.FriendlyLinkName == linkName);
+    }
+
+    public async Task<bool> CheckLinkNameExistsAsync(int currentSlipId, string linkName)
+    {
+        return await dbContext.Slips.AsNoTracking().AnyAsync(s => s.Id != currentSlipId && s.FriendlyLinkName == linkName);
     }
 
     public async Task<Slip> CreateAsync(Slip entity)

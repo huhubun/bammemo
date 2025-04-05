@@ -10,6 +10,7 @@ public interface ISlipService
     Task<Slip?> GetByIdAsync(int id);
     Task<Slip?> GetByIdNoTrackingAsync(int id);
     Task<Slip?> GetByLinkNameAsync(string linkName);
+    Task<bool> CheckLinkNameExistsAsync(int currentSlipId, string linkName);
     Task<Slip> CreateAsync(Slip slip);
     Task<Slip> UpdateAsync(Slip slip);
     Task<int> DeleteAsync(int id);
