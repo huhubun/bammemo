@@ -1,7 +1,27 @@
 ﻿.slip-editor-input {
+    width: 100%;
+    height: auto;
+    /* 
+        cancel、发送按钮那一行 32px；
+        分割线 1px；
+        分割线上下 gap 各 10px，共 20px；
+    */
+    max-height: calc(80dvh - 32px - 1px - 20px);
+    resize: none;
     border: none;
     outline: none;
     font-size: var(--type-ramp-base-font-size);
+}
+
+@media (max-height: 400px) {
+    .slip-editor-input {
+        /*
+            前面一样；
+            页面最顶部padding 16px；
+            box 上下的 padding 各16px，共32px；
+        */
+        max-height: calc(100dvh - 32px - 1px - 20px - 16px - 32px);
+    }
 }
 
 ::deep .bammemo-slip-editor-toolbar, ::deep .bammemo-slip-editor-actions {
