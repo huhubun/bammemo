@@ -49,9 +49,9 @@ public partial class BammemoSlipPropertyEditDialog(
                 }
                 else
                 {
-                    ToastService.ShowError($"操作失败：{ex.Message}");
-                    Console.WriteLine($"更新文章属性失败：{ex}");
-                }
+                ToastService.ShowError($"操作失败：{ex.Message}");
+                Console.WriteLine($"更新文章属性失败：{ex}");
+            }
             }
             finally
             {
