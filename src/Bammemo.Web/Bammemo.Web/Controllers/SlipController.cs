@@ -107,6 +107,33 @@ public class SlipController(
     }
 
     [Authorize]
+    [HttpPut("{id}/property")]
+    [ProducesResponseType<UpdateSlipResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    public async Task<IActionResult> UpdatePropertyAsync([FromRoute] string id, [FromBody] UpdateSlipPropertyRequest request)
+    {
+        var rawId = await idService.DecodeAsync(id);
+        var entity = await slipService.GetByIdAsync(rawId);
+
+        if (entity == null)
+        {
+            return NotFound();
+        }
+
+        if (request.FriendlyLinkName != null && await slipService.CheckLinkNameExistsAsync(rawId, request.FriendlyLinkName))
+        {
+            return Conflict();
+        }
+
+        entity = request.MapTo(entity);
+
+        var result = await slipService.UpdateAsync(entity);
+
+        return Ok(result.MapTo<UpdateSlipResponse>());
+    }
+
+    [Authorize]
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

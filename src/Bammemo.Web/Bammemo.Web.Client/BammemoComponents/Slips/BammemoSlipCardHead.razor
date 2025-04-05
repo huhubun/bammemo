@@ -32,11 +32,11 @@
                 @if (isLoggedIn)
                 {
                     <FluentMenuItem OnClick="@(async _ => await OnEditClick.InvokeAsync())" Disabled="@(!IsWebAssembly)">修改</FluentMenuItem>
+                    <FluentMenuItem OnClick="HandleEditPropertyAsync" Disabled="@(!IsWebAssembly)">属性</FluentMenuItem>
                     @* TODO *@
                     @* <FluentMenuItem>归档</FluentMenuItem> *@
                     <FluentDivider />
                     <FluentMenuItem OnClick="CopySlipUrlAsync">复制链接</FluentMenuItem>
-                    @* <FluentMenuItem>高级</FluentMenuItem> *@
                     <FluentDivider />
                     <FluentMenuItem OnClick="HandleDeleteClick" Class="bammemo-slip-card-head-delete-button">删除</FluentMenuItem>
                 }
@@ -61,6 +61,9 @@
 
     [Parameter]
     public required EventCallback OnAfterDelete { get; set; }
+
+    [Parameter]
+    public required EventCallback<BammemoSlipPropertyEditDialog.SlipPropertyModel> OnAfterUpdateProperty { get; set; }
 
     private bool IsWebAssembly => RendererInfo.Name == BlazorRendererName.WebAssembly;
 
@@ -106,6 +109,29 @@
         {
             await WebApiClient.Api.Slips[Data.Id].DeleteAsync();
             await OnAfterDelete.InvokeAsync();
+        }
+    }
+
+    private async Task HandleEditPropertyAsync()
+    {
+        var dialog = await DialogService.ShowDialogAsync(
+            DialogHelper.From<BammemoSlipPropertyEditDialog>(),
+            Data.MapTo<BammemoSlipPropertyEditDialog.SlipPropertyModel>(),
+            new DialogParameters
+                {
+                    Title = $"文章属性",
+                    PreventDismissOnOverlayClick = true,
+                    PreventScroll = true,
+                });
+
+        var result = await dialog.Result;
+        if (!result.Cancelled && result.Data != null)
+        {
+            var data = result.Data as BammemoSlipPropertyEditDialog.SlipPropertyModel;
+
+            await OnAfterUpdateProperty.InvokeAsync(data);
+
+            ToastService.ShowSuccess("文章属性更新成功");
         }
     }
 }

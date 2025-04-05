@@ -6,6 +6,6 @@ namespace Bammemo.Web.MapperProfiles;
 
 [Map<SlipTag, SlipTagDto>]
 [Map<SlipTagDto, SlipTag>]
-public partial class SlipTagProfile 
+public static partial class SlipTagProfile 
 {
 }

@@ -3,4 +3,5 @@
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
 public sealed class MapAttribute<TSource, TTarget> : Attribute
 {
+    public bool ToExistsOnly { get; set; }
 }

@@ -1,0 +1,41 @@
+﻿@rendermode InteractiveWebAssembly
+@using System.Net
+@using System.ComponentModel.DataAnnotations
+
+<FluentDialogBody>
+    <EditForm EditContext="@_editContext" FormName="simple_redirect_rule">
+        <DataAnnotationsValidator />
+
+        <FluentStack Orientation="Orientation.Vertical">
+            <div class="w-full">
+                <FluentTextField @bind-Value="@Content.Title" Label="@($"标题（建议60个字符以内：{Content.Title?.Length ?? 0}/60）")" Class="w-full" />
+                <FluentValidationMessage For="@(() => Content.Title)" />
+            </div>
+
+            <div class="w-full">
+                <FluentTextField @bind-Value="@Content.FriendlyLinkName" Label="FriendlyLinkName" Class="w-full" />
+                <FluentValidationMessage For="@(() => Content.FriendlyLinkName)" />
+            </div>
+
+            <div class="w-full">
+                <FluentTextArea Rows="4" @bind-Value="@Content.Excerpt" Label="@($"描述（建议160个字符以内：{Content.Excerpt?.Length ?? 0}/160）")" Class="w-full" />
+                <FluentValidationMessage For="@(() => Content.Excerpt)" />
+            </div>
+        </FluentStack>
+    </EditForm>
+</FluentDialogBody>
+
+<FluentDialogFooter>
+    <FluentButton Appearance="Appearance.Accent"
+    Loading="@isLoading"
+    OnClick="@SaveAsync">
+        Save
+    </FluentButton>
+
+    <FluentButton Appearance="Appearance.Neutral"
+    OnClick="@CancelAsync">
+        Cancel
+    </FluentButton>
+</FluentDialogFooter>
+
+<FluentToastProvider />
