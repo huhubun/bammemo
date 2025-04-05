@@ -7,15 +7,18 @@
 
 <BammemoPageTitle Title="友情链接" />
 
-<HeadContent>
-    @if (links != null)
-    {
-        var siteNames = String.Join(",", links.Select(l => l.Key));
+@if (links != null)
+{
+    var siteNames = String.Join(",", links.Select(l => l.Key));
 
+    <SectionContent SectionName="MetaDescription">
         <meta name="description" content="@siteNames" />
+    </SectionContent>
+
+    <SectionContent SectionName="MetaKeywords">
         <meta name="keywords" content="@siteNames" />
-    }
-</HeadContent>
+    </SectionContent>
+}
 
 <div>
     <BammemoContent>
@@ -82,7 +85,7 @@
         if (!PersistentComponentState.TryTakeFromJson(SITE_LINK_PERSITING_KEY, out links))
         {
             var response = await CommonSiteLinkService.ListAsync();
-            links = response.SiteLinks.Select(link => new KeyValuePair<string,string>(link.Name, link.Url)).ToArray();
+            links = response.SiteLinks.Select(link => new KeyValuePair<string, string>(link.Name, link.Url)).ToArray();
         }
     }
 

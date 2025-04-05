@@ -8,17 +8,19 @@
 
 <BammemoPageTitle Title="@(slip?.Title ?? $"{slip?.CreatedAt.ToLocalTimeString()} 发表的博文")" />
 
-<HeadContent>
-    @if (slip?.Excerpt != null)
-    {
+@if (slip?.Excerpt != null)
+{
+    <SectionContent SectionName="MetaDescription">
         <meta name="description" content="@slip.Excerpt" />
-    }
+    </SectionContent>
+}
 
-    @if (slip?.Tags?.Any() ?? false)
-    {
+@if (slip?.Tags?.Any() ?? false)
+{
+    <SectionContent SectionName="MetaKeywords">
         <meta name="keywords" content="@String.Join(",", slip.Tags)" />
-    }
-</HeadContent>
+    </SectionContent>
+}
 
 <div>
     @if (slip?.Title != null)

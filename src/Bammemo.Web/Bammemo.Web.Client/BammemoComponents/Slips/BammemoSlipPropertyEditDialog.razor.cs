@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.FluentUI.AspNetCore.Components;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace Bammemo.Web.Client.BammemoComponents.Slips;
 
@@ -13,6 +14,7 @@ public partial class BammemoSlipPropertyEditDialog(
 {
     private EditContext _editContext = default!;
     private bool isLoading = false;
+    private bool isFriendlyLinkNameExists = false;
 
     [CascadingParameter]
     public FluentDialog Dialog { get; set; } = default!;
@@ -27,6 +29,8 @@ public partial class BammemoSlipPropertyEditDialog(
 
     private async Task SaveAsync()
     {
+        isFriendlyLinkNameExists = false;
+
         if (_editContext.Validate())
         {
             isLoading = true;
@@ -39,8 +43,15 @@ public partial class BammemoSlipPropertyEditDialog(
             }
             catch (Exception ex)
             {
-                ToastService.ShowError($"操作失败：{ex.Message}");
-                Console.WriteLine($"更新文章属性失败：{ex}");
+                if (ex is ProblemDetails problemDetails && problemDetails.Status == (int)HttpStatusCode.Conflict)
+                {
+                    isFriendlyLinkNameExists = true;
+                }
+                else
+                {
+                    ToastService.ShowError($"操作失败：{ex.Message}");
+                    Console.WriteLine($"更新文章属性失败：{ex}");
+                }
             }
             finally
             {
