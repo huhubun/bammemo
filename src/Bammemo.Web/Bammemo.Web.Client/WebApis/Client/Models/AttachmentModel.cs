@@ -9,45 +9,31 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class UploadFileResponse : IAdditionalDataHolder, IParsable
+    public partial class AttachmentModel : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
         /// <summary>The fileMetadataId property</summary>
         public int? FileMetadataId { get; set; }
-        /// <summary>The fileName property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? FileName { get; set; }
-#nullable restore
-#else
-        public string FileName { get; set; }
-#endif
-        /// <summary>The url property</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Url { get; set; }
-#nullable restore
-#else
-        public string Url { get; set; }
-#endif
+        /// <summary>The showThumbnail property</summary>
+        public bool? ShowThumbnail { get; set; }
         /// <summary>
-        /// Instantiates a new <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.UploadFileResponse"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.AttachmentModel"/> and sets the default values.
         /// </summary>
-        public UploadFileResponse()
+        public AttachmentModel()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.UploadFileResponse"/></returns>
+        /// <returns>A <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.AttachmentModel"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Bammemo.Web.Client.WebApis.Client.Models.UploadFileResponse CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Bammemo.Web.Client.WebApis.Client.Models.AttachmentModel CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new global::Bammemo.Web.Client.WebApis.Client.Models.UploadFileResponse();
+            return new global::Bammemo.Web.Client.WebApis.Client.Models.AttachmentModel();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -58,8 +44,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
             return new Dictionary<string, Action<IParseNode>>
             {
                 { "fileMetadataId", n => { FileMetadataId = n.GetIntValue(); } },
-                { "fileName", n => { FileName = n.GetStringValue(); } },
-                { "url", n => { Url = n.GetStringValue(); } },
+                { "showThumbnail", n => { ShowThumbnail = n.GetBoolValue(); } },
             };
         }
         /// <summary>
@@ -70,8 +55,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("fileMetadataId", FileMetadataId);
-            writer.WriteStringValue("fileName", FileName);
-            writer.WriteStringValue("url", Url);
+            writer.WriteBoolValue("showThumbnail", ShowThumbnail);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -16,7 +16,6 @@ public class FileMetadata
     public required string HashValue { get; set; }
     public required string HashAlgorithm { get; set; }
     public long CreatedAt { get; set; }
-    public long? UpdateAt { get; set; }
 
     public virtual ICollection<FileReference>? References { get; set; }
 }

@@ -1,8 +1,5 @@
-﻿@using Bammemo.Service.Abstractions.Dtos.Slips
-@using Bammemo.Service.Abstractions.Enums
+﻿@using Bammemo.Service.Abstractions.Enums
 @rendermode InteractiveAuto
-@inject Bammemo.Web.Client.WebApis.Client.WebApiClient WebApiClient
-@inject IJSRuntime jsRuntime
 
 @if (RendererInfo.Name != BlazorRendererName.WebAssembly)
 {
@@ -23,18 +20,114 @@ else
                       @bind:event="oninput"
                       @ref="textarea" />
 
-            @* TODO *@
-            @*             <FluentToolbar Class="bammemo-slip-editor-toolbar">
-                <FluentButton Appearance="Appearance.Stealth"
+            @if (attachments.Count > 0)
+            {
+                var imageAttachments = new List<SlipAttachmentModel>();
+                var otherAttachments = new List<SlipAttachmentModel>();
+
+                foreach (var attachment in attachments)
+                {
+                    if (FileNameHelper.IsImage(attachment.FileName))
+                    {
+                        imageAttachments.Add(attachment);
+                    }
+                    else
+                    {
+                        otherAttachments.Add(attachment);
+                    }
+                }
+
+                if (imageAttachments.Any())
+                {
+                    <FluentStack Orientation="Orientation.Horizontal" Wrap Class="bammemo-slip-editor-image-attachments-wrap">
+                        @foreach (var attachment in imageAttachments)
+                        {
+                            <BammemoCard Border
+                                         @key="attachment.FileMetadataId"
+                                         Style="@($"background-image: url('{attachment.Url}'); width: 128px; height: 128px;")"
+                                         Class="bammemo-slip-editor-image-preview">
+                                <FluentStack Orientation="Orientation.Vertical"
+                                             VerticalAlignment="VerticalAlignment.Top"
+                                             HorizontalAlignment="HorizontalAlignment.Right"
+                                             Class="bammemo-slip-editor-image-preview-actions">
+                                    <FluentButton Appearance="Appearance.Stealth"
+                                                  IconEnd="@(new Icons.Filled.Size16.Delete())"
+                                                  Title="删除"
+                                                  OnClick="@(_ => attachments.Remove(attachment))" />
+
+                                    <FluentButton Appearance="Appearance.Stealth"
+                                                  IconEnd="@(new Icons.Filled.Size16.ArrowUpRight())"
+                                                  Title="插入"
+                                                  OnClick="@(async _ => await HandleInsertAttachmentToContentAsync(attachment))" />
+
+                                    @if (attachment.ShowThumbnail)
+                                    {
+                                        <FluentButton Appearance="Appearance.Stealth"
+                                                      IconEnd="@(new Icons.Filled.Size16.Stack())"
+                                                      Title="显示缩略图"
+                                                      OnClick="@(_ => attachment.ShowThumbnail = false)" />
+                                    }
+                                    else
+                                    {
+                                        <FluentButton Appearance="Appearance.Stealth"
+                                                      IconEnd="@(new Icons.Filled.Size16.StackOff())"
+                                                      Title="不显示缩略图"
+                                                      OnClick="@(_ => attachment.ShowThumbnail = true)" />
+                                    }
+                                </FluentStack>
+                            </BammemoCard>
+                        }
+                    </FluentStack>
+                }
+
+                if (otherAttachments.Any())
+                {
+                    <FluentStack Orientation="Orientation.Horizontal" Wrap Class="bammemo-slip-editor-non-image-attachments-wrap">
+                        @foreach (var attachment in otherAttachments)
+                        {
+                            <BammemoCard Border
+                                         @key="attachment.FileMetadataId"
+                                         Class="bammemo-slip-editor-non-image-attachments-item">
+                                <FluentStack Orientation="Orientation.Horizontal"
+                                             VerticalAlignment="VerticalAlignment.Center"
+                                             Class="bammemo-slip-editor-non-image-attachments-item-actions">
+                                    <FluentLabel Typo="Typography.Subject" title="@attachment.FileName">@attachment.FileName</FluentLabel>
+                                    <FluentButton Appearance="Appearance.Stealth"
+                                                  IconEnd="@(new Icons.Filled.Size16.ArrowUpRight())"
+                                                  Title="插入" />
+                                    <FluentButton Appearance="Appearance.Stealth"
+                                                  IconEnd="@(new Icons.Filled.Size16.Delete())"
+                                                  Title="删除" />
+                                </FluentStack>
+                            </BammemoCard>
+                        }
+                    </FluentStack>
+                }
+            }
+
+            <FluentStack Orientation="Orientation.Horizontal" Class="bammemo-slip-editor-functions">
+                @* <FluentButton Appearance="Appearance.Stealth"
                               IconEnd="@(new Icons.Filled.Size20.NumberSymbol())"
-                              Title="标签" />
-                <FluentButton Appearance="Appearance.Stealth"
+                              Title="标签" /> *@
+
+                <FluentInputFile AnchorId="@RenderedSlipAttachmentUploaderId"
+                                 DragDropZoneVisible="false"
+                                 Multiple
+                                 Mode="InputFileMode.Stream"
+                                 MaximumFileSize="@(1 * 1024 * 1024)"
+                                 OnFileUploaded="@OnAttachmentUploadedAsync"
+                                 OnCompleted="@(_ => isAttachmentUploading = false)" />
+
+                <FluentButton Id="@RenderedSlipAttachmentUploaderId"
+                              Appearance="Appearance.Stealth"
                               IconEnd="@(new Icons.Filled.Size20.Attach())"
-                              Title="上传" />
-                <FluentButton Appearance="Appearance.Stealth"
+                              Title="上传"
+                              Loading="isAttachmentUploading" />
+
+                @*                 <FluentButton Appearance="Appearance.Stealth"
                               IconEnd="@(new Icons.Filled.Size20.LinkMultiple())"
-                              Title="链接" />
-            </FluentToolbar> *@
+                              Title="链接" /> *@
+            </FluentStack>
 
             <FluentDivider Style="width: 100%;" />
 
@@ -67,76 +160,4 @@ else
             </FluentStack>
         </FluentStack>
     </div>
-}
-
-@code {
-    private string? content = null;
-    private string status = ((int)SlipStatus.Public).ToString();
-    private bool isSaveButtonLoading = false;
-    private ElementReference textarea;
-
-    [Parameter]
-    public bool IsEdit { get; set; }
-
-    [Parameter]
-    public ListSlipDto? Data { get; set; }
-
-    [Parameter]
-    public EventCallback<ListSlipDto> OnSlipSaved { get; set; }
-
-    [Parameter]
-    public EventCallback<bool> OnEditCanceled { get; set; }
-
-    protected override void OnParametersSet()
-    {
-        if (Data != null)
-        {
-            content = Data.Content;
-            status = ((int)Data.Status).ToString();
-        }
-    }
-
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (Data != null)
-        {
-            await jsRuntime.InvokeVoidAsync("bammemo.util.resizeSlipEditorTextarea", textarea);
-        }
-    }
-
-    private async Task OnSaveClickAsync()
-    {
-        ArgumentNullException.ThrowIfNull(content);
-
-        if (IsEdit)
-        {
-            ArgumentNullException.ThrowIfNull(Data);
-
-            var editedStatus = Enum.Parse<SlipStatus>(status);
-
-            var updatedSlip = await WebApiClient.Api.Slips[Data.Id].PutAsync(new Bammemo.Web.Client.WebApis.Client.Models.UpdateSlipRequest
-                {
-                    Content = content,
-                    Status = (int)editedStatus
-                });
-
-            // Keep slip id here
-            var dto = updatedSlip.MapTo<ListSlipDto>();
-            dto.Id = Data.Id;
-
-            await OnSlipSaved.InvokeAsync(dto);
-        }
-        else
-        {
-            var createdSlip = await WebApiClient.Api.Slips.PostAsync(new Bammemo.Web.Client.WebApis.Client.Models.CreateSlipRequest
-                {
-                    Content = content,
-                    Status = (int)Enum.Parse<SlipStatus>(status)
-                });
-
-            await OnSlipSaved.InvokeAsync(createdSlip.MapTo<ListSlipDto>());
-        }
-
-        content = null;
-    }
 }

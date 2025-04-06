@@ -9,7 +9,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class UploadFileResponse : IAdditionalDataHolder, IParsable
+    public partial class SlipAttachmentModel : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
@@ -24,6 +24,8 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
 #else
         public string FileName { get; set; }
 #endif
+        /// <summary>The showThumbnail property</summary>
+        public bool? ShowThumbnail { get; set; }
         /// <summary>The url property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -33,21 +35,21 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         public string Url { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.UploadFileResponse"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel"/> and sets the default values.
         /// </summary>
-        public UploadFileResponse()
+        public SlipAttachmentModel()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.UploadFileResponse"/></returns>
+        /// <returns>A <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Bammemo.Web.Client.WebApis.Client.Models.UploadFileResponse CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new global::Bammemo.Web.Client.WebApis.Client.Models.UploadFileResponse();
+            return new global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -59,6 +61,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
             {
                 { "fileMetadataId", n => { FileMetadataId = n.GetIntValue(); } },
                 { "fileName", n => { FileName = n.GetStringValue(); } },
+                { "showThumbnail", n => { ShowThumbnail = n.GetBoolValue(); } },
                 { "url", n => { Url = n.GetStringValue(); } },
             };
         }
@@ -71,6 +74,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
             writer.WriteIntValue("fileMetadataId", FileMetadataId);
             writer.WriteStringValue("fileName", FileName);
+            writer.WriteBoolValue("showThumbnail", ShowThumbnail);
             writer.WriteStringValue("url", Url);
             writer.WriteAdditionalData(AdditionalData);
         }

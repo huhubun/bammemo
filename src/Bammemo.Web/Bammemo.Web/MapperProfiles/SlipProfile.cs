@@ -1,6 +1,8 @@
 ﻿using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Attributes;
 using Bammemo.Service.Abstractions.Dtos.Slips;
+using Bammemo.Service.Models.Slips;
+using Bammemo.Web.Client.BammemoComponents.Slips;
 using Bammemo.Web.WebApiModels.Slips;
 
 namespace Bammemo.Web.MapperProfiles;
@@ -16,6 +18,8 @@ namespace Bammemo.Web.MapperProfiles;
 [Map<Slip, SlipDetailDto>]
 [Map<Slip, ListSlipResponse.SlipModel>]
 [Map<UpdateSlipPropertyRequest, Slip>(ToExistsOnly = true)]
+[Map<CreateSlipRequest.AttachmentModel, AddSlipAttachmentInfo>]
+[Map<SlipAttachmentDto, ListSlipResponse.SlipAttachmentModel>]
 public static partial class SlipProfile
 {
     static partial void AfterMap(Slip source, ListSlipResponse.SlipModel target)

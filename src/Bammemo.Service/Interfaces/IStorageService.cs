@@ -9,4 +9,5 @@ public interface IStorageService
     Task<FileMetadata> SaveAsync(string fileName, FileType fileType, Stream stream, bool keepFileName = true, FileReferenceSourceType? sourceType = null, int? sourceId = null);
     Task<FileMetadata?> GetFileMetadataByFullName(string fullName);
     Task<FileReadResult> ReadAsync(FileMetadata fileMetadata);
+    Task SaveReferencesAsync(IEnumerable<FileReference> references);
 }

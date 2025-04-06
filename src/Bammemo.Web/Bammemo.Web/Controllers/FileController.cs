@@ -1,4 +1,5 @@
-﻿using Bammemo.Service.Interfaces;
+﻿using Bammemo.Service.Extensions;
+using Bammemo.Service.Interfaces;
 using Bammemo.Web.WebApiModels.Files;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -17,14 +18,12 @@ public class FileController(
         using var stream = request.File.OpenReadStream();
 
         var fileMetadata = await storageService.SaveAsync(request.File.FileName, request.Type, stream, request.KeepFileName);
-        var baseUriBuilder = Request.Host.Port.HasValue
-            ? new UriBuilder(Request.Scheme, Request.Host.Host, Request.Host.Port.Value)
-            : new UriBuilder(Request.Scheme, Request.Host.Host);
 
         return Ok(new UploadFileResponse
         {
+            FileMetadataId = fileMetadata.Id,
             FileName = fileMetadata.FileName,
-            Url = new Uri(baseUriBuilder.Uri, $"files/{fileMetadata.Path.Replace("\\", "/")}/{fileMetadata.FileName}").ToString()
+            Url = fileMetadata.GetUrl(Request).ToString()
         });
     }
 }

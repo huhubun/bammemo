@@ -32,8 +32,7 @@ public static class FileApis
                     contentType = MediaTypeNames.Application.Octet;
                 }
 
-                var timestamp = fileMetadata.UpdateAt ?? fileMetadata.CreatedAt;
-                var lastModified = new DateTimeOffset(timestamp, TimeSpan.Zero);
+                var lastModified = new DateTimeOffset(fileMetadata.CreatedAt, TimeSpan.Zero);
                 var etag = new Microsoft.Net.Http.Headers.EntityTagHeaderValue($"\"{fileMetadata.HashValue}\"");
 
                 return Results.Stream(result.Stream, contentType, fileMetadata.FileName, lastModified, etag, true);

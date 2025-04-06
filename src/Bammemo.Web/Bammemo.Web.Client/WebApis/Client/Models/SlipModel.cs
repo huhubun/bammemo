@@ -14,6 +14,14 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
+        /// <summary>The attachments property</summary>
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
+#nullable enable
+        public List<global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel>? Attachments { get; set; }
+#nullable restore
+#else
+        public List<global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel> Attachments { get; set; }
+#endif
         /// <summary>The content property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -93,6 +101,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "attachments", n => { Attachments = n.GetCollectionOfObjectValues<global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel>(global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel.CreateFromDiscriminatorValue)?.AsList(); } },
                 { "content", n => { Content = n.GetStringValue(); } },
                 { "createdAt", n => { CreatedAt = n.GetLongValue(); } },
                 { "excerpt", n => { Excerpt = n.GetStringValue(); } },
@@ -111,6 +120,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
+            writer.WriteCollectionOfObjectValues<global::Bammemo.Web.Client.WebApis.Client.Models.SlipAttachmentModel>("attachments", Attachments);
             writer.WriteStringValue("content", Content);
             writer.WriteLongValue("createdAt", CreatedAt);
             writer.WriteStringValue("excerpt", Excerpt);

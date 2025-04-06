@@ -2,6 +2,7 @@
 using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Interfaces;
+using Bammemo.Service.Models.Slips;
 using Bammemo.Web.WebApiModels.Slips;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,11 +28,18 @@ public class SlipController(
                 query.MapTo<ListSlipQueryRequestDto>(),
                 await paging.DecodeAsync(idService.DecodeAsync) ?? null);
 
+            var attachmentsGroup = await slipService.LoadAttachmentsAsync(result.Select(r => r.Id));
+
             var slipModels = new List<ListSlipResponse.SlipModel>();
             foreach (var item in result)
             {
                 var model = item.MapTo<ListSlipResponse.SlipModel>();
                 model.Id = await idService.EncodeAsync(item.Id);
+
+                if (attachmentsGroup.TryGetValue(item.Id, out var attachments))
+                {
+                    model.Attachments = attachments.MapToArray<ListSlipResponse.SlipAttachmentModel>();
+                }
 
                 slipModels.Add(model);
             }
@@ -73,15 +81,15 @@ public class SlipController(
         var entity = request.MapTo<Slip>();
 
         var result = await slipService.CreateAsync(entity);
-        var encodedId = await idService.EncodeAsync(result.Id);
+        await slipService.AddAttachmentsAsync(result.Id, request.Attachments.MapToArray<AddSlipAttachmentInfo>());
 
         var model = result.MapTo<CreateSlipResponse>();
-        model.Id = encodedId;
+        model.Id = await idService.EncodeAsync(result.Id);
 
         return Created(
             nameof(GetByIdAsync),
             nameof(SlipController),
-            encodedId,
+            model.Id,
             model);
     }
 

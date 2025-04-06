@@ -1,6 +1,7 @@
 ﻿using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
+using Bammemo.Service.Models.Slips;
 
 namespace Bammemo.Service.Interfaces;
 
@@ -16,4 +17,6 @@ public interface ISlipService
     Task<int> DeleteAsync(int id);
     Task<long[]> GetCreatedTimeWithSlipAsync(long startTime, long endTime);
     Task<string[]> GetAllTagsAsync();
+    Task AddAttachmentsAsync(int slipId, IEnumerable<AddSlipAttachmentInfo> attachmentInfos);
+    Task<Dictionary<int, SlipAttachmentDto[]>> LoadAttachmentsAsync(IEnumerable<int> slipIds);
 }

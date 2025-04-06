@@ -15,12 +15,18 @@ public class CommonSlipService(
         CursorPagingRequest<string>? paging = null)
     {
         var slips = await slipService.ListAsync(query, await paging.DecodeAsync(idService.DecodeAsync) ?? null);
+        var attachmentsGroup = await slipService.LoadAttachmentsAsync(slips.Select(r => r.Id));
 
         var result = new List<ListSlipDto>();
         foreach (var item in slips)
         {
             var dto = item.MapTo<ListSlipDto>();
             dto.Id =  await idService.EncodeAsync(item.Id);
+
+            if (attachmentsGroup.TryGetValue(item.Id, out var attachments))
+            {
+                dto.Attachments = attachments;
+            }
 
             result.Add(dto);
         }

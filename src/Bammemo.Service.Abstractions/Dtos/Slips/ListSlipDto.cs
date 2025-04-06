@@ -10,4 +10,5 @@ public class ListSlipDto
     public SlipStatus Status { get; set; }
     public string? Title { get; set; }
     public string? Excerpt { get; set; }
+    public SlipAttachmentDto[]? Attachments { get; set; }
 }

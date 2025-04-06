@@ -52,9 +52,12 @@ public class StorageService(
         int? sourceId = null)
     {
         var path = GetPath(fileType);
-
-        FileMetadata? fileMetadata;
         var extension = Path.GetExtension(fileName);
+        var (algorithm, hash) = HashHelper.Sha256(stream);
+
+        var storageType = await GetStorageTypeAsync();
+        var provider = await GetStorageProviderAsync(storageType);
+        FileMetadata? fileMetadata;
 
         if (keepFileName)
         {
@@ -65,27 +68,21 @@ public class StorageService(
         }
         else
         {
-            fileMetadata = null;
-
             fileName = $"{Guid.NewGuid():n}{extension}";
+            fileMetadata = null;
         }
-
-        var (algorithm, hash) = HashHelper.Sha256(stream);
-        var storageType = await GetStorageTypeAsync();
-        var provider = await GetStorageProviderAsync(storageType);
 
         if (fileMetadata == null)
         {
-            var storageFileName = $"{Guid.NewGuid():n}{extension}";
-
             fileMetadata = new FileMetadata
             {
                 FileName = fileName,
-                StorageFileName = storageFileName,
+                // 避免实际保存使用的文件名被猜测
+                StorageFileName = $"{Guid.NewGuid():n}{extension}",
                 Path = path,
                 Size = stream.Length,
                 FileType = (int)fileType,
-                HashAlgorithm=algorithm,
+                HashAlgorithm = algorithm,
                 HashValue = hash,
                 StorageType = (int)storageType,
                 CreatedAt = DateTime.UtcNow.Ticks
@@ -95,9 +92,12 @@ public class StorageService(
         }
         else
         {
+            fileMetadata.StorageFileName = $"{Guid.NewGuid():n}{extension}";
+            fileMetadata.Size = stream.Length;
             fileMetadata.HashAlgorithm = algorithm;
             fileMetadata.HashValue = hash;
-            fileMetadata.UpdateAt = DateTime.UtcNow.Ticks;
+            fileMetadata.StorageType = (int)storageType;
+            fileMetadata.CreatedAt = DateTime.UtcNow.Ticks;
         }
 
         await provider.SaveAsync(path, fileMetadata.StorageFileName, stream);
@@ -142,15 +142,29 @@ public class StorageService(
             .SingleOrDefaultAsync();
     }
 
+    public async Task SaveReferencesAsync(IEnumerable<FileReference> references)
+    {
+        if (references.Any())
+        {
+            await dbContext.FileReferences.AddRangeAsync(references);
+            await dbContext.SaveChangesAsync();
+        }
+        else
+        {
+            // TODO LOG
+        }
+    }
+
     private static string GetPath(FileType fileType) => fileType switch
     {
         FileType.Favicon => "favicon",
         FileType.SiteLogo => "logo",
+        FileType.SlipAttachment => $"slip_attachment/{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/{DateTime.UtcNow.Day}",
         _ => throw new NotSupportedException(fileType.ToString())
     };
 
     private static (string path, string fileName) ParseFilePath(string fullName)
         => (
-        Path.GetDirectoryName(fullName) ?? throw new NullReferenceException("path"),
+        (Path.GetDirectoryName(fullName) ?? throw new NullReferenceException("path")).Replace('\\', '/'),
         Path.GetFileName(fullName));
 }

@@ -45,6 +45,22 @@
                         console.error('复制失败：', error);
                         return false;
                     });
+            },
+            insertToSlipEditorTextarea: function(element, content){
+                var startPos = element.selectionStart;
+                var endPos = element.selectionEnd;
+
+                // 在光标位置插入文本
+                element.value = element.value.substring(0, startPos)
+                    + content
+                    + element.value.substring(endPos);
+
+                // 将光标移动到插入文本的末尾
+                element.selectionStart = element.selectionEnd = startPos + content.length;
+
+                element.focus();
+
+                return element.value;
             }
         }
 

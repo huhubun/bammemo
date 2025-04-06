@@ -1,8 +1,9 @@
-﻿namespace Bammemo.Web.WebApiModels.Files;
+﻿namespace Bammemo.Service.Abstractions.Dtos.Slips;
 
-public class UploadFileResponse
+public class SlipAttachmentDto
 {
     public int FileMetadataId { get; set; }
     public required string FileName { get; set; }
     public required string Url { get; set; }
+    public bool ShowThumbnail { get; set; }
 }

@@ -16,7 +16,7 @@ public class LocalStorageProvider(
             IsAvailable = true
         });
 
-    public Task SaveAsync(string path, string fileName, Stream stream)
+    public async Task SaveAsync(string path, string fileName, Stream stream)
     {
         var fullPath = Path.Combine(bammemoOptions.Value.StoragePath, path, fileName);
         var tmpFileFullPath = fullPath + ".tmp";
@@ -38,7 +38,7 @@ public class LocalStorageProvider(
 
             using var fileStream = File.Create(fullPath);
             stream.Seek(0, SeekOrigin.Begin);
-            stream.CopyToAsync(fileStream);
+            await stream.CopyToAsync(fileStream);
 
             if (File.Exists(tmpFileFullPath))
             {
@@ -55,8 +55,6 @@ public class LocalStorageProvider(
                 File.Move(tmpFileFullPath, fullPath);
             }
         }
-
-        return Task.CompletedTask;
     }
 
     public Task<FileReadResult> ReadAsync(FileMetadata fileMetadata)

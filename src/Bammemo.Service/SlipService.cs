@@ -4,14 +4,17 @@ using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Interfaces;
+using Bammemo.Service.Models.Slips;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Bammemo.Service.Extensions;
 
 namespace Bammemo.Service;
 
 public class SlipService(
     BammemoDbContext dbContext,
-    IHttpContextAccessor httpContext) : ISlipService
+    IHttpContextAccessor httpContext,
+    IStorageService storageService) : ISlipService
 {
     public async Task<Slip[]> ListAsync(
         ListSlipQueryRequestDto? query,
@@ -162,7 +165,42 @@ public class SlipService(
             .Distinct()
             .ToArrayAsync();
 
-    public bool IsAuthenticated => httpContext.HttpContext.User.Identity?.IsAuthenticated ?? false;
+    public async Task AddAttachmentsAsync(int slipId, IEnumerable<AddSlipAttachmentInfo> attachmentInfos)
+    {
+        await storageService.SaveReferencesAsync(attachmentInfos.Select(a => new FileReference
+        {
+            MetadataId = a.FileMetadataId,
+            SourceId = slipId,
+            SourceType = (int)FileReferenceSourceType.Slip,
+            ShowThumbnail = a.ShowThumbnail,
+        }));
+    }
+
+    public async Task<Dictionary<int, SlipAttachmentDto[]>> LoadAttachmentsAsync(IEnumerable<int> slipIds)
+    {
+        var filesQuery = from m in dbContext.FileMetadata
+                join fr in dbContext.FileReferences on m.Id equals fr.MetadataId
+                where fr.SourceType == (int)FileReferenceSourceType.Slip
+                where slipIds.Contains(fr.SourceId)
+                select new
+                {
+                    FileMetadata = m,
+                    fr.SourceId,
+                    fr.ShowThumbnail
+                };
+
+        var filesList = await filesQuery.AsNoTracking().ToListAsync();
+
+        return filesList.GroupBy(f => f.SourceId, f => new SlipAttachmentDto
+        {
+            FileMetadataId = f.FileMetadata.Id,
+            FileName = f.FileMetadata.FileName,
+            Url = f.FileMetadata.GetUrl(httpContext.HttpContext.Request).ToString(),
+            ShowThumbnail = f.ShowThumbnail ?? false
+        }).ToDictionary(g => g.Key, g => g.ToArray());
+    }
+
+    private bool IsAuthenticated => httpContext.HttpContext.User.Identity?.IsAuthenticated ?? false;
 
     private void SlipAuthorizeGuardian(Slip? slip)
     {
