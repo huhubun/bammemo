@@ -1,5 +1,6 @@
 ﻿@using Bammemo.Service.Abstractions.Dtos.Slips
 @rendermode InteractiveAuto
+@inject IDialogService DialogService
 
 @if (!isDelete)
 {
@@ -14,12 +15,16 @@
             }
             else
             {
-                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="width: 100%;">
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="width: 100%;" Id="@RendedId">
                     <BammemoSlipCardHead Data="Data"
                                          OnEditClick="@(_ => isEditMode = true)"
                                          OnAfterDelete="@(_=>isDelete = true)"
                                          OnAfterUpdateProperty="@((BammemoSlipPropertyEditDialog.SlipPropertyModel propertyModel) => Data = propertyModel.MapTo(Data))" />
+
                     <BammemoMarkdownSection Id="@Data.Id" Content="@Data.Content" ReadAllUrl="@Data.GetUrl()" />
+
+                    <BammemoSlipImageAttachments Attachments="imageAttachments" Wrap OnImageClick="@(async (int i)=> await HandleClickImageAsync(i))" />
+                    <BammemoSlipFileAttachments Attachments="otherAttachments" />
                 </FluentStack>
             }
         </BammemoCard>
@@ -29,13 +34,60 @@
 @code {
     private bool isEditMode = false;
     private bool isDelete = false;
+    private List<SlipAttachmentDto> imageAttachments = new();
+    private List<SlipAttachmentDto> otherAttachments = new();
 
     [Parameter]
     public required ListSlipDto Data { get; set; }
+
+    private string RendedId => $"bammemo-slip-card-{Data.Id}";
+
+    protected override void OnParametersSet()
+    {
+        if (Data.Attachments?.Any() ?? false)
+        {
+            foreach (var attachment in Data.Attachments)
+            {
+                if (FileNameHelper.IsImage(attachment.FileName))
+                {
+                    if (attachment.ShowThumbnail)
+                    {
+                        imageAttachments.Add(attachment);
+                    }
+                }
+                else
+                {
+                    otherAttachments.Add(attachment);
+                }
+            }
+        }
+    }
 
     private void OnNewSlipSaved(ListSlipDto slip)
     {
         Data = slip;
         isEditMode = false;
+    }
+
+    private async Task HandleClickImageAsync(int attachmentIndex)
+    {
+        var dialog = await DialogService.ShowDialogAsync(
+            DialogHelper.From<BammemoSlipImageAttachmentPreviewDialog>(),
+            new BammemoSlipImageAttachmentPreviewDialog.ImageAttachmentPreviewModel
+                {
+                    Attachments = imageAttachments,
+                    CurrentIndex = attachmentIndex
+                },
+            new DialogParameters
+                {
+                    PreventDismissOnOverlayClick = true,
+                    PreventScroll = true,
+                    Modal = true,
+                    // Dialog 每边有 1px 的边框
+                    Width = "calc(100dvw - 1px - 1px)",
+                    Height = "calc(100dvh - 1px - 1px)",
+                });
+
+        var result = await dialog.Result;
     }
 }

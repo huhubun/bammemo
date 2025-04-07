@@ -1,0 +1,11 @@
+﻿::deep .bammemo-slip-file-attachment {
+    padding: 0.4rem 0.8rem;
+    width: auto;
+}
+
+    ::deep .bammemo-slip-file-attachment .fluent-typography {
+        max-width: 26rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }

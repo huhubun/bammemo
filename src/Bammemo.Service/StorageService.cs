@@ -47,7 +47,6 @@ public class StorageService(
         string fileName,
         FileType fileType,
         Stream stream,
-        bool keepFileName = true,
         FileReferenceSourceType? sourceType = null,
         int? sourceId = null)
     {
@@ -57,48 +56,22 @@ public class StorageService(
 
         var storageType = await GetStorageTypeAsync();
         var provider = await GetStorageProviderAsync(storageType);
-        FileMetadata? fileMetadata;
 
-        if (keepFileName)
+        var fileMetadata = new FileMetadata
         {
-            fileMetadata = await dbContext.FileMetadata
-                .Where(f => f.Path == path && f.FileName == fileName)
-                .Include(f => f.References)
-                .SingleOrDefaultAsync();
-        }
-        else
-        {
-            fileName = $"{Guid.NewGuid():n}{extension}";
-            fileMetadata = null;
-        }
+            FileName = fileName,
+            // 避免实际保存使用的文件名被猜测
+            StorageFileName = $"{Guid.NewGuid():n}{extension}",
+            Path = path,
+            Size = stream.Length,
+            FileType = (int)fileType,
+            HashAlgorithm = algorithm,
+            HashValue = hash,
+            StorageType = (int)storageType,
+            CreatedAt = DateTime.UtcNow.Ticks
+        };
 
-        if (fileMetadata == null)
-        {
-            fileMetadata = new FileMetadata
-            {
-                FileName = fileName,
-                // 避免实际保存使用的文件名被猜测
-                StorageFileName = $"{Guid.NewGuid():n}{extension}",
-                Path = path,
-                Size = stream.Length,
-                FileType = (int)fileType,
-                HashAlgorithm = algorithm,
-                HashValue = hash,
-                StorageType = (int)storageType,
-                CreatedAt = DateTime.UtcNow.Ticks
-            };
-
-            dbContext.FileMetadata.Add(fileMetadata);
-        }
-        else
-        {
-            fileMetadata.StorageFileName = $"{Guid.NewGuid():n}{extension}";
-            fileMetadata.Size = stream.Length;
-            fileMetadata.HashAlgorithm = algorithm;
-            fileMetadata.HashValue = hash;
-            fileMetadata.StorageType = (int)storageType;
-            fileMetadata.CreatedAt = DateTime.UtcNow.Ticks;
-        }
+        dbContext.FileMetadata.Add(fileMetadata);
 
         await provider.SaveAsync(path, fileMetadata.StorageFileName, stream);
 
@@ -157,9 +130,9 @@ public class StorageService(
 
     private static string GetPath(FileType fileType) => fileType switch
     {
-        FileType.Favicon => "favicon",
-        FileType.SiteLogo => "logo",
-        FileType.SlipAttachment => $"slip_attachment/{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/{DateTime.UtcNow.Day}",
+        FileType.Favicon => $"favicon/{Guid.NewGuid():n}",
+        FileType.SiteLogo => $"logo/{Guid.NewGuid():n}",
+        FileType.SlipAttachment => $"slip_attachment/{DateTime.UtcNow.Year}/{DateTime.UtcNow.Month}/{DateTime.UtcNow.Day}/{Guid.NewGuid():n}",
         _ => throw new NotSupportedException(fileType.ToString())
     };
 

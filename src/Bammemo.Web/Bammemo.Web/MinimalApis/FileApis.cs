@@ -1,6 +1,8 @@
 ﻿using Bammemo.Service.Interfaces;
+using Bammemo.Web.Client.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using System.Net;
 using System.Net.Mime;
 
 namespace Bammemo.Web.MinimalApis;
@@ -14,13 +16,15 @@ public static class FileApis
         return app;
     }
 
-    private static async Task<IResult> LoadFile([FromRoute] string rest, [FromServices] IStorageService storageService)
+    private static async Task<IResult> LoadFile([FromRoute] string rest, [FromServices] IStorageService storageService, HttpContext context)
     {
         var fileMetadata = await storageService.GetFileMetadataByFullName(rest);
         if (fileMetadata == null)
         {
             return Results.NotFound();
         }
+
+        var inline = context.Request.Query.TryGetValue("response-content-disposition", out var fileHandler) && fileHandler == "inline";
 
         var result = await storageService.ReadAsync(fileMetadata);
         switch (result.Type)
@@ -35,9 +39,18 @@ public static class FileApis
                 var lastModified = new DateTimeOffset(fileMetadata.CreatedAt, TimeSpan.Zero);
                 var etag = new Microsoft.Net.Http.Headers.EntityTagHeaderValue($"\"{fileMetadata.HashValue}\"");
 
-                return Results.Stream(result.Stream, contentType, fileMetadata.FileName, lastModified, etag, true);
+                if (inline)
+                {
+                    context.Response.Headers.Append("Content-Disposition", $"inline; filename={WebUtility.UrlEncode(fileMetadata.FileName)}");
+                    return Results.Stream(result.Stream, contentType, null, lastModified, etag, true);
+                }
+                else
+                {
+                    return Results.Stream(result.Stream, contentType, fileMetadata.FileName, lastModified, etag, true);
+                }
             case FileReadResultType.Url:
-                return Results.Redirect(result.Url);
+                var url = UrlHelper.AppendQueryString(result.Url, KeyValuePair.Create("response-content-disposition", inline ? "inline" : "attachment")).ToString();
+                return Results.Redirect(url);
             default:
                 throw new NotSupportedException(result.Type.ToString());
         }

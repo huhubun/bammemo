@@ -1,0 +1,149 @@
+﻿@rendermode InteractiveAuto
+
+<div>
+    <FluentDialogHeader ShowDismiss="true">
+        &nbsp;
+    </FluentDialogHeader>
+
+    <FluentDialogBody>
+        <FluentGrid OnBreakpointEnter="@(size => _gridItemSize = size)" Style="display: none;" />
+
+        @if (_gridItemSize.HasValue)
+        {
+            if (_gridItemSize.Value == GridItemSize.Xs || _gridItemSize.Value == GridItemSize.Sm)
+            {
+                <FluentStack Orientation="Orientation.Vertical" VerticalGap="24" Class="bammemo-screen-small">
+                    <FluentStack Class="bammemo-slip-image-preview-wrap"
+                                 Style="position: relative;"
+                                 VerticalAlignment="VerticalAlignment.Center"
+                                 HorizontalAlignment="HorizontalAlignment.Center">
+
+                        <FluentStack Style="width: 100%; position: absolute; left: 0; top: 0;"
+                                     Orientation="Orientation.Horizontal">
+
+                            <FluentButton Appearance="Appearance.Stealth"
+                                          IconStart="@(new Icons.Filled.Size24.ArrowLeft())"
+                                          Title="返回"
+                                          Class="bammemo-slip-image-preview-back-button"
+                                          Style="width: 32px; height: 32px; border-radius: 50%;"
+                                          OnClick="@(async _ => await Dialog.CloseAsync())" />
+
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.End">
+                                @if (ViewUrl != null)
+                                {
+                                    <FluentAnchor Appearance="Appearance.Stealth"
+                                                  IconStart="@(new Icons.Filled.Size16.WindowNew())"
+                                                  Target="_blank"
+                                                  Href="@ViewUrl">
+                                        新窗口查看
+                                    </FluentAnchor>
+                                }
+
+                                @if (DownloadUrl != null)
+                                {
+                                    <FluentAnchor Appearance="Appearance.Stealth"
+                                                  IconStart="@(new Icons.Filled.Size16.ArrowDownload())"
+                                                  Href="@DownloadUrl">
+                                        下载
+                                    </FluentAnchor>
+                                }
+                            </FluentStack>
+                        </FluentStack>
+
+                        <FluentButton Appearance="Appearance.Stealth"
+                                      IconStart="@(new Icons.Filled.Size32.ChevronLeft())"
+                                      Title="上一张"
+                                      Style="position: absolute; left: 0; top: 50%; width: 48px; height: 48px; border-radius: 50%;"
+                                      Class="bammemo-slip-image-preview-previous-button"
+                                      Disabled="@(Content.CurrentIndex == 0)"
+                                      OnClick="@(_ => Content.CurrentIndex -= 1)" />
+
+                        <FluentButton Appearance="Appearance.Stealth"
+                                      IconStart="@(new Icons.Filled.Size32.ChevronRight())"
+                                      Title="下一张"
+                                      Style="position: absolute; right: 0; top: 50%; width: 48px; height: 48px; border-radius: 50%;"
+                                      Class="bammemo-slip-image-preview-next-button"
+                                      Disabled="@(Content.CurrentIndex == (Content.Attachments.Count - 1))"
+                                      OnClick="@(_ => Content.CurrentIndex += 1)" />
+
+                        <img src="@ImageUrl" />
+                    </FluentStack>
+
+                    <FluentStack Style="width: calc(100dvw - 24px - 24px); height: 128px;" Class="bammemo-slip-image-list-wrap">
+                        <BammemoSlipImageAttachments Attachments="Content.Attachments" HighlightIndex="Content.CurrentIndex" OnImageClick="@((int index) => Content.CurrentIndex = index)" />
+                    </FluentStack>
+                </FluentStack>
+            }
+            else
+            {
+                <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="24" Class="bammemo-screen-large">
+                    <FluentStack Class="bammemo-slip-image-preview-wrap"
+                                 Style="width: 0; flex-grow: 1; position: relative;"
+                                 VerticalAlignment="VerticalAlignment.Center"
+                                 HorizontalAlignment="HorizontalAlignment.Center">
+
+                        <FluentStack Style="width: 100%; position: absolute; left: 0; top: 0;"
+                                     Orientation="Orientation.Horizontal">
+
+                            <FluentButton Appearance="Appearance.Stealth"
+                                          IconStart="@(new Icons.Filled.Size24.ArrowLeft())"
+                                          Title="返回"
+                                          Class="bammemo-slip-image-preview-back-button"
+                                          Style="width: 32px; height: 32px; border-radius: 50%;"
+                                          OnClick="@(async _ => await Dialog.CloseAsync())" />
+
+
+                            <FluentStack Orientation="Orientation.Horizontal" HorizontalAlignment="HorizontalAlignment.End">
+                                @if (ViewUrl != null)
+                                {
+                                    <FluentAnchor Appearance="Appearance.Stealth"
+                                                  IconStart="@(new Icons.Filled.Size16.WindowNew())"
+                                                  Target="_blank"
+                                                  Href="@ViewUrl">
+                                        新窗口查看
+                                    </FluentAnchor>
+                                }
+
+                                @if (DownloadUrl != null)
+                                {
+                                    <FluentAnchor Appearance="Appearance.Stealth"
+                                                  IconStart="@(new Icons.Filled.Size16.ArrowDownload())"
+                                                  Href="@DownloadUrl">
+                                        下载
+                                    </FluentAnchor>
+                                }
+                            </FluentStack>
+                        </FluentStack>
+
+                        <FluentButton Appearance="Appearance.Stealth"
+                                      IconStart="@(new Icons.Filled.Size32.ChevronLeft())"
+                                      Title="上一张"
+                                      Style="position: absolute; left: 0; top: 50%; width: 48px; height: 48px; border-radius: 50%;"
+                                      Class="bammemo-slip-image-preview-previous-button"
+                                      Disabled="@(Content.CurrentIndex == 0)"
+                                      OnClick="@(_ => Content.CurrentIndex -= 1)" />
+
+                        <FluentButton Appearance="Appearance.Stealth"
+                                      IconStart="@(new Icons.Filled.Size32.ChevronRight())"
+                                      Title="下一张"
+                                      Style="position: absolute; right: 0; top: 50%; width: 48px; height: 48px; border-radius: 50%;"
+                                      Class="bammemo-slip-image-preview-next-button"
+                                      Disabled="@(Content.CurrentIndex == (Content.Attachments.Count - 1))"
+                                      OnClick="@(_ => Content.CurrentIndex += 1)" />
+
+                        <img src="@ImageUrl" />
+                    </FluentStack>
+
+                    @* 一个图片 128px，gap 10px，一排要显示3个图片那就是128*3+10*2+10 *@
+                    <FluentStack Style="@($"width: {128 * 3 + 10 * 2}px; flex-basis: {128 * 3 + 10 * 2}px;")" Wrap Class="bammemo-slip-image-list-wrap">
+                        <BammemoSlipImageAttachments Attachments="Content.Attachments" Wrap HighlightIndex="Content.CurrentIndex" OnImageClick="@((int index) => Content.CurrentIndex = index)" />
+                    </FluentStack>
+                </FluentStack>
+            }
+        }
+    </FluentDialogBody>
+
+    <FluentDialogFooter>
+        &nbsp;
+    </FluentDialogFooter>
+</div>

@@ -1,0 +1,38 @@
+﻿@using Bammemo.Service.Abstractions.Dtos.Slips
+@rendermode InteractiveAuto
+
+@if (Attachments.Any())
+{
+    <div class="w-full">
+        <FluentStack Wrap="Wrap">
+            @for (var i = 0; i < Attachments.Count; i++)
+            {
+                var index = i;
+                var attachment = Attachments[index];
+
+                <BammemoCard Border
+                             Shadow="@(HighlightIndex.HasValue && HighlightIndex.Value == index)"
+                             HoverShadow
+                             @key="attachment.FileMetadataId"
+                             Style="width: 128px; height: 128px; "
+                             Class="bammemo-slip-image-attachment-item-wrap">
+                    <img src="@attachment.Url" class="bammemo-slip-image-attachment-item" @onclick="@(async _ => await OnImageClick.InvokeAsync(index))" />
+                </BammemoCard>
+            }
+        </FluentStack>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public required List<SlipAttachmentDto> Attachments { get; set; }
+
+    [Parameter]
+    public int? HighlightIndex { get; set; }
+
+    [Parameter]
+    public bool Wrap { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnImageClick { get; set; }
+}

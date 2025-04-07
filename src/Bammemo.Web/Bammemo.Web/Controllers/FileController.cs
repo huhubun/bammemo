@@ -17,7 +17,7 @@ public class FileController(
     {
         using var stream = request.File.OpenReadStream();
 
-        var fileMetadata = await storageService.SaveAsync(request.File.FileName, request.Type, stream, request.KeepFileName);
+        var fileMetadata = await storageService.SaveAsync(request.File.FileName, request.Type, stream);
 
         return Ok(new UploadFileResponse
         {

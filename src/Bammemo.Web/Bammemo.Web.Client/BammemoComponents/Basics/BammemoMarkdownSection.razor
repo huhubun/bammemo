@@ -1,5 +1,6 @@
 ﻿@using Bammemo.Web.Client.Extensions.MarkdigExtensions
 @using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator
+@using Bammemo.Web.Client.Models.MediumZoomLibraries
 @using Markdig
 @using System.Text
 @rendermode InteractiveAuto
@@ -107,10 +108,5 @@
         }
 
         return (summary.ToString(), hasMore);
-    }
-
-    class MediumZoomOptions
-    {
-        public string? Background { get; set; }
     }
 }
