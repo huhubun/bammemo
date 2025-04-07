@@ -6,17 +6,9 @@
         <FluentStack Wrap Orientation="Orientation.Horizontal">
             @foreach (var attachment in Attachments)
             {
-                <BammemoCard Border @key="attachment.FileMetadataId" Class="bammemo-slip-file-attachment">
-                    <FluentStack Style="align-items: center;">
-                        <FluentLabel Typo="Typography.Subject" title="@attachment.FileName">@attachment.FileName</FluentLabel>
-                        <FluentButton Appearance="Appearance.Stealth"
-                                      IconEnd="@(new Icons.Filled.Size16.ArrowUpRight())"
-                                      Title="插入" />
-                        <FluentButton Appearance="Appearance.Stealth"
-                                      IconEnd="@(new Icons.Filled.Size16.Delete())"
-                                      Title="删除" />
-                    </FluentStack>
-                </BammemoCard>
+                <FluentAnchor Href="@attachment.Url" Appearance="Appearance.Outline" IconStart="@(new Icons.Filled.Size16.ArrowDownload())">
+                    @attachment.FileName
+                </FluentAnchor>
             }
         </FluentStack>
     </div>

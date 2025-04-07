@@ -50,6 +50,7 @@ public class CommonSlipService(
     {
         var dto = entity.MapTo<SlipDetailDto>();
         dto.Id = await idService.EncodeAsync(entity.Id);
+        dto.Attachments = await slipService.LoadAttachmentsAsync(entity.Id);
 
         return dto;
     }

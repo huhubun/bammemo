@@ -43,7 +43,6 @@ else
                         @foreach (var attachment in imageAttachments)
                         {
                             <BammemoCard Border
-                                         @key="attachment.FileMetadataId"
                                          Style="@($"background-image: url('{attachment.Url}'); width: 128px; height: 128px;")"
                                          Class="bammemo-slip-editor-image-preview">
                                 <FluentStack Orientation="Orientation.Vertical"
@@ -53,7 +52,7 @@ else
                                     <FluentButton Appearance="Appearance.Stealth"
                                                   IconEnd="@(new Icons.Filled.Size16.Delete())"
                                                   Title="删除"
-                                                  OnClick="@(_ => attachments.Remove(attachment))" />
+                                                  OnClick="@(async _ => await HandleDeleteAttachmentAsync(attachment))" />
 
                                     <FluentButton Appearance="Appearance.Stealth"
                                                   IconEnd="@(new Icons.Filled.Size16.ArrowUpRight())"
@@ -86,7 +85,6 @@ else
                         @foreach (var attachment in otherAttachments)
                         {
                             <BammemoCard Border
-                                         @key="attachment.FileMetadataId"
                                          Class="bammemo-slip-editor-non-image-attachments-item">
                                 <FluentStack Orientation="Orientation.Horizontal"
                                              VerticalAlignment="VerticalAlignment.Center"
@@ -94,10 +92,12 @@ else
                                     <FluentLabel Typo="Typography.Subject" title="@attachment.FileName">@attachment.FileName</FluentLabel>
                                     <FluentButton Appearance="Appearance.Stealth"
                                                   IconEnd="@(new Icons.Filled.Size16.ArrowUpRight())"
-                                                  Title="插入" />
+                                                  Title="插入"
+                                                  OnClick="@(async _ => await HandleInsertAttachmentToContentAsync(attachment))" />
                                     <FluentButton Appearance="Appearance.Stealth"
                                                   IconEnd="@(new Icons.Filled.Size16.Delete())"
-                                                  Title="删除" />
+                                                  Title="删除"
+                                                  OnClick="@(async _ => await HandleDeleteAttachmentAsync(attachment))" />
                                 </FluentStack>
                             </BammemoCard>
                         }

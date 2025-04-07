@@ -5,8 +5,9 @@
 @implements IDisposable
 @inject PersistentComponentState PersistentComponentState
 @inject ICommonSlipService CommonSlipService
+@inject IDialogService DialogService
 
-<BammemoPageTitle Title="@(slip?.Title ?? $"{slip?.CreatedAt.ToLocalTimeString()} 发表的博文")" />
+<BammemoPageTitle Title="@(slip?.Title ?? $"{slip?.CreatedAt.ToLocalTimeString()} 发表的内容")" />
 
 @if (slip?.Excerpt != null)
 {
@@ -38,11 +39,15 @@
     <FluentGrid Justify="JustifyContent.Center">
 
         <FluentGridItem xs="12" lg="8" xl="6">
-
             <BammemoCard>
                 @if (slip != null)
                 {
-                    <BammemoMarkdownSection Id="@slip.Id" Content="@slip.Content" FullDisplay />
+                    <FluentStack Orientation="Orientation.Vertical">
+                        <BammemoMarkdownSection Id="@slip.Id" Content="@slip.Content" FullDisplay />
+
+                        <BammemoSlipImageAttachments Attachments="imageAttachments" Wrap OnImageClick="@(async (int i)=> await HandleClickImageAsync(i))" />
+                        <BammemoSlipFileAttachments Attachments="otherAttachments" />
+                    </FluentStack>
                 }
                 else
                 {
@@ -105,6 +110,8 @@
 @code {
     private PersistingComponentStateSubscription persistingSubscription;
     private SlipDetailDto? slip;
+    private List<SlipAttachmentDto> imageAttachments = new();
+    private List<SlipAttachmentDto> otherAttachments = new();
 
     [Parameter]
     public string? Id { get; set; }
@@ -126,8 +133,27 @@
             slip = Type switch
             {
                 SlipIdOrLinkNameType.Id => await CommonSlipService.GetByIdAsync(Id),
-                SlipIdOrLinkNameType.LinkName => await CommonSlipService.GetByLinkNameAsync(LinkName)
+                SlipIdOrLinkNameType.LinkName => await CommonSlipService.GetByLinkNameAsync(LinkName),
+                _ => throw new NotSupportedException(Type.ToString())
             };
+        }
+
+        if (slip?.Attachments?.Any() ?? false)
+        {
+            foreach (var attachment in slip.Attachments)
+            {
+                if (FileNameHelper.IsImage(attachment.FileName))
+                {
+                    if (attachment.ShowThumbnail)
+                    {
+                        imageAttachments.Add(attachment);
+                    }
+                }
+                else
+                {
+                    otherAttachments.Add(attachment);
+                }
+            }
         }
     }
 
@@ -135,6 +161,28 @@
     {
         PersistentComponentState.PersistAsJson(nameof(slip), slip);
         return Task.CompletedTask;
+    }
+
+    private async Task HandleClickImageAsync(int attachmentIndex)
+    {
+        var dialog = await DialogService.ShowDialogAsync(
+            DialogHelper.From<BammemoSlipImageAttachmentPreviewDialog>(),
+            new BammemoSlipImageAttachmentPreviewDialog.ImageAttachmentPreviewModel
+                {
+                    Attachments = imageAttachments,
+                    CurrentIndex = attachmentIndex
+                },
+            new DialogParameters
+                {
+                    PreventDismissOnOverlayClick = true,
+                    PreventScroll = true,
+                    Modal = true,
+                // Dialog 每边有 1px 的边框
+                    Width = "calc(100dvw - 1px - 1px)",
+                    Height = "calc(100dvh - 1px - 1px)",
+                });
+
+        await dialog.Result;
     }
 
     void IDisposable.Dispose() => persistingSubscription.Dispose();

@@ -15,8 +15,11 @@ namespace Bammemo.Web.Client.MapperProfiles;
 [Map<BammemoSlipPropertyEditDialog.SlipPropertyModel, ListSlipDto>(ToExistsOnly = true)]
 [Map<BammemoSlipPropertyEditDialog.SlipPropertyModel, UpdateSlipPropertyRequest>]
 [Map<UploadFileResponse, BammemoSlipEditor.SlipAttachmentModel>]
-[Map<BammemoSlipEditor.SlipAttachmentModel, Bammemo.Web.Client.WebApis.Client.Models.AttachmentModel>]
+[Map<BammemoSlipEditor.SlipAttachmentModel, AttachmentModel>]
 [Map<SlipAttachmentModel, SlipAttachmentDto>]
+[Map<SlipAttachmentDto, BammemoSlipEditor.SlipAttachmentModel>]
+[Map<BammemoSlipEditor.SlipAttachmentModel, SlipAttachmentDto>]
+[Map<SlipAttachmentModel, AttachmentModel>]
 public static partial class SlipProfile
 {
 }

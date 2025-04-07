@@ -69,7 +69,7 @@
                         <img src="@ImageUrl" />
                     </FluentStack>
 
-                    <FluentStack Style="width: calc(100dvw - 24px - 24px); height: 128px;" Class="bammemo-slip-image-list-wrap">
+                    <FluentStack Style="width: calc(100dvw - 24px - 24px); height: calc(128px + 16px);" Class="bammemo-slip-image-list-wrap" VerticalAlignment="VerticalAlignment.Top">
                         <BammemoSlipImageAttachments Attachments="Content.Attachments" HighlightIndex="Content.CurrentIndex" OnImageClick="@((int index) => Content.CurrentIndex = index)" />
                     </FluentStack>
                 </FluentStack>

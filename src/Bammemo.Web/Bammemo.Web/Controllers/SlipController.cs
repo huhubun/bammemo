@@ -81,7 +81,11 @@ public class SlipController(
         var entity = request.MapTo<Slip>();
 
         var result = await slipService.CreateAsync(entity);
-        await slipService.AddAttachmentsAsync(result.Id, request.Attachments.MapToArray<AddSlipAttachmentInfo>());
+
+        if (request.Attachments?.Count > 0)
+        {
+            await slipService.AddAttachmentsAsync(result.Id, request.Attachments.MapToArray<AddSlipAttachmentInfo>());
+        }
 
         var model = result.MapTo<CreateSlipResponse>();
         model.Id = await idService.EncodeAsync(result.Id);
@@ -108,6 +112,11 @@ public class SlipController(
         }
 
         entity = request.MapTo(entity);
+
+        if (request.Attachments?.Count > 0)
+        {
+            await slipService.AddAttachmentsAsync(entity.Id, request.Attachments.MapToArray<AddSlipAttachmentInfo>());
+        }
 
         var result = await slipService.UpdateAsync(entity);
 

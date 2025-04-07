@@ -167,27 +167,60 @@ public class SlipService(
 
     public async Task AddAttachmentsAsync(int slipId, IEnumerable<AddSlipAttachmentInfo> attachmentInfos)
     {
-        await storageService.SaveReferencesAsync(attachmentInfos.Select(a => new FileReference
+        var newFileReferences = new List<FileReference>();
+        var needUpdateFileReferences = new List<FileReference>();
+
+        var fileMetadatas = (await storageService.GetFileMetadatasBySourceIdAsync(slipId)).ToDictionary(fm => fm.Id, fm => fm);
+
+        foreach (var attachment in attachmentInfos)
         {
-            MetadataId = a.FileMetadataId,
-            SourceId = slipId,
-            SourceType = (int)FileReferenceSourceType.Slip,
-            ShowThumbnail = a.ShowThumbnail,
-        }));
+            if (fileMetadatas.TryGetValue(attachment.FileMetadataId, out var fileMetadata))
+            {
+                var reference = fileMetadata.References?.SingleOrDefault(reference => reference.SourceId == slipId);
+                if(reference != null && reference.ShowThumbnail != attachment.ShowThumbnail)
+                {
+                    reference.ShowThumbnail = attachment.ShowThumbnail;
+                    needUpdateFileReferences.Add(reference);
+                }
+            }
+            else
+            {
+                newFileReferences.Add(new FileReference
+                {
+                    MetadataId = attachment.FileMetadataId,
+                    SourceId = slipId,
+                    SourceType = (int)FileReferenceSourceType.Slip,
+                    ShowThumbnail = attachment.ShowThumbnail
+                });
+            }
+        }
+
+        await storageService.SaveReferencesAsync(newFileReferences, needUpdateFileReferences);
+    }
+
+    public async Task<SlipAttachmentDto[]> LoadAttachmentsAsync(int slipId)
+    {
+        var attachments = await LoadAttachmentsAsync([slipId]);
+        if (attachments.Count == 1)
+        {
+            return attachments.First().Value;
+        }
+
+        return [];
     }
 
     public async Task<Dictionary<int, SlipAttachmentDto[]>> LoadAttachmentsAsync(IEnumerable<int> slipIds)
     {
         var filesQuery = from m in dbContext.FileMetadata
-                join fr in dbContext.FileReferences on m.Id equals fr.MetadataId
-                where fr.SourceType == (int)FileReferenceSourceType.Slip
-                where slipIds.Contains(fr.SourceId)
-                select new
-                {
-                    FileMetadata = m,
-                    fr.SourceId,
-                    fr.ShowThumbnail
-                };
+                         join fr in dbContext.FileReferences on m.Id equals fr.MetadataId
+                         where fr.SourceType == (int)FileReferenceSourceType.Slip
+                         where slipIds.Contains(fr.SourceId)
+                         select new
+                         {
+                             FileMetadata = m,
+                             fr.SourceId,
+                             fr.ShowThumbnail
+                         };
 
         var filesList = await filesQuery.AsNoTracking().ToListAsync();
 

@@ -13,7 +13,6 @@
                 <BammemoCard Border
                              Shadow="@(HighlightIndex.HasValue && HighlightIndex.Value == index)"
                              HoverShadow
-                             @key="attachment.FileMetadataId"
                              Style="width: 128px; height: 128px; "
                              Class="bammemo-slip-image-attachment-item-wrap">
                     <img src="@attachment.Url" class="bammemo-slip-image-attachment-item" @onclick="@(async _ => await OnImageClick.InvokeAsync(index))" />

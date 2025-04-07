@@ -63,4 +63,23 @@ public class LocalStorageProvider(
             Type = FileReadResultType.Stream,
             Stream = File.OpenRead(Path.Combine(bammemoOptions.Value.StoragePath, fileMetadata.Path, fileMetadata.StorageFileName))
         });
+
+    public Task<FileDeleteResult> DeleteAsync(string path, string fileName)
+    {
+        var fullPath = Path.Combine(bammemoOptions.Value.StoragePath, path, fileName);
+
+        if (File.Exists(fullPath))
+        {
+            File.Delete(fullPath);
+        }
+        else
+        {
+            // TODO LOG
+        }
+
+        return Task.FromResult(new FileDeleteResult
+        {
+            Status = FileDeleteStatus.Deleted
+        });
+    }
 }

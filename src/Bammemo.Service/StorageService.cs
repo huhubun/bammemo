@@ -100,9 +100,27 @@ public class StorageService(
         return await provider.ReadAsync(fileMetadata);
     }
 
-    public async Task DeleteAsync()
+    public async Task<FileDeleteResult> DeleteAsync(int fileMetadataId)
     {
+        var fileMetadata = await dbContext.FileMetadata.SingleOrDefaultAsync(fm => fm.Id == fileMetadataId);
+        if (fileMetadata == null)
+        {
+            return new FileDeleteResult
+            {
+                Status = FileDeleteStatus.FileMetadataNotFound
+            };
+        }
 
+        var provider = await GetStorageProviderAsync((StorageType)fileMetadata.StorageType);
+        var result = await provider.DeleteAsync(fileMetadata.Path, fileMetadata.StorageFileName);
+
+        if (result.Status == FileDeleteStatus.Deleted)
+        {
+            dbContext.Remove(fileMetadata);
+            await dbContext.SaveChangesAsync();
+        }
+
+        return result;
     }
 
     public async Task<FileMetadata?> GetFileMetadataByFullName(string fullName)
@@ -115,11 +133,32 @@ public class StorageService(
             .SingleOrDefaultAsync();
     }
 
-    public async Task SaveReferencesAsync(IEnumerable<FileReference> references)
+    public async Task<List<FileMetadata>> GetFileMetadatasBySourceIdAsync(int sourceId)
     {
-        if (references.Any())
+        return await dbContext.FileMetadata
+            .Where(fm => fm.References.Any(r => r.SourceId == sourceId))
+            .Include(fm => fm.References)
+            .ToListAsync();
+    }
+
+    public async Task SaveReferencesAsync(List<FileReference> newReferences, List<FileReference> updatedReferences)
+    {
+        var needSave = false;
+
+        if (newReferences.Count != 0)
         {
-            await dbContext.FileReferences.AddRangeAsync(references);
+            await dbContext.FileReferences.AddRangeAsync(newReferences);
+            needSave = true;
+        }
+
+        if (updatedReferences.Count != 0)
+        {
+            dbContext.FileReferences.UpdateRange(updatedReferences);
+            needSave = true;
+        }
+
+        if (needSave)
+        {
             await dbContext.SaveChangesAsync();
         }
         else

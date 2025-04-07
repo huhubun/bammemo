@@ -11,7 +11,8 @@ namespace Bammemo.Web.Client.BammemoComponents.Slips;
 
 public partial class BammemoSlipEditor(
     IJSRuntime jsRuntime,
-    WebApiClient WebApiClient)
+    WebApiClient WebApiClient,
+    IToastService ToastService)
 {
     private string? content = null;
     private string status = ((int)SlipStatus.Public).ToString();
@@ -40,6 +41,7 @@ public partial class BammemoSlipEditor(
         {
             content = Data.Content;
             status = ((int)Data.Status).ToString();
+            attachments = Data.Attachments.MapToList<SlipAttachmentModel>();
         }
     }
 
@@ -64,12 +66,14 @@ public partial class BammemoSlipEditor(
             var updatedSlip = await WebApiClient.Api.Slips[Data.Id].PutAsync(new UpdateSlipRequest
             {
                 Content = content,
-                Status = (int)editedStatus
+                Status = (int)editedStatus,
+                Attachments = attachments.MapToList<AttachmentModel>()
             });
 
             // Keep slip id here
             var dto = updatedSlip.MapTo<ListSlipDto>();
             dto.Id = Data.Id;
+            dto.Attachments = attachments.MapToArray<SlipAttachmentDto>();
 
             await OnSlipSaved.InvokeAsync(dto);
         }
@@ -82,7 +86,9 @@ public partial class BammemoSlipEditor(
                 Attachments = attachments.MapToList<AttachmentModel>()
             });
 
-            await OnSlipSaved.InvokeAsync(createdSlip.MapTo<ListSlipDto>());
+            var listItem = createdSlip.MapTo<ListSlipDto>();
+            listItem.Attachments = attachments.MapToArray<SlipAttachmentDto>();
+            await OnSlipSaved.InvokeAsync(listItem);
         }
 
         content = String.Empty;
@@ -129,6 +135,21 @@ public partial class BammemoSlipEditor(
         if (isImage)
         {
             slipAttachmentModel.ShowThumbnail = false;
+        }
+    }
+
+    private async Task HandleDeleteAttachmentAsync(SlipAttachmentModel slipAttachmentModel)
+    {
+        try
+        {
+            await WebApiClient.Api.Files[slipAttachmentModel.FileMetadataId].DeleteAsync();
+            attachments.Remove(slipAttachmentModel);
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError("删除附件失败：" + ex.Message);
+
+            // TODO LOG
         }
     }
 

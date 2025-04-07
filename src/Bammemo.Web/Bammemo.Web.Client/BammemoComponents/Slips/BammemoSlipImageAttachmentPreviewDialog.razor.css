@@ -36,3 +36,7 @@
 ::deep .bammemo-slip-image-preview-wrap:hover .bammemo-slip-image-preview-next-button {
     display: inline-flex;
 }
+
+::deep .bammemo-slip-image-list-wrap .bammemo-slip-image-attachment-item-wrap:hover {
+    cursor: pointer;
+}

@@ -9,17 +9,17 @@
             @if (isEditMode)
             {
                 <BammemoSlipEditor IsEdit="true"
-                                   Data="Data"
-                                   OnSlipSaved="OnNewSlipSaved"
-                                   OnEditCanceled="@(_ => isEditMode = false)" />
+                Data="Data"
+                OnSlipSaved="OnNewSlipSaved"
+                OnEditCanceled="@(_ => isEditMode = false)" />
             }
             else
             {
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="8" Style="width: 100%;" Id="@RendedId">
                     <BammemoSlipCardHead Data="Data"
-                                         OnEditClick="@(_ => isEditMode = true)"
-                                         OnAfterDelete="@(_=>isDelete = true)"
-                                         OnAfterUpdateProperty="@((BammemoSlipPropertyEditDialog.SlipPropertyModel propertyModel) => Data = propertyModel.MapTo(Data))" />
+                    OnEditClick="@(_ => isEditMode = true)"
+                    OnAfterDelete="@(_=>isDelete = true)"
+                    OnAfterUpdateProperty="@((BammemoSlipPropertyEditDialog.SlipPropertyModel propertyModel) => Data = propertyModel.MapTo(Data))" />
 
                     <BammemoMarkdownSection Id="@Data.Id" Content="@Data.Content" ReadAllUrl="@Data.GetUrl()" />
 
@@ -44,6 +44,9 @@
 
     protected override void OnParametersSet()
     {
+        imageAttachments.Clear();
+        otherAttachments.Clear();
+
         if (Data.Attachments?.Any() ?? false)
         {
             foreach (var attachment in Data.Attachments)
@@ -67,6 +70,8 @@
     {
         Data = slip;
         isEditMode = false;
+
+        OnParametersSet();
     }
 
     private async Task HandleClickImageAsync(int attachmentIndex)
@@ -88,6 +93,6 @@
                     Height = "calc(100dvh - 1px - 1px)",
                 });
 
-        var result = await dialog.Result;
+        await dialog.Result;
     }
 }

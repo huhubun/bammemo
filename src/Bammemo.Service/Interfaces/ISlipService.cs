@@ -18,5 +18,6 @@ public interface ISlipService
     Task<long[]> GetCreatedTimeWithSlipAsync(long startTime, long endTime);
     Task<string[]> GetAllTagsAsync();
     Task AddAttachmentsAsync(int slipId, IEnumerable<AddSlipAttachmentInfo> attachmentInfos);
+    Task<SlipAttachmentDto[]> LoadAttachmentsAsync(int slipId);
     Task<Dictionary<int, SlipAttachmentDto[]>> LoadAttachmentsAsync(IEnumerable<int> slipIds);
 }
