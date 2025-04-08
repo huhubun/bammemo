@@ -233,6 +233,11 @@ public class SlipService(
         }).ToDictionary(g => g.Key, g => g.ToArray());
     }
 
+    public async Task<SlipStatus[]> GetStatusAsync(params IEnumerable<int> slipIds)
+    {
+        return await dbContext.Slips.AsNoTracking().Where(s => slipIds.Contains(s.Id)).Select(s => s.Status).Cast<SlipStatus>().ToArrayAsync();
+    }
+
     private bool IsAuthenticated => httpContext.HttpContext.User.Identity?.IsAuthenticated ?? false;
 
     private void SlipAuthorizeGuardian(Slip? slip)

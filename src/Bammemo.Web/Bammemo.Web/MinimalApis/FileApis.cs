@@ -16,12 +16,30 @@ public static class FileApis
         return app;
     }
 
-    private static async Task<IResult> LoadFile([FromRoute] string rest, [FromServices] IStorageService storageService, HttpContext context)
+    private static async Task<IResult> LoadFile(
+        [FromRoute] string rest, 
+        [FromServices] IStorageService storageService, 
+        [FromServices] ISlipService slipService,
+        HttpContext context)
     {
         var fileMetadata = await storageService.GetFileMetadataByFullName(rest);
         if (fileMetadata == null)
         {
             return Results.NotFound();
+        }
+
+        if (fileMetadata.References?.Count > 0)
+        {
+            var slipIds = fileMetadata.References.Where(r => r.SourceType == (int)FileReferenceSourceType.Slip).Select(r => r.SourceId).ToArray();
+
+            if (slipIds.Length > 0)
+            {
+                var status = await slipService.GetStatusAsync(slipIds);
+                if (status.Any(s => s != SlipStatus.Public) && !(context.User.Identity?.IsAuthenticated ?? false))
+                {
+                    return Results.Unauthorized();
+                }
+            }
         }
 
         var inline = context.Request.Query.TryGetValue("response-content-disposition", out var fileHandler) && fileHandler == "inline";

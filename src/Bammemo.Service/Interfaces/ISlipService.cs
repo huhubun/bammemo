@@ -20,4 +20,5 @@ public interface ISlipService
     Task AddAttachmentsAsync(int slipId, IEnumerable<AddSlipAttachmentInfo> attachmentInfos);
     Task<SlipAttachmentDto[]> LoadAttachmentsAsync(int slipId);
     Task<Dictionary<int, SlipAttachmentDto[]>> LoadAttachmentsAsync(IEnumerable<int> slipIds);
+    Task<SlipStatus[]> GetStatusAsync(params IEnumerable<int> slipIds);
 }
