@@ -12,10 +12,14 @@
         border: 1px solid var(--neutral-stroke-active);
     }
 
+    .bammemo-card[shadow] {
+        box-shadow: 0 0 5px 0 var(--neutral-stroke-hover);
+    }
+
     .bammemo-card[hover-border]:hover {
         border: 1px solid var(--neutral-stroke-active);
     }
 
     .bammemo-card[hover-shadow]:hover {
-        box-shadow: 0 0 5px 0 var(--neutral-stroke-active);
+        box-shadow: 0 0 5px 0 var(--neutral-stroke-hover);
     }

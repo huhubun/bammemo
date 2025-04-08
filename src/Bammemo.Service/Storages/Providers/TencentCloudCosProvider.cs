@@ -4,6 +4,7 @@ using Bammemo.Service.Interfaces;
 using Bammemo.Service.Options;
 using COSXML;
 using COSXML.Auth;
+using COSXML.Model.Object;
 using COSXML.Transfer;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
@@ -15,7 +16,7 @@ public class TencentCloudCosProvider(
     ISettingService settingService) : IStorageProvider
 {
     private const string LOCAL_TEMP_FOLDER_PATH = "tmp/TencentCloudCos";
-    private const string COS_PREFIX= "bammemo";
+    private const string COS_PREFIX = "bammemo";
 
     public StorageType StorageType => StorageType.TencentCloudCos;
 
@@ -132,6 +133,57 @@ public class TencentCloudCosProvider(
                 File.Delete(tempFilePath);
             }
         }
+    }
+
+    public async Task<FileDeleteResult> DeleteAsync(string path, string fileName)
+    {
+        var tencentCloudSetting = await GetTencentCloudSettingAsync();
+
+        if (tencentCloudSetting?.Cos == null)
+        {
+            throw new OptionsValidationException(SettingKeys.TencentCloud, typeof(TencentCloudSetting), ["COS not configured"]);
+        }
+
+        var config = new CosXmlConfig.Builder()
+                .IsHttps(true)
+                .SetRegion(tencentCloudSetting.Cos.Region)
+                .SetDebugLog(true)
+                .Build();
+
+        var cosCredentialProvider = new DefaultQCloudCredentialProvider(
+          tencentCloudSetting.SecretId,
+          tencentCloudSetting.SecretKey,
+          //每次请求签名有效时长，单位为秒
+          600);
+
+        var cosXml = new CosXmlServer(config, cosCredentialProvider);
+        var transferConfig = new TransferConfig();
+        var transferManager = new TransferManager(cosXml, transferConfig);
+
+        try
+        {
+            DeleteObjectRequest request = new DeleteObjectRequest(tencentCloudSetting.Cos.Bucket, $"{COS_PREFIX}/{path}/{fileName}");
+
+            DeleteObjectResult result = cosXml.DeleteObject(request);
+
+            return new FileDeleteResult
+            {
+                Status = FileDeleteStatus.Deleted
+            };
+        }
+        catch (COSXML.CosException.CosClientException clientEx)
+        {
+            Console.WriteLine("CosClientException: " + clientEx);
+        }
+        catch (COSXML.CosException.CosServerException serverEx)
+        {
+            Console.WriteLine("CosServerException: " + serverEx.GetInfo());
+        }
+
+        return new FileDeleteResult
+        {
+            Status = FileDeleteStatus.Failed
+        };
     }
 
     private async Task<TencentCloudSetting?> GetTencentCloudSettingAsync()

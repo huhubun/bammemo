@@ -11,4 +11,5 @@ public class SlipDetailDto
     public string? Title { get; set; }
     public string? Excerpt { get; set; }
     public string[]? Tags { get; set; }
+    public SlipAttachmentDto[]? Attachments { get; set; }
 }

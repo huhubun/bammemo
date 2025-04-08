@@ -10,6 +10,6 @@ namespace Bammemo.Web.MapperProfiles;
 [Map<UpdateSiteLinkRequest, SiteLink>]
 [Map<SiteLink, CreateSiteLinkResponse>]
 [Map<SiteLink, ListSiteLinkDto.SiteLinkModel>]
-public partial class SiteLinkProfile
+public static partial class SiteLinkProfile
 {
 }

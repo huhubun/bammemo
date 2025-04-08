@@ -8,12 +8,19 @@
 
 <BammemoPageTitle Title="首页" />
 
-<HeadContent>
-    @foreach (var meta in metas ?? Enumerable.Empty<KeyValuePair<string, string?>>())
+@foreach (var meta in metas ?? Enumerable.Empty<KeyValuePair<string, string?>>())
+{
+    var sectionName = meta.Key switch
     {
+        "description" => "MetaDescription",
+        "keywords" => "MetaKeywords",
+        _ => throw new NotSupportedException(meta.Key)
+    };
+
+    <SectionContent SectionName="@sectionName">
         <meta name="@meta.Key" content="@meta.Value" />
-    }
-</HeadContent>
+    </SectionContent>
+}
 
 <BammemoSlipHome IsAdmin="@isLoggedIn" />
 

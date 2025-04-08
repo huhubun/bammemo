@@ -1,0 +1,27 @@
+﻿@rendermode InteractiveAuto
+
+<img @attributes="attributes" />
+
+@code {
+    private Dictionary<string, object> attributes = new();
+
+    [Parameter]
+    public required string Src { get; set; }
+
+    [Parameter]
+    public bool Lazy { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        if (Lazy)
+        {
+            attributes["data-src"] = Src;
+            attributes["class"] = "lozad";
+
+        }
+        else
+        {
+            attributes["src"] = Src;
+        }
+    }
+}

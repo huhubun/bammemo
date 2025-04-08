@@ -27,7 +27,7 @@ namespace Bammemo.CodeAnalysis
                    classDecl.AttributeLists.Count > 0;
         }
 
-        private static (INamedTypeSymbol, IEnumerable<(ITypeSymbol source, ITypeSymbol target)>) GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
+        private static (INamedTypeSymbol, IEnumerable<(AttributeData attributeData, ITypeSymbol source, ITypeSymbol target)>) GetSemanticTargetForGeneration(GeneratorSyntaxContext context)
         {
             var classDecl = (ClassDeclarationSyntax)context.Node;
             var semanticModel = context.SemanticModel;
@@ -45,16 +45,18 @@ namespace Bammemo.CodeAnalysis
             if (mapToAttr == null || !mapToAttr.Any())
                 return default;
 
-            return (classSymbol, mapToAttr.Where(a => a.AttributeClass.TypeArguments[0] != null).Select(a => (source: a.AttributeClass.TypeArguments[0], target: a.AttributeClass.TypeArguments[1])));
+            return (classSymbol, mapToAttr.Where(a => a.AttributeClass.TypeArguments[0] != null).Select(a => (attributeData: a, source: a.AttributeClass.TypeArguments[0], target: a.AttributeClass.TypeArguments[1])));
         }
 
-        private static void Execute(SourceProductionContext context, (INamedTypeSymbol classSymbol, IEnumerable<(ITypeSymbol source, ITypeSymbol target)> types) symbol)
+        private static void Execute(SourceProductionContext context, (INamedTypeSymbol classSymbol, IEnumerable<(AttributeData attributeData, ITypeSymbol source, ITypeSymbol target)> types) symbol)
         {
             var (classSymbol, types) = symbol;
 
             if (classSymbol == null) return;
 
             var allMethods = new List<string>();
+
+
 
             foreach (var groupTypes in types.GroupBy(t => t.source, SymbolEqualityComparer.Default))
             {
@@ -66,8 +68,18 @@ namespace Bammemo.CodeAnalysis
                 var sourceProperties = sourceType.GetMembers().OfType<IPropertySymbol>().Where(p => p.GetMethod != null);
                 var sourceFullName = sourceType.ToDisplayString();
 
-                foreach (var (_, targetType) in groupTypes)
+                foreach (var (attributeData, _, targetType) in groupTypes)
                 {
+                    var toExistsOnly = false;
+
+                    foreach (var p in attributeData.NamedArguments)
+                    {
+                        if (p.Key == "ToExistsOnly")
+                        {
+                            toExistsOnly = (bool)p.Value.Value;
+                        }
+                    }
+
                     var targetProperties = targetType.GetMembers().OfType<IPropertySymbol>().Where(p => p.SetMethod != null)
                         .ToDictionary(p => p.Name, p => p);
 
@@ -362,14 +374,26 @@ namespace Bammemo.CodeAnalysis
                 return MapTo(source, null as {targetFullName}) as TDest;
             }}");
 
+                    //toExistsOnly
+                    string newLine;
+
+                    if (toExistsOnly)
+                    {
+                        newLine = $"throw new NotSupportedException($\"Only support map {sourceFullName} to exists {{typeof({targetFullName})}}, you can remove \\\"ToExistsOnly = true\\\" the in MapAttribute.\");";
+                    }
+                    else
+                    {
+                        newLine = $@"target = new {targetFullName}
+                {{
+                    {String.Join("\n                    ", mappingNew)}
+                }};";
+                    }
+
                     var sourceToTargetMethod = $@"static {targetFullName} MapTo(this {sourceFullName} source, {targetFullName} target)
         {{
             if(target == null)
             {{
-                target = new {targetFullName}
-                {{
-                    {String.Join("\n                    ", mappingNew)}
-                }};
+                {newLine}
             }}
             else
             {{

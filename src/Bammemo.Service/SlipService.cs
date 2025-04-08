@@ -1,18 +1,20 @@
 ﻿using Bammemo.Data;
 using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Dtos.Slips;
-using Bammemo.Service.Abstractions.Enums;
 using Bammemo.Service.Abstractions.Paginations;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Interfaces;
+using Bammemo.Service.Models.Slips;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Bammemo.Service.Extensions;
 
 namespace Bammemo.Service;
 
 public class SlipService(
     BammemoDbContext dbContext,
-    IHttpContextAccessor httpContext) : ISlipService
+    IHttpContextAccessor httpContext,
+    IStorageService storageService) : ISlipService
 {
     public async Task<Slip[]> ListAsync(
         ListSlipQueryRequestDto? query,
@@ -87,6 +89,11 @@ public class SlipService(
         return await dbContext.Slips.AsNoTracking().Include(s => s.Tags).SingleOrDefaultAsync(s => s.FriendlyLinkName == linkName);
     }
 
+    public async Task<bool> CheckLinkNameExistsAsync(int currentSlipId, string linkName)
+    {
+        return await dbContext.Slips.AsNoTracking().AnyAsync(s => s.Id != currentSlipId && s.FriendlyLinkName == linkName);
+    }
+
     public async Task<Slip> CreateAsync(Slip entity)
     {
         var tags = MarkdownHelper.ExtractTags(entity.Content);
@@ -158,7 +165,80 @@ public class SlipService(
             .Distinct()
             .ToArrayAsync();
 
-    public bool IsAuthenticated => httpContext.HttpContext.User.Identity?.IsAuthenticated ?? false;
+    public async Task AddAttachmentsAsync(int slipId, IEnumerable<AddSlipAttachmentInfo> attachmentInfos)
+    {
+        var newFileReferences = new List<FileReference>();
+        var needUpdateFileReferences = new List<FileReference>();
+
+        var fileMetadatas = (await storageService.GetFileMetadatasBySourceIdAsync(slipId)).ToDictionary(fm => fm.Id, fm => fm);
+
+        foreach (var attachment in attachmentInfos)
+        {
+            if (fileMetadatas.TryGetValue(attachment.FileMetadataId, out var fileMetadata))
+            {
+                var reference = fileMetadata.References?.SingleOrDefault(reference => reference.SourceId == slipId);
+                if(reference != null && reference.ShowThumbnail != attachment.ShowThumbnail)
+                {
+                    reference.ShowThumbnail = attachment.ShowThumbnail;
+                    needUpdateFileReferences.Add(reference);
+                }
+            }
+            else
+            {
+                newFileReferences.Add(new FileReference
+                {
+                    MetadataId = attachment.FileMetadataId,
+                    SourceId = slipId,
+                    SourceType = (int)FileReferenceSourceType.Slip,
+                    ShowThumbnail = attachment.ShowThumbnail
+                });
+            }
+        }
+
+        await storageService.SaveReferencesAsync(newFileReferences, needUpdateFileReferences);
+    }
+
+    public async Task<SlipAttachmentDto[]> LoadAttachmentsAsync(int slipId)
+    {
+        var attachments = await LoadAttachmentsAsync([slipId]);
+        if (attachments.Count == 1)
+        {
+            return attachments.First().Value;
+        }
+
+        return [];
+    }
+
+    public async Task<Dictionary<int, SlipAttachmentDto[]>> LoadAttachmentsAsync(IEnumerable<int> slipIds)
+    {
+        var filesQuery = from m in dbContext.FileMetadata
+                         join fr in dbContext.FileReferences on m.Id equals fr.MetadataId
+                         where fr.SourceType == (int)FileReferenceSourceType.Slip
+                         where slipIds.Contains(fr.SourceId)
+                         select new
+                         {
+                             FileMetadata = m,
+                             fr.SourceId,
+                             fr.ShowThumbnail
+                         };
+
+        var filesList = await filesQuery.AsNoTracking().ToListAsync();
+
+        return filesList.GroupBy(f => f.SourceId, f => new SlipAttachmentDto
+        {
+            FileMetadataId = f.FileMetadata.Id,
+            FileName = f.FileMetadata.FileName,
+            Url = f.FileMetadata.GetUrl(httpContext.HttpContext.Request).ToString(),
+            ShowThumbnail = f.ShowThumbnail ?? false
+        }).ToDictionary(g => g.Key, g => g.ToArray());
+    }
+
+    public async Task<SlipStatus[]> GetStatusAsync(params IEnumerable<int> slipIds)
+    {
+        return await dbContext.Slips.AsNoTracking().Where(s => slipIds.Contains(s.Id)).Select(s => s.Status).Cast<SlipStatus>().ToArrayAsync();
+    }
+
+    private bool IsAuthenticated => httpContext.HttpContext.User.Identity?.IsAuthenticated ?? false;
 
     private void SlipAuthorizeGuardian(Slip? slip)
     {

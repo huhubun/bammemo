@@ -54,8 +54,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // GlobalState.OnChange += async () => await JSRuntime.InvokeVoidAsync("bammemo.color.delayedApply");
-
         persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
 
         if (!PersistentComponentState.TryTakeFromJson(PERSITING_KEY, out siteLogoUrl))

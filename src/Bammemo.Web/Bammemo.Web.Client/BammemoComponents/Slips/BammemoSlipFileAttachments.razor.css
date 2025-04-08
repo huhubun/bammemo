@@ -1,0 +1,12 @@
+﻿::deep .bammemo-slip-file-attachment {
+    padding: 4px 10px;
+    width: auto;
+    border-radius: calc(var(--layer-corner-radius) * 1px);
+}
+
+    ::deep .bammemo-slip-file-attachment .fluent-typography {
+        max-width: 26rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }

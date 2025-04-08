@@ -15,5 +15,14 @@ public class ListSlipResponse
         public string? Title { get; set; }
         public string? Excerpt { get; set; }
         public string[]? Tags { get; set; }
+        public SlipAttachmentModel[]? Attachments { get; set; }
+    }
+
+    public class SlipAttachmentModel
+    {
+        public int FileMetadataId { get; set; }
+        public required string FileName { get; set; }
+        public required string Url { get; set; }
+        public bool ShowThumbnail { get; set; }
     }
 }

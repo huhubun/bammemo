@@ -2,6 +2,7 @@
 
 public class UploadFileResponse
 {
+    public int FileMetadataId { get; set; }
     public required string FileName { get; set; }
     public required string Url { get; set; }
 }

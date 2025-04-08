@@ -12,7 +12,8 @@
     <script type="text/javascript">
         window.bammemo = {};
     </script>
-    <script type="text/javascript" src="/js/bammemo-color.js"></script>
+    <script type="text/javascript" src="/js/lozad.min.js"></script>
+    <script type="text/javascript" src="/js/medium-zoom.min.js"></script>
     <script type="text/javascript" src="/js/bammemo-highlight.js"></script>
 </head>
 
@@ -24,6 +25,8 @@
     <FluentDesignTheme StorageName="theme" customColor="#18181b" />
     <Routes />
     <script>
+        window.bammemo.lozad = lozad();
+
         window.bammemo.util = {
             autoResizeSlipEditorTextarea: function (event) {
                 if (event.target instanceof HTMLTextAreaElement
@@ -42,6 +45,22 @@
                         console.error('复制失败：', error);
                         return false;
                     });
+            },
+            insertToSlipEditorTextarea: function(element, content){
+                var startPos = element.selectionStart;
+                var endPos = element.selectionEnd;
+
+                // 在光标位置插入文本
+                element.value = element.value.substring(0, startPos)
+                    + content
+                    + element.value.substring(endPos);
+
+                // 将光标移动到插入文本的末尾
+                element.selectionStart = element.selectionEnd = startPos + content.length;
+
+                element.focus();
+
+                return element.value;
             }
         }
 

@@ -1,18 +1,82 @@
 ﻿.slip-editor-input {
+    width: 100%;
+    height: auto;
+    /* 
+        cancel、发送按钮那一行 32px；
+        分割线 1px；
+        分割线上下 gap 各 10px，共 20px；
+        插入图片那些按钮那一行 32px；
+        插入图片那些按钮上方的 gap 10px；
+    */
+    max-height: calc(80dvh - 32px - 1px - 20px - 32px - 10px);
+    resize: none;
     border: none;
     outline: none;
     font-size: var(--type-ramp-base-font-size);
+    background-color: var(--neutral-layer-floating);
 }
 
-::deep .bammemo-slip-editor-toolbar, ::deep .bammemo-slip-editor-actions {
+@media (max-height: 400px) {
+    .slip-editor-input {
+        /*
+            前面一样；
+            页面最顶部padding 16px；
+            box 上下的 padding 各16px，共32px；
+        */
+        max-height: calc(100dvh - 32px - 1px - 20px - 32px - 10px - 16px - 32px);
+    }
+}
+
+::deep .bammemo-slip-editor-actions {
     width: 100%;
     background-color: var(--neutral-layer-floating);
 }
 
-    ::deep .bammemo-slip-editor-toolbar fluent-button:hover {
-        opacity: 0.8;
+.bammemo-slip-editor-image-attachments-wrap, .bammemo-slip-editor-non-image-attachments-wrap, .bammemo-slip-editor-functions {
+    width: 100%;
+}
+
+::deep .bammemo-slip-editor-image-preview {
+    padding: 0.4rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-clip: padding-box;
+    background-size: cover;
+}
+
+::deep .bammemo-slip-editor-non-image-attachments-item {
+    padding: 5px calc((10 + (var(--design-unit) * 2 * var(--density))) * 1px);
+    width: auto;
+    border-radius: calc(var(--control-corner-radius) * 1px);
+}
+
+::deep .bammemo-slip-editor-non-image-attachments-item-actions .fluent-typography {
+    max-width: 26rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+::deep .bammemo-slip-editor-image-preview fluent-button {
+    width: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    height: 24px;
+    min-height: 24px;
+    max-height: 24px;
+    line-height: 24px;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    background-color: rgba(243,243,243,0.6);
+}
+
+    ::deep .bammemo-slip-editor-image-preview fluent-button:hover {
+        background-color: rgba(0,0,0,0.2);
     }
 
-    ::deep .bammemo-slip-editor-toolbar fluent-button::part(control) {
-        background-color: initial;
+    ::deep .bammemo-slip-editor-image-preview fluent-button::part(control) {
+        height: 24px;
+        display: block;
+        background: none;
     }

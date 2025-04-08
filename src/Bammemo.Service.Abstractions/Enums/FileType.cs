@@ -3,5 +3,6 @@
 public enum FileType
 {
     Favicon,
-    SiteLogo
+    SiteLogo,
+    SlipAttachment
 }

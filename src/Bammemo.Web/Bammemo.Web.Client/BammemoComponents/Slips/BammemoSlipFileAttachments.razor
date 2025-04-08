@@ -1,0 +1,20 @@
+﻿@using Bammemo.Service.Abstractions.Dtos.Slips
+
+@if (Attachments.Any())
+{
+    <div>
+        <FluentStack Wrap Orientation="Orientation.Horizontal">
+            @foreach (var attachment in Attachments)
+            {
+                <FluentAnchor Href="@attachment.Url" Appearance="Appearance.Outline" IconStart="@(new Icons.Filled.Size16.ArrowDownload())">
+                    @attachment.FileName
+                </FluentAnchor>
+            }
+        </FluentStack>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public required IEnumerable<SlipAttachmentDto> Attachments { get; set; }
+}

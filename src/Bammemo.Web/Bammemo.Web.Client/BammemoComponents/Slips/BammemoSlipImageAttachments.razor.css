@@ -1,0 +1,19 @@
+﻿::deep .bammemo-slip-image-attachment-item-wrap {
+    overflow: hidden;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+    ::deep .bammemo-slip-image-attachment-item-wrap:hover {
+        cursor: zoom-in;
+    }
+
+::deep .bammemo-slip-image-attachment-item {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}

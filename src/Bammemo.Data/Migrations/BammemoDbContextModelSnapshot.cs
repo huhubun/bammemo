@@ -54,9 +54,6 @@ namespace Bammemo.Data.Migrations
                     b.Property<int>("StorageType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("UpdateAt")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Path", "FileName");
@@ -71,6 +68,9 @@ namespace Bammemo.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("MetadataId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool?>("ShowThumbnail")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("SourceId")

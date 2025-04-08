@@ -1,0 +1,42 @@
+﻿::deep .fluent-dialog-header, ::deep .fluent-dialog-footer {
+    display: none !important;
+}
+
+::deep .bammemo-screen-small .bammemo-slip-image-preview-wrap, ::deep .bammemo-screen-small .bammemo-slip-image-list-wrap {
+    /* padding 24px，内部 gap 24px，底部小图 128px */
+    height: calc(100dvh - 24px - 24px - 24px - 128px);
+}
+
+::deep .bammemo-screen-large .bammemo-slip-image-preview-wrap, ::deep .bammemo-screen-large .bammemo-slip-image-list-wrap {
+    /* Dialog 内部有每边 24px padding */
+    height: calc(100dvh - 24px - 24px);
+}
+::deep .bammemo-screen-small .bammemo-slip-image-list-wrap{
+    overflow: hidden;
+    overflow-x: auto;
+}
+
+::deep .bammemo-slip-image-preview-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+    object-position: center;
+}
+
+/* TODO 滚动条优化 */
+/*::deep .bammemo-slip-image-list-wrap {
+    overflow: scroll;
+}*/
+
+::deep .bammemo-slip-image-preview-previous-button, ::deep .bammemo-slip-image-preview-next-button {
+    display: none;
+}
+
+::deep .bammemo-slip-image-preview-wrap:hover .bammemo-slip-image-preview-previous-button,
+::deep .bammemo-slip-image-preview-wrap:hover .bammemo-slip-image-preview-next-button {
+    display: inline-flex;
+}
+
+::deep .bammemo-slip-image-list-wrap .bammemo-slip-image-attachment-item-wrap:hover {
+    cursor: pointer;
+}

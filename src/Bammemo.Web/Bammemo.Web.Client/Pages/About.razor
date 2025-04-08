@@ -7,20 +7,22 @@
 
 <BammemoPageTitle Title="关于" />
 
-<HeadContent>
-    @if (settingModel != null)
+@if (settingModel != null)
+{
+    if (settingModel.Description != null)
     {
-        if (settingModel.Description != null)
-        {
+        <SectionContent SectionName="MetaDescription">
             <meta name="description" content="@settingModel.Description" />
-        }
-
-        if (settingModel.Keywords != null)
-        {
-            <meta name="keywords" content="@String.Join(",", settingModel.Keywords)" />
-        }
+        </SectionContent>
     }
-</HeadContent>
+
+    if (settingModel.Keywords != null)
+    {
+        <SectionContent SectionName="MetaKeywords">
+            <meta name="keywords" content="@String.Join(",", settingModel.Keywords)" />
+        </SectionContent>
+    }
+}
 
 <div>
     <BammemoContent>
@@ -29,7 +31,7 @@
             if (settingModel.Content != null)
             {
                 <BammemoCard>
-                    <BammemoMarkdownSection Content="@settingModel.Content" />
+                    <BammemoMarkdownSection Id="@ABOUT_PAGE_PERSITING_KEY" Content="@settingModel.Content" />
                 </BammemoCard>
             }
             else

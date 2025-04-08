@@ -10,6 +10,7 @@ public class FileReference
     public int MetadataId { get; set; }
     public int SourceId { get; set; }
     public int SourceType { get; set; }
+    public bool? ShowThumbnail { get; set; }
 
     public virtual FileMetadata? Metadata { get; set; }
 }
