@@ -16,6 +16,10 @@
         overflow-wrap: break-word;
     }
 
+.bammemo-markdown-section-content ::deep p:last-of-type {
+    margin-bottom: 0;
+}
+
 /* Fluent UI Blazor CodeSnippet.razor.css */
 
 ::deep .snippet {
