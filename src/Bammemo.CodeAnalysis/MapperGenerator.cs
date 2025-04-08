@@ -128,14 +128,14 @@ namespace Bammemo.CodeAnalysis
                                 // 如果两边都是基础类型（int、string、枚举等）
                                 if (isSourceBasicType && isTargetBasicType)
                                 {
-                                    mappingNew.Add($"{targetProp.Name} = source.{sourceProp.Name}.Cast<{targetEnumerableType.ToDisplayString()}>().{toMethodName}(),");
-                                    mappingEqual.Add($"target.{targetProp.Name} = source.{sourceProp.Name}.Cast<{targetEnumerableType.ToDisplayString()}>().{toMethodName}();");
+                                    mappingNew.Add($"{targetProp.Name} = source.{sourceProp.Name}?.Cast<{targetEnumerableType.ToDisplayString()}>()?.{toMethodName}(),");
+                                    mappingEqual.Add($"target.{targetProp.Name} = source.{sourceProp.Name}?.Cast<{targetEnumerableType.ToDisplayString()}>()?.{toMethodName}();");
                                 }
                                 // 如果两边都是 class，直接调用 MapTo() 方法，只要添加了 Map 就能够映射
                                 else if (!isSourceBasicType && !isTargetBasicType)
                                 {
-                                    mappingNew.Add($"{targetProp.Name} = source.{sourceProp.Name}.Map{toMethodName}<{targetEnumerableType.ToDisplayString()}>(),");
-                                    mappingEqual.Add($"target.{targetProp.Name} = source.{sourceProp.Name}.Map{toMethodName}<{targetEnumerableType.ToDisplayString()}>();");
+                                    mappingNew.Add($"{targetProp.Name} = source.{sourceProp.Name}?.Map{toMethodName}<{targetEnumerableType.ToDisplayString()}>(),");
+                                    mappingEqual.Add($"target.{targetProp.Name} = source.{sourceProp.Name}?.Map{toMethodName}<{targetEnumerableType.ToDisplayString()}>();");
                                 }
                                 else
                                 {
@@ -177,8 +177,8 @@ namespace Bammemo.CodeAnalysis
                                         }
                                         else
                                         {
-                                            mappingNew.Add($"{targetProp.Name} = source.{sourceProp.Name}.MapTo<{targetProp.Type.ToDisplayString()}>(),");
-                                            mappingEqual.Add($"target.{targetProp.Name} = source.{sourceProp.Name}.MapTo<{targetProp.Type.ToDisplayString()}>();");
+                                            mappingNew.Add($"{targetProp.Name} = source.{sourceProp.Name}?.MapTo<{targetProp.Type.ToDisplayString()}>(),");
+                                            mappingEqual.Add($"target.{targetProp.Name} = source.{sourceProp.Name}?.MapTo<{targetProp.Type.ToDisplayString()}>();");
                                         }
                                     }
                                     // Source 不是枚举（仅限 Int32），Target 是枚举
