@@ -41,7 +41,7 @@ public partial class BammemoSlipEditor(
         {
             content = Data.Content;
             status = ((int)Data.Status).ToString();
-            attachments = Data.Attachments.MapToList<SlipAttachmentModel>();
+            attachments = Data.Attachments?.MapToList<SlipAttachmentModel>() ?? [];
         }
     }
 
