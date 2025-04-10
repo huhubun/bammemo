@@ -158,13 +158,89 @@ blockquote {
         margin: 0;
     }
 
-.text-error{
+.text-error {
     color: var(--error);
 }
 
-.w-full{
+.w-full {
     width: 100%;
 }
+
+.markdown-alert {
+    margin: 16px 0;
+    padding: 8px 16px;
+    border-left: 5px solid red;
+}
+
+    .markdown-alert .markdown-alert-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .markdown-alert.markdown-alert-note {
+        border-color: var(--info);
+    }
+
+        .markdown-alert.markdown-alert-note .markdown-alert-title {
+            color: var(--info);
+        }
+
+
+            .markdown-alert.markdown-alert-note .markdown-alert-title svg {
+                fill: var(--info);
+            }
+
+    .markdown-alert.markdown-alert-tip {
+        border-color: var(--success);
+    }
+
+        .markdown-alert.markdown-alert-tip .markdown-alert-title {
+            color: var(--success);
+        }
+
+            .markdown-alert.markdown-alert-tip .markdown-alert-title svg {
+                fill: var(--success);
+            }
+
+    .markdown-alert.markdown-alert-important {
+        border-color: var(--presence-oof);
+    }
+
+        .markdown-alert.markdown-alert-important .markdown-alert-title {
+            color: var(--presence-oof);
+        }
+
+            .markdown-alert.markdown-alert-important .markdown-alert-title svg {
+                fill: var(--presence-oof);
+            }
+
+    .markdown-alert.markdown-alert-warning {
+        border-color: var(--warning);
+    }
+
+        .markdown-alert.markdown-alert-warning .markdown-alert-title {
+            color: var(--warning);
+        }
+
+            .markdown-alert.markdown-alert-warning .markdown-alert-title svg {
+                fill: var(--warning);
+            }
+
+    .markdown-alert.markdown-alert-caution {
+        border-color: var(--error);
+    }
+
+        .markdown-alert.markdown-alert-caution .markdown-alert-title {
+            color: var(--error);
+        }
+
+            .markdown-alert.markdown-alert-caution .markdown-alert-title svg {
+                fill: var(--error);
+            }
 
 @media (max-width: 600px) {
     .body-content {
