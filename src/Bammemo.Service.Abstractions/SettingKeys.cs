@@ -20,6 +20,7 @@ public static class SettingKeys
     public const string TencentCloud = nameof(TencentCloud);
     public const string StorageType = nameof(StorageType);
     public const string SiteLogoUrl = nameof(SiteLogoUrl);
+    public const string Highlight = nameof(Highlight);
 
     public static bool VerifyKey(string key)
         => VerifyKeys([key]);

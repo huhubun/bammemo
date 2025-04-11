@@ -30,6 +30,10 @@
   </ItemGroup>
     
   <ItemGroup>
+    <Content Include="BammemoComponents\Basics\BammemoMarkdownSection.razor.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Include="Layout\MainLayout.razor.js">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

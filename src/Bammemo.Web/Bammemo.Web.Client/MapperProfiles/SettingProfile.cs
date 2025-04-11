@@ -3,6 +3,7 @@ using Bammemo.Service.Abstractions.Dtos.Settings;
 using Bammemo.Service.Abstractions.SettingModels;
 using Bammemo.Web.Client.Extensions.SettingModels;
 using Bammemo.Web.Client.Models.Settings;
+using Bammemo.Web.Client.Pages.Settings;
 using Bammemo.Web.Client.WebApis.Client.Models;
 
 namespace Bammemo.Web.Client.MapperProfiles;
@@ -14,6 +15,9 @@ namespace Bammemo.Web.Client.MapperProfiles;
 [Map<TencentCloudSetting.CosSetting, TencentCloudSettingModel.CosSettingModel>]
 [Map<TencentCloudSettingModel, TencentCloudSetting>]
 [Map<TencentCloudSettingModel.CosSettingModel, TencentCloudSetting.CosSetting>]
+[Map<FunctionHighlightSettingModel, FunctionSetting.FunctionSettingModel>]
+[Map<FunctionSetting.FunctionSettingModel, FunctionHighlightSettingModel>]
+[Map<FunctionSetting.FunctionSettingModel, FunctionHighlightSetting>]
 public static partial class SettingProfile
 {
     static partial void AfterMap(TencentCloudSetting source, TencentCloudSettingModel target)

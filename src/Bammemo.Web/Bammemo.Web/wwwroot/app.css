@@ -242,6 +242,10 @@ blockquote {
                 fill: var(--error);
             }
 
+.bammemo-setting-subtitle {
+    margin-bottom: 16px;
+}
+
 @media (max-width: 600px) {
     .body-content {
         height: calc(100dvh - 64px) !important;

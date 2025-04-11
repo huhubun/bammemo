@@ -22,6 +22,10 @@
 }
 
 @code {
+    private string? markdownHtml = null;
+    private bool hasMore = false;
+    private IJSObjectReference? module;
+
     [Parameter]
     public required string Id { get; set; }
 
@@ -35,9 +39,6 @@
     public string? ReadAllUrl { get; set; }
 
     private string RendedId => $"bammemo-markdown-section-{Id}";
-
-    private string? markdownHtml = null;
-    private bool hasMore = false;
 
     protected override void OnInitialized()
     {
@@ -74,6 +75,8 @@
     {
         if (firstRender)
         {
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./BammemoComponents/Basics/BammemoMarkdownSection.razor.js");
+
             await JSRuntime.InvokeVoidAsync("bammemo.lozad.observe");
             await JSRuntime.InvokeVoidAsync(
                 "mediumZoom",
@@ -83,8 +86,11 @@
                         Background = "var(--neutral-fill-layer-rest)"
                     });
 
-            await JSRuntime.InvokeVoidAsync("bammemo.highlight.highlight");
-            await JSRuntime.InvokeVoidAsync("bammemo.highlight.addCopyButton");
+            if (module != null)
+            {
+                await module.InvokeVoidAsync("highlight");
+                await module.InvokeVoidAsync("addCopyButton");
+            }
         }
     }
 
