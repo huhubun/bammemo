@@ -1,5 +1,6 @@
 ﻿using Bammemo.Data;
 using Bammemo.Data.Entities;
+using Bammemo.Service.Enums;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Interfaces;
 using Bammemo.Service.Storages;
@@ -52,7 +53,7 @@ public class StorageService(
     {
         var path = GetPath(fileType);
         var extension = Path.GetExtension(fileName);
-        var (algorithm, hash) = HashHelper.Sha256(stream);
+        var (algorithm, hash) = HashHelper.Sha256(stream, BinaryEncodingType.Hex);
 
         var storageType = await GetStorageTypeAsync();
         var provider = await GetStorageProviderAsync(storageType);

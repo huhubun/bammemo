@@ -22,7 +22,7 @@
 
                 <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Class="w-full">
                     <div class="w-full">
-                        <FluentTextField Name="identifier" @bind-Value="model.HighlightJsUrl" Label="highlight.js Url" Required Class="w-full" />
+                        <FluentTextField Name="identifier" @bind-Value="model.HighlightJsUrl" Label="highlight.js Url" Class="w-full" />
                         <FluentLabel Typo="Typography.Body" Color="Color.Info">
                             您可以<FluentAnchor Href="https://highlightjs.readthedocs.io/en/latest/building-testing.html" Target="_blank" Appearance="Appearance.Hypertext">重新打包</FluentAnchor> highlight.js 以配置更多语言，或直接使用 CDN 上的 highlight.js 地址。如果未配置，将使用 bammemo 内置的 highlight.js。
                         </FluentLabel>
@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="w-full">
-                        <FluentTextField Name="identifier" @bind-Value="model.HighlightCssLightUrl" Label="亮色主题 CSS Url" Required Class="w-full" />
+                        <FluentTextField Name="identifier" @bind-Value="model.HighlightCssLightUrl" Label="亮色主题 CSS Url" Class="w-full" />
                         <FluentLabel Typo="Typography.Body" Color="Color.Info">
                             您自己的，或 CDN 上的 highlight.js 亮色 CSS 文件地址，如果未配置，将使用 bammemo 内置的 <FluentAnchor Href="https://highlightjs.org/demo#lang=csharp&v=1&theme=github-min&code=bmFtZXNwYWNlIFRlbGVwcm9tcHRlckNvbnNvbGU7CgppbnRlcm5hbCBjbGFzcyBQcm9ncmFtCnsKICAgIHN0YXRpYyB2b2lkIE1haW4oc3RyaW5nW10gYXJncynFJMYqxAHHVS5Xcml0ZUxpbmUoIkhlbGxvIFdvcmxkISIpO8UrfQp9" Target="_blank" Appearance="Appearance.Hypertext">github 亮色主题</FluentAnchor>。
                         </FluentLabel>
@@ -38,7 +38,7 @@
                     </div>
 
                     <div class="w-full">
-                        <FluentTextField Name="identifier" @bind-Value="model.HighlightCssDarkUrl" Label="暗色主题 CSS Url" Required Class="w-full" />
+                        <FluentTextField Name="identifier" @bind-Value="model.HighlightCssDarkUrl" Label="暗色主题 CSS Url" Class="w-full" />
                         <FluentLabel Typo="Typography.Body" Color="Color.Info">
                             您自己的，或 CDN 上的 highlight.js 暗色 CSS 文件地址，如果未配置，将使用 bammemo 内置的 <FluentAnchor Href="https://highlightjs.org/demo#lang=csharp&v=1&theme=github-dark-min&code=bmFtZXNwYWNlIFRlbGVwcm9tcHRlckNvbnNvbGU7CgppbnRlcm5hbCBjbGFzcyBQcm9ncmFtCnsKICAgIHN0YXRpYyB2b2lkIE1haW4oc3RyaW5nW10gYXJncynFJMYqxAHHVS5Xcml0ZUxpbmUoIkhlbGxvIFdvcmxkISIpO8UrfQp9" Target="_blank" Appearance="Appearance.Hypertext">github 暗色主题</FluentAnchor>。
                         </FluentLabel>

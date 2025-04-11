@@ -80,7 +80,7 @@ public partial class FunctionSetting(
                 }
             });
 
-            ToastService.ShowSuccess("功能设置保存成功，刷新页面后生效。");
+            ToastService.ShowSuccess("功能设置保存成功，重启 bammemo 后生效。");
         }
         catch (Exception ex)
         {
