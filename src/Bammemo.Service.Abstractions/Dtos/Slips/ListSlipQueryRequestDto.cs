@@ -6,4 +6,5 @@ public class ListSlipQueryRequestDto
     public long? EndTime { get; set; }
     public string[]? Tags { get; set; }
     public int[]? Status { get; set; }
+    public string? Keyword { get; set; }
 }

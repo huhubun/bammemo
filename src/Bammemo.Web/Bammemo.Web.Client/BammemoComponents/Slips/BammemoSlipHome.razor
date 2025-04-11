@@ -19,21 +19,29 @@
                 </BammemoCard>
             }
 
-            @if (StartTimeDateTime.HasValue || (SelectedTags?.Length > 0))
+            @if (StartTimeDateTime.HasValue || (SelectedTags?.Length > 0) || !String.IsNullOrWhiteSpace(Keyword))
             {
                 <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
                     @if (StartTimeDateTime.HasValue)
                     {
                         <BammemoFilterBadge OnClick="OnRemoveCalendarSelectedDate"
-                                            IconStart="@(new Icons.Regular.Size16.Calendar())">
+                        IconStart="@(new Icons.Regular.Size16.Calendar())">
                             @StartTimeDateTime.ToIsoDateString()
+                        </BammemoFilterBadge>
+                    }
+
+                    @if (!String.IsNullOrWhiteSpace(Keyword))
+                    {
+                        <BammemoFilterBadge OnClick="OnRemoveKeyword"
+                        IconStart="@(new Icons.Regular.Size16.LineHorizontal4Search())">
+                            @Keyword
                         </BammemoFilterBadge>
                     }
 
                     @foreach (var tag in SelectedTags ?? [])
                     {
                         <BammemoFilterBadge OnClick="@(_ => OnRemoveSelectedTagClick(tag))"
-                                            IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
+                        IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
                             @tag
                         </BammemoFilterBadge>
                     }
@@ -67,8 +75,16 @@
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Style="width: 250px; ">
+            <FluentSearch @bind-Value="Keyword"
+            @bind-Value:after="OnKeywordChanged"
+            Immediate
+            ImmediateDelay="300"
+            Appearance="FluentInputAppearance.Filled"
+            Style="width: 100%;" />
+
             <BammemoSlipCalendar SelectedTime="StartTimeDateTime"
-                                 OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
+            OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
+
             <BammemoSlipHomeTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
         </FluentStack>
     </FluentGridItem>
@@ -90,6 +106,9 @@
 
     [SupplyParameterFromQuery(Name = "tags")]
     private string[]? SelectedTags { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string? Keyword { get; set; }
 
     private PersistingComponentStateSubscription persistingSubscription;
     private ListSlipDto[]? persistSlips;
@@ -199,6 +218,20 @@
         OnSelectedTagChanged(tags.ToArray());
     }
 
+    private void OnKeywordChanged()
+    {
+        NavigationManager.NavigateTo(NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        {
+            {nameof(Keyword), String.IsNullOrWhiteSpace(Keyword) ? null : Keyword}
+        }), false);
+    }
+
+    private void OnRemoveKeyword()
+    {
+        Keyword = null;
+        OnKeywordChanged();
+    }
+
     private ListSlipQueryRequestDto GetListSlipQueryRequest()
     {
         return new ListSlipQueryRequestDto
@@ -206,7 +239,8 @@
                 StartTime = StartTime,
                 EndTime = EndTime,
                 Tags = SelectedTags,
-                Status = IsAdmin ? Enum.GetValues<SlipStatus>().Select(s => (int)s).ToArray() : null
+                Status = IsAdmin ? Enum.GetValues<SlipStatus>().Select(s => (int)s).ToArray() : null,
+                Keyword = Keyword
             };
     }
 

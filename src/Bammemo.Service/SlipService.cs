@@ -56,6 +56,11 @@ public class SlipService(
             slips = slips.Where(s => query.Status.Contains(s.Status));
         }
 
+        if (!String.IsNullOrWhiteSpace(query?.Keyword))
+        {
+            slips = slips.Where(s => EF.Functions.Like(s.Content, $"%{query.Keyword}%"));
+        }
+
         var take = paging?.Take ?? 5;
 
         if (paging != null)
@@ -177,7 +182,7 @@ public class SlipService(
             if (fileMetadatas.TryGetValue(attachment.FileMetadataId, out var fileMetadata))
             {
                 var reference = fileMetadata.References?.SingleOrDefault(reference => reference.SourceId == slipId);
-                if(reference != null && reference.ShowThumbnail != attachment.ShowThumbnail)
+                if (reference != null && reference.ShowThumbnail != attachment.ShowThumbnail)
                 {
                     reference.ShowThumbnail = attachment.ShowThumbnail;
                     needUpdateFileReferences.Add(reference);
