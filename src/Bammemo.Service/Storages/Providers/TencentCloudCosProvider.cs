@@ -195,6 +195,6 @@ public class TencentCloudCosProvider(
             return null;
         }
 
-        return JsonSerializer.Deserialize<TencentCloudSetting>(settingEntity.Value, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+        return JsonSerializer.Deserialize<TencentCloudSetting>(settingEntity.Value, BammemoJsonSerializerOptions.CamelCaseOption);
     }
 }

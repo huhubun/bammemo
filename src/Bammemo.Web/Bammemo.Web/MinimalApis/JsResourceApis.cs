@@ -1,6 +1,7 @@
 ﻿using Bammemo.Service.Abstractions.SettingModels;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Interfaces;
+using Bammemo.Service.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Net.Mime;
@@ -38,7 +39,7 @@ public static class JsResourceApis
         {
             highlightSetting = JsonSerializer.Deserialize<FunctionHighlightSetting>(
                 highlightSettingString.Value,
-                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                BammemoJsonSerializerOptions.CamelCaseOption);
         }
 
         var defaultHighlight = memoryCache.GetOrCreate($"{nameof(JsResourceApis)}-default-highlight", _ => new List<string>

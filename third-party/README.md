@@ -6,5 +6,5 @@
 使用 [nuget-license](https://github.com/sensslen/nuget-license) 对依赖的 nuget 包的许可证进行整理。
 
 ```bash
-nuget-license -i Bammemo.slnx -fo third-party/nuget_packages/README.md -d third-party/nuget_packages/
+nuget-license -i Bammemo.slnx -ignore ./third-party/ignoreNugetPackages.json -fo third-party/nuget_packages/README.md -d third-party/nuget_packages/
 ```

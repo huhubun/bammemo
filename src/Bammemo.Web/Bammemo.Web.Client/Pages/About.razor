@@ -82,7 +82,7 @@
                     case SettingKeys.AboutPageKeywords:
                         if (setting.Value != null)
                         {
-                            settingModel.Keywords = JsonSerializer.Deserialize<List<string>>(setting.Value);
+                            settingModel.Keywords = JsonSerializer.Deserialize<List<string>>(setting.Value, JsonSourceGenerationContext.Default.ListString);
                         }
                         break;
                     case SettingKeys.AboutPageContent:

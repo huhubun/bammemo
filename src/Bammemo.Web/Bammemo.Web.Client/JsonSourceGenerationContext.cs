@@ -5,12 +5,14 @@ using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.SettingModels;
 using Bammemo.Web.Client.Models.Settings;
 using System.Text.Json.Serialization;
+using Bammemo.Web.Client.Pages.Settings;
 
 namespace Bammemo.Web.Client;
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(string))]
 [JsonSerializable(typeof(string[]))]
+[JsonSerializable(typeof(List<string>))]
 [JsonSerializable(typeof(Dictionary<string, string?>))]
 [JsonSerializable(typeof(KeyValuePair<string, string>[]))]
 [JsonSerializable(typeof(long))]
@@ -35,6 +37,9 @@ namespace Bammemo.Web.Client;
 [JsonSerializable(typeof(TencentCloudSettingModel.CosSettingModel))]
 [JsonSerializable(typeof(FunctionHighlightSetting))]
 [JsonSerializable(typeof(FunctionHighlightSettingModel))]
+[JsonSerializable(typeof(SiteSetting.TextUrlModel))]
+[JsonSerializable(typeof(List<SiteSetting.TextUrlModel>))]
+[JsonSerializable(typeof(IEnumerable<SiteSetting.TextUrlModel>))]
 internal partial class JsonSourceGenerationContext : JsonSerializerContext
 {
 }

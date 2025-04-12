@@ -66,7 +66,7 @@ public partial class BammemoFooter(
         if (!persistentComponentState.TryTakeFromJson(nameof(footerLinks), out footerLinks))
         {
             var setting = await commonSettingService.GetByKeyAsync(SettingKeys.FooterLinks);
-            footerLinks = setting?.Value != null ? JsonSerializer.Deserialize<List<TextUrlSetting>>(setting.Value) : [];
+            footerLinks = setting?.Value != null ? JsonSerializer.Deserialize<List<TextUrlSetting>>(setting.Value, JsonSourceGenerationContext.Default.ListTextUrlSetting) : [];
         }
     }
 
