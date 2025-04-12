@@ -61,7 +61,7 @@
             @if (cursorSlipId != null)
             {
                 <div style="width: 100%;">
-                    <FluentButton Appearance="Appearance.Stealth" OnClick="LoadMore" Style="width: 100%;">Load more</FluentButton>
+                    <FluentButton Appearance="Appearance.Stealth" OnClick="LoadMore" Style="width: 100%;" Loading="@isLoadingMore">Load more</FluentButton>
                 </div>
             }
 
@@ -116,6 +116,7 @@
     private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
     private string? cursorSlipId = null;
     private bool showNoDataFound = false;
+    private bool isLoadingMore = false;
 
     protected override void OnInitialized()
     {
@@ -170,13 +171,27 @@
 
     private async Task LoadMore()
     {
-        var slips = await CommonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
-            {
-                Cursor = cursorSlipId ?? String.Empty,
-                Take = 5
-            });
+        isLoadingMore = true;
 
-        AppendRenderSlips(slips);
+        try
+        {
+            var slips = await CommonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
+                {
+                    Cursor = cursorSlipId ?? String.Empty,
+                    Take = 5
+                });
+
+            AppendRenderSlips(slips);
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Load more 失败：{ex.Message}");
+            Console.WriteLine($"Load more 失败：{ex}");
+        }
+        finally
+        {
+            isLoadingMore = false;
+        }
     }
 
     private void OnNewSlipSaved(ListSlipDto slip)
