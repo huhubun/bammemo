@@ -1,0 +1,11 @@
+﻿::deep .bammemo-site-link-card h4, ::deep .bammemo-site-link-card h6 {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+::deep a {
+    width: 100%;
+    text-decoration: none;
+} 

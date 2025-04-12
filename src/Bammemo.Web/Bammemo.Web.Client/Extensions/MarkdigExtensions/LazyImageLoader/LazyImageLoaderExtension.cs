@@ -5,10 +5,9 @@ using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
-namespace Bammemo.Web.Client.Extensions.MarkdigExtensions;
+namespace Bammemo.MarkdigExtensions;
 #pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
-
-public class LazyImageLoader : IMarkdownExtension
+public class LazyImageLoaderExtension : IMarkdownExtension
 {
     public void Setup(MarkdownPipelineBuilder pipeline)
     {

@@ -1,4 +1,4 @@
-﻿@using Bammemo.Web.Client.Extensions.MarkdigExtensions
+﻿@using Bammemo.MarkdigExtensions
 @using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator
 @using Bammemo.Web.Client.Models.MediumZoomLibraries
 @using Markdig
@@ -16,12 +16,16 @@
 
         @if (hasMore && ReadAllUrl != null)
         {
-            <FluentAnchor IconStart="@(new Icons.Regular.Size16.ReadingList())" Href="@ReadAllUrl">阅读全文</FluentAnchor>
+            <FluentAnchor IconStart="@(new Icons.Regular.Size16.ReadingList())" Href="@ReadAllUrl" Class="bammemo-markdown-section-read-all">阅读全文</FluentAnchor>
         }
     </div>
 }
 
 @code {
+    private string? markdownHtml = null;
+    private bool hasMore = false;
+    private IJSObjectReference? module;
+
     [Parameter]
     public required string Id { get; set; }
 
@@ -35,9 +39,6 @@
     public string? ReadAllUrl { get; set; }
 
     private string RendedId => $"bammemo-markdown-section-{Id}";
-
-    private string? markdownHtml = null;
-    private bool hasMore = false;
 
     protected override void OnInitialized()
     {
@@ -56,8 +57,9 @@
             // https://github.com/xoofx/markdig/issues/774
             .UseAlertBlocks()
             .Use<MarkdownSectionPreCodeExtension>()
+            .Use<HashTagExtension>()
             .Use<MoreSeparatorExtension>()
-            .Use<LazyImageLoader>()
+            .Use<LazyImageLoaderExtension>()
             .Build();
 
         if (FullDisplay)
@@ -74,6 +76,8 @@
     {
         if (firstRender)
         {
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./BammemoComponents/Basics/BammemoMarkdownSection.razor.js");
+
             await JSRuntime.InvokeVoidAsync("bammemo.lozad.observe");
             await JSRuntime.InvokeVoidAsync(
                 "mediumZoom",
@@ -83,8 +87,11 @@
                         Background = "var(--neutral-fill-layer-rest)"
                     });
 
-            await JSRuntime.InvokeVoidAsync("bammemo.highlight.highlight");
-            await JSRuntime.InvokeVoidAsync("bammemo.highlight.addCopyButton");
+            if (module != null)
+            {
+                await module.InvokeVoidAsync("highlight");
+                await module.InvokeVoidAsync("addCopyButton");
+            }
         }
     }
 

@@ -198,6 +198,7 @@ app.MapGet("/bammemo.json", async (HttpContext httpContext) =>
     });
 }).ExcludeFromDescription();
 
-app.MapFilesApi();
+app.MapJsResourceApi()
+    .MapFilesApi();
 
 app.Run();

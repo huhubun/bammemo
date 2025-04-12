@@ -117,7 +117,7 @@
                     model.Description = setting.Value;
                     break;
                 case SettingKeys.AboutPageKeywords:
-                    model.Keywords = setting.Value != null ? JsonSerializer.Deserialize<List<string>>(setting.Value) : [];
+                    model.Keywords = setting.Value != null ? JsonSerializer.Deserialize<List<string>>(setting.Value, JsonSourceGenerationContext.Default.ListString) : [];
                     break;
                 case SettingKeys.AboutPageContent:
                     model.Content = setting.Value;
@@ -147,7 +147,7 @@
                         AdditionalData = settingKeys.ToDictionary(key => key, (string key) => key switch
                         {
                             SettingKeys.AboutPageDescription => NormalizeSettingValue(model.Description),
-                            SettingKeys.AboutPageKeywords => model.Keywords != null ? (JsonSerializer.Serialize(model.Keywords)) : (object?)null,
+                            SettingKeys.AboutPageKeywords => model.Keywords != null ? (JsonSerializer.Serialize(model.Keywords), JsonSourceGenerationContext.Default.ListString) : (object?)null,
                             SettingKeys.AboutPageContent => model.Content,
                             _ => throw new NotSupportedException(key)
                         })

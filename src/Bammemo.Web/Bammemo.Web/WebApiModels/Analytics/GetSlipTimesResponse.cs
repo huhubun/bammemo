@@ -1,4 +1,4 @@
-﻿namespace Bammemo.Web.WebApiModels.Slips;
+﻿namespace Bammemo.Web.WebApiModels.Analytics;
 
 public class GetSlipTimesResponse
 {

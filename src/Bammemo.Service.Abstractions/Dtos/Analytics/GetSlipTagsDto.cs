@@ -2,5 +2,11 @@
 
 public class GetSlipTagsDto
 {
-    public required string[] Tags { get; set; }
+    public required TagItemAnalyticModel[] Tags { get; set; }
+
+    public record TagItemAnalyticModel
+    {
+        public required string Tag { get; set; }
+        public int Count { get; set; }
+    }
 }

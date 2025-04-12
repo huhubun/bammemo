@@ -2,6 +2,13 @@
     padding: 0;
 }
 
-::deep fluent-button::part(start) {
+::deep fluent-button::part(start), ::deep .bammemo-slip-tag-list-view-all::part(start) {
     margin-right: 4px;
+}
+
+::deep .bammemo-slip-tag-list-view-all::part(control) {
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: inherit;
+    color: inherit;
 }

@@ -10,7 +10,7 @@ public class MarkdownHelperTest
         var tags = MarkdownHelper.ExtractTags(
             """
             # h1
-            this is #demo markdown.
+            this is #demo# markdown.
             """);
 
         Assert.Equal(["demo"], tags);
@@ -23,7 +23,7 @@ public class MarkdownHelperTest
         this is #### not a tag.
 
         ## h2
-        this is the #demo tag.
+        this is the #demo# tag.
         """)]
     [InlineData(
         """
@@ -35,12 +35,12 @@ public class MarkdownHelperTest
         ```
 
         ## h2
-        this is the #demo tag.
+        this is the #demo# tag.
         """)]
     [InlineData(
         """
         # h1
-        this is the #demo tag.
+        this is the #demo# tag.
 
         #
         # 
@@ -74,7 +74,7 @@ public class MarkdownHelperTest
         this is #### not a tag.
 
         ## h2
-        this is the number #5 tag.
+        this is the number #5# tag.
         """,
         "5")]
     [InlineData(
@@ -83,7 +83,16 @@ public class MarkdownHelperTest
         this is #### not a tag.
 
         ## h2
-        this is the #number-5 tag.
+        this is the symbol #C\## tag.
+        """,
+        "C#")]
+    [InlineData(
+        """
+        # h1
+        this is #### not a tag.
+
+        ## h2
+        this is the #number-5# tag.
         """,
         "number-5")]
     [InlineData(
@@ -92,7 +101,7 @@ public class MarkdownHelperTest
         this is #### not a tag.
 
         ## h2
-        this is the #asp_net_core tag.
+        this is the #asp_net_core# tag.
         """,
         "asp_net_core")]
     [InlineData(
@@ -101,7 +110,16 @@ public class MarkdownHelperTest
         this is #### not a tag.
 
         ## h2
-        this is the #中文 tag.
+        this is the #ASP.NET Core# tag.
+        """,
+        "ASP.NET Core")]
+    [InlineData(
+        """
+        # h1
+        this is #### not a tag.
+
+        ## h2
+        this is the #中文# tag.
         """,
         "中文")]
     [InlineData(
@@ -110,7 +128,7 @@ public class MarkdownHelperTest
         this is #### not a tag.
 
         ## h2
-        this is the #あ tag.
+        this is the #あ# tag.
         """,
         "あ")]
     public void ExtractTags_TagContentTest(string markdown, string tagContent)
@@ -124,22 +142,22 @@ public class MarkdownHelperTest
     [InlineData(
     """
         # h1
-        this is #not a tag.
+        this is #not# a tag.
 
         ## h2
-        this is the #中文 tag.
+        this is the #中文# tag.
         """,
     "not", "中文")]
     [InlineData(
     """
         # h1
-        this is #one #two #three tags.
+        this is #one# #two# #three# tags.
         """,
     "one", "two", "three")]
     [InlineData(
     """
         # h1
-        this is #a#b#c tags.
+        this is#a##b##c#tags.
         """,
     "a", "b", "c")]
     public void ExtractTags_MultipleTagsTest(string markdown, params string[] expectedTags)

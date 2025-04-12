@@ -61,12 +61,14 @@
         </FluentGridItem>
 
         <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
-            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16">
+            <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Style="width: 250px;">
 
                 <BammemoSlipDetailProperty Title="发表于">
                     @if (slip != null)
                     {
-                        @slip.CreatedAt.ToLocalTimeString()
+                        <FluentLabel>
+                            @slip.CreatedAt.ToLocalTimeString()
+                        </FluentLabel>
                     }
                     else
                     {
@@ -77,13 +79,13 @@
                 @if (slip?.UpdateAt.HasValue ?? false)
                 {
                     <BammemoSlipDetailProperty Title="最后修改于">
-                        <p>
+                        <FluentLabel>
                             @slip.UpdateAt.Value.ToLocalTimeString()
-                        </p>
+                        </FluentLabel>
                     </BammemoSlipDetailProperty>
                 }
 
-                @if (slip == null || (slip.Tags?.Any() ?? false))
+                @if ((slip?.Tags?.Any() ?? false))
                 {
                     <BammemoSlipDetailProperty Title="Tags">
                         @if (slip != null)

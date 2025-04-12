@@ -26,4 +26,9 @@ public static partial class SlipProfile
     {
         target.Tags = source.Tags == null ? [] : source.Tags.Select(t => t.Tag).ToArray();
     }
+
+    static partial void AfterMap(Slip source, SlipDetailDto target)
+    {
+        target.Tags = source.Tags == null ? [] : source.Tags.Select(t => t.Tag).ToArray();
+    }
 }

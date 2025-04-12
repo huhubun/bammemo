@@ -50,7 +50,7 @@
                     case SettingKeys.SiteKeywords:
                         if (setting.Value != null)
                         {
-                            var keywords = JsonSerializer.Deserialize<List<string>>(setting.Value);
+                            var keywords = JsonSerializer.Deserialize<List<string>>(setting.Value, JsonSourceGenerationContext.Default.ListString);
                             if (keywords != null)
                             {
                                 metas["keywords"] = String.Join(",", keywords);

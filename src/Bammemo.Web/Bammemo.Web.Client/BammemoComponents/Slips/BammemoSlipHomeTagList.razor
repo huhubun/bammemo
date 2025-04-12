@@ -1,4 +1,5 @@
 ﻿@using Bammemo.Service.Abstractions.CommonServices
+@using Bammemo.Service.Abstractions.Dtos.Analytics
 @rendermode InteractiveAuto
 @implements IDisposable
 @inject PersistentComponentState PersistentComponentState
@@ -6,21 +7,29 @@
 
 <div class="bammemo-slip-tag-list">
     <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" VerticalGap="@(16/4)" Wrap>
-        @foreach (var tag in popularTags ?? Enumerable.Empty<string>())
+        @foreach (var tag in popularTags ?? Enumerable.Empty<GetSlipTagsDto.TagItemAnalyticModel>())
         {
             <FluentButton BackgroundColor="var(--neutral-layer-2)"
                           Color="var(--accent-foreground-active)"
-                          OnClick="@(_ => OnTagSelectedAsync(tag))"
+                          OnClick="@(_ => OnTagSelectedAsync(tag.Tag))"
                           IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
-                @tag
+                @tag.Tag
             </FluentButton>
         }
+
+        <FluentAnchor Style="background-color: var(--neutral-layer-2); color: var(--accent-foreground-active)"
+                      Class="bammemo-slip-tag-list-view-all"
+                      IconStart="@(new Icons.Regular.Size16.MoreHorizontal())"
+                      Href="/tags"
+                      Appearance="Appearance.Outline">
+            查看全部
+        </FluentAnchor>
     </FluentStack>
 </div>
 
 @code {
     private PersistingComponentStateSubscription persistingSubscription;
-    private string[]? popularTags;
+    private GetSlipTagsDto.TagItemAnalyticModel[]? popularTags;
 
     [Parameter]
     public string[]? SelectedTags { get; set; }
@@ -34,7 +43,7 @@
 
         if (!PersistentComponentState.TryTakeFromJson(nameof(popularTags), out popularTags))
         {
-            popularTags = (await CommonAnalyticsService.GetSlipTagsAsync()).Tags;
+            popularTags = (await CommonAnalyticsService.GetSlipTagsAsync(20)).Tags;
         }
     }
 

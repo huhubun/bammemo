@@ -3,5 +3,6 @@
 }
 
 ::deep fluent-anchor::part(control) {
-    text-decoration: none;
+    border: none;
+    padding: 0;
 }

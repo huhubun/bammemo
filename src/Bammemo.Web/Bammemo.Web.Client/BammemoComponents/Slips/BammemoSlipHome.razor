@@ -19,7 +19,7 @@
                 </BammemoCard>
             }
 
-            @if (StartTimeDateTime.HasValue || (SelectedTags?.Length > 0))
+            @if (StartTimeDateTime.HasValue || (SelectedTags?.Length > 0) || !String.IsNullOrWhiteSpace(Keyword))
             {
                 <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
                     @if (StartTimeDateTime.HasValue)
@@ -27,6 +27,14 @@
                         <BammemoFilterBadge OnClick="OnRemoveCalendarSelectedDate"
                                             IconStart="@(new Icons.Regular.Size16.Calendar())">
                             @StartTimeDateTime.ToIsoDateString()
+                        </BammemoFilterBadge>
+                    }
+
+                    @if (!String.IsNullOrWhiteSpace(Keyword))
+                    {
+                        <BammemoFilterBadge OnClick="OnRemoveKeyword"
+                                            IconStart="@(new Icons.Regular.Size16.LineHorizontal4Search())">
+                            @Keyword
                         </BammemoFilterBadge>
                     }
 
@@ -53,7 +61,7 @@
             @if (cursorSlipId != null)
             {
                 <div style="width: 100%;">
-                    <FluentButton Appearance="Appearance.Stealth" OnClick="LoadMore" Style="width: 100%;">Load more</FluentButton>
+                    <FluentButton Appearance="Appearance.Stealth" OnClick="LoadMore" Style="width: 100%;" Loading="@isLoadingMore">Load more</FluentButton>
                 </div>
             }
 
@@ -67,8 +75,16 @@
 
     <FluentGridItem lg="3" HiddenWhen="GridItemHidden.MdAndDown">
         <FluentStack Orientation="Orientation.Vertical" VerticalGap="16" Style="width: 250px; ">
+            <FluentSearch @bind-Value="Keyword"
+                          @bind-Value:after="OnKeywordChanged"
+                          Immediate
+                          ImmediateDelay="300"
+                          Appearance="FluentInputAppearance.Filled"
+                          Style="width: 100%;" />
+
             <BammemoSlipCalendar SelectedTime="StartTimeDateTime"
                                  OnSelectedDateChanged="OnCalendarSelectedDateChanged" />
+
             <BammemoSlipHomeTagList SelectedTags="SelectedTags" OnSelectedTagChanged="OnSelectedTagChanged" />
         </FluentStack>
     </FluentGridItem>
@@ -91,12 +107,16 @@
     [SupplyParameterFromQuery(Name = "tags")]
     private string[]? SelectedTags { get; set; }
 
+    [SupplyParameterFromQuery]
+    private string? Keyword { get; set; }
+
     private PersistingComponentStateSubscription persistingSubscription;
     private ListSlipDto[]? persistSlips;
     private List<ListSlipDto> slipList = new List<ListSlipDto>();
     private List<ListSlipDto> newSlipList = new List<ListSlipDto>();
     private string? cursorSlipId = null;
     private bool showNoDataFound = false;
+    private bool isLoadingMore = false;
 
     protected override void OnInitialized()
     {
@@ -151,13 +171,27 @@
 
     private async Task LoadMore()
     {
-        var slips = await CommonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
-            {
-                Cursor = cursorSlipId ?? String.Empty,
-                Take = 5
-            });
+        isLoadingMore = true;
 
-        AppendRenderSlips(slips);
+        try
+        {
+            var slips = await CommonSlipService.ListAsync(GetListSlipQueryRequest(), new CursorPagingRequest<string>
+                {
+                    Cursor = cursorSlipId ?? String.Empty,
+                    Take = 5
+                });
+
+            AppendRenderSlips(slips);
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Load more 失败：{ex.Message}");
+            Console.WriteLine($"Load more 失败：{ex}");
+        }
+        finally
+        {
+            isLoadingMore = false;
+        }
     }
 
     private void OnNewSlipSaved(ListSlipDto slip)
@@ -199,6 +233,20 @@
         OnSelectedTagChanged(tags.ToArray());
     }
 
+    private void OnKeywordChanged()
+    {
+        NavigationManager.NavigateTo(NavigationManager.GetUriWithQueryParameters(new Dictionary<string, object?>
+        {
+            {nameof(Keyword), String.IsNullOrWhiteSpace(Keyword) ? null : Keyword}
+        }), false);
+    }
+
+    private void OnRemoveKeyword()
+    {
+        Keyword = null;
+        OnKeywordChanged();
+    }
+
     private ListSlipQueryRequestDto GetListSlipQueryRequest()
     {
         return new ListSlipQueryRequestDto
@@ -206,7 +254,8 @@
                 StartTime = StartTime,
                 EndTime = EndTime,
                 Tags = SelectedTags,
-                Status = IsAdmin ? Enum.GetValues<SlipStatus>().Select(s => (int)s).ToArray() : null
+                Status = IsAdmin ? Enum.GetValues<SlipStatus>().Select(s => (int)s).ToArray() : null,
+                Keyword = Keyword
             };
     }
 

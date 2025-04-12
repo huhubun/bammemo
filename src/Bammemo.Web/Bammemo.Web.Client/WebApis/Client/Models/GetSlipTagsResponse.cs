@@ -17,10 +17,10 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         /// <summary>The tags property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<string>? Tags { get; set; }
+        public List<global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel>? Tags { get; set; }
 #nullable restore
 #else
-        public List<string> Tags { get; set; }
+        public List<global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel> Tags { get; set; }
 #endif
         /// <summary>
         /// Instantiates a new <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.GetSlipTagsResponse"/> and sets the default values.
@@ -47,7 +47,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "tags", n => { Tags = n.GetCollectionOfPrimitiveValues<string>()?.AsList(); } },
+                { "tags", n => { Tags = n.GetCollectionOfObjectValues<global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel>(global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -57,7 +57,7 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfPrimitiveValues<string>("tags", Tags);
+            writer.WriteCollectionOfObjectValues<global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel>("tags", Tags);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

@@ -18,7 +18,8 @@ public class CommonSlipService(
             Tags = query.Tags,
             Status = query.Status?.Cast<int?>().ToArray() ?? null,
             Cursor = paging?.Cursor,
-            Take = paging?.Take
+            Take = paging?.Take,
+            Keyword = query.Keyword
         });
 
         return result?.Data?.MapToArray<ListSlipDto>() ?? [];

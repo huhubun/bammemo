@@ -1,0 +1,101 @@
+﻿@page "/tags"
+@using Bammemo.Service.Abstractions.CommonServices
+@using Bammemo.Service.Abstractions.Dtos.SiteLinks
+@using Bammemo.Service.Abstractions.Dtos.Analytics
+@rendermode InteractiveAuto
+@inject PersistentComponentState PersistentComponentState
+@inject ICommonAnalyticsService CommonAnalyticsService
+
+<BammemoPageTitle Title="Tags" />
+
+@if (tags != null)
+{
+    var topTags = String.Join(",", tags.Take(20));
+
+    <SectionContent SectionName="MetaDescription">
+        <meta name="description" content="@topTags" />
+    </SectionContent>
+
+    <SectionContent SectionName="MetaKeywords">
+        <meta name="keywords" content="@topTags" />
+    </SectionContent>
+}
+
+<div>
+    <BammemoContent>
+        <FluentGrid Spacing="2" Style="width: 100%;" @key="tags">
+            @if (tags != null)
+            {
+                if (tags.Length != 0)
+                {
+                    foreach (var tag in tags)
+                    {
+                        <FluentGridItem xs="12" sm="6" md="4" lg="4" @key="tag.Tag">
+                            <a href="@($"/?tags={Uri.EscapeDataString(tag.Tag)}")">
+                                <BammemoCard Class="bammemo-site-link-card" HoverShadow HoverBorder>
+                                    <FluentStack Orientation="Orientation.Horizontal" Style="align-items: center;">
+                                        <FluentIcon Value="@(new Icons.Filled.Size20.NumberSymbol())" />
+
+                                        <FluentLabel Typo="Typography.PaneHeader">
+                                            @tag.Tag
+                                        </FluentLabel>
+
+                                        @if (tag.Count > 3)
+                                        {
+                                            <FluentBadge Circular=true Appearance="Appearance.Accent" title="@($"共有{tag.Count}篇文章")">
+                                                @tag.Count
+                                            </FluentBadge>
+                                        }
+                                    </FluentStack>
+                                </BammemoCard>
+                            </a>
+                        </FluentGridItem>
+                    }
+                }
+                else
+                {
+                    <BammemoNoData />
+                }
+            }
+            else
+            {
+                @for (var i = 0; i < 3; i++)
+                {
+                    <FluentGridItem xs="12" sm="6" md="4" lg="4">
+
+                        <BammemoCard Class="bammemo-site-link-card" HoverShadow HoverBorder>
+                            <FluentStack Orientation="Orientation.Vertical">
+                                <FluentLabel Typo="Typography.PaneHeader">
+                                    <FluentSkeleton Style="width: 80%; height: var(--type-ramp-plus-3-font-size);" />
+                                </FluentLabel>
+                            </FluentStack>
+                        </BammemoCard>
+                    </FluentGridItem>
+                }
+            }
+        </FluentGrid>
+    </BammemoContent>
+</div>
+
+@code {
+    private const string TAG_PAGE_PERSITING_KEY = "tag_page";
+    private GetSlipTagsDto.TagItemAnalyticModel[]? tags;
+    private PersistingComponentStateSubscription persistingSubscription;
+
+    protected override async Task OnInitializedAsync()
+    {
+        persistingSubscription = PersistentComponentState.RegisterOnPersisting(PersistData);
+
+        if (!PersistentComponentState.TryTakeFromJson(TAG_PAGE_PERSITING_KEY, out tags))
+        {
+            var response = await CommonAnalyticsService.GetSlipTagsAsync(null);
+            tags = response.Tags;
+        }
+    }
+
+    private Task PersistData()
+    {
+        PersistentComponentState.PersistAsJson(TAG_PAGE_PERSITING_KEY, tags);
+        return Task.CompletedTask;
+    }
+}
