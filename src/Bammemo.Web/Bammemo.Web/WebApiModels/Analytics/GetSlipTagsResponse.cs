@@ -1,6 +1,6 @@
-﻿namespace Bammemo.Service.Abstractions.Dtos.Analytics;
+﻿namespace Bammemo.Web.WebApiModels.Analytics;
 
-public class GetSlipTagsDto
+public class GetSlipTagsResponse
 {
     public required TagItemAnalyticModel[] Tags { get; set; }
 

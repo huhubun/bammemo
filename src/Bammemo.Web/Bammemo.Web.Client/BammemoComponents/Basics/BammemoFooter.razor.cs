@@ -23,6 +23,9 @@ public partial class BammemoFooter(
     [GeneratedRegex("^/links$", RegexOptions.IgnoreCase, 200)]
     private static partial Regex LinksPageRegex();
 
+    [GeneratedRegex("^/tags", RegexOptions.IgnoreCase, 200)]
+    private static partial Regex TagsPageRegex();
+
     [GeneratedRegex("^/settings(/.*)?$", RegexOptions.IgnoreCase, 200)]
     private static partial Regex SettingPageRegex();
 
@@ -44,6 +47,7 @@ public partial class BammemoFooter(
         LoginPageRegex(),
         AboutPageRegex(),
         LinksPageRegex(),
+        TagsPageRegex(),
         SettingPageRegex(),
         NotFoundPageRegex()
     ]);

@@ -1,5 +1,5 @@
 ﻿using Bammemo.Service.Interfaces;
-using Bammemo.Web.WebApiModels.Slips;
+using Bammemo.Web.WebApiModels.Analytics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bammemo.Web.Controllers;
@@ -14,7 +14,7 @@ public class AnalyticsController(
     public async Task<IActionResult> GetSlipTimesAsync([FromQuery] GetSlipTimesRequest request)
     {
         var times = await slipService.GetCreatedTimeWithSlipAsync(request.StartTime, request.EndTime);
-        
+
         return Ok(new GetSlipTimesResponse
         {
             CreatedTimes = times
@@ -23,13 +23,17 @@ public class AnalyticsController(
 
     [HttpGet("slips/tags")]
     [ProducesResponseType<GetSlipTagsResponse>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetSlipTagsAsync()
+    public async Task<IActionResult> GetSlipTagsAsync([FromQuery] GetSlipTagsRequest request)
     {
-        var tags = await slipService.GetAllTagsAsync();
+        var tags = await slipService.GetTagsWithCountAsync(request?.Top);
 
         return Ok(new GetSlipTagsResponse
         {
-            Tags = tags
+            Tags = tags.Select(t => new GetSlipTagsResponse.TagItemAnalyticModel
+            {
+                Tag = t.Key,
+                Count = t.Value
+            }).ToArray()
         });
     }
 }

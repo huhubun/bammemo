@@ -1,4 +1,4 @@
-﻿@using Bammemo.Web.Client.Extensions.MarkdigExtensions
+﻿@using Bammemo.MarkdigExtensions
 @using Bammemo.Web.Client.Extensions.MarkdigExtensions.MoreSeparator
 @using Bammemo.Web.Client.Models.MediumZoomLibraries
 @using Markdig
@@ -16,7 +16,7 @@
 
         @if (hasMore && ReadAllUrl != null)
         {
-            <FluentAnchor IconStart="@(new Icons.Regular.Size16.ReadingList())" Href="@ReadAllUrl">阅读全文</FluentAnchor>
+            <FluentAnchor IconStart="@(new Icons.Regular.Size16.ReadingList())" Href="@ReadAllUrl" Class="bammemo-markdown-section-read-all">阅读全文</FluentAnchor>
         }
     </div>
 }
@@ -57,8 +57,9 @@
             // https://github.com/xoofx/markdig/issues/774
             .UseAlertBlocks()
             .Use<MarkdownSectionPreCodeExtension>()
+            .Use<HashTagExtension>()
             .Use<MoreSeparatorExtension>()
-            .Use<LazyImageLoader>()
+            .Use<LazyImageLoaderExtension>()
             .Build();
 
         if (FullDisplay)

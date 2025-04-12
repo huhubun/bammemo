@@ -2,12 +2,13 @@
 using Bammemo.Data.Entities;
 using Bammemo.Service.Abstractions.Dtos.Slips;
 using Bammemo.Service.Abstractions.Paginations;
+using Bammemo.Service.Extensions;
 using Bammemo.Service.Helpers;
 using Bammemo.Service.Interfaces;
 using Bammemo.Service.Models.Slips;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Bammemo.Service.Extensions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Bammemo.Service;
 
@@ -156,11 +157,11 @@ public class SlipService(
 
     public async Task<long[]> GetCreatedTimeWithSlipAsync(long startTime, long endTime)
         => await dbContext.Slips
-            .AsNoTracking()
-            .Where(s => s.CreatedAt >= startTime)
-            .Where(s => s.CreatedAt < endTime)
-            .Select(s => s.CreatedAt)
-            .ToArrayAsync();
+                .AsNoTracking()
+                .Where(s => s.CreatedAt >= startTime)
+                .Where(s => s.CreatedAt < endTime)
+                .Select(s => s.CreatedAt)
+                .ToArrayAsync();
 
     public async Task<string[]> GetAllTagsAsync()
         => await dbContext.SlipTags
@@ -169,6 +170,18 @@ public class SlipService(
             .Select(st => st.Tag)
             .Distinct()
             .ToArrayAsync();
+
+    public async Task<Dictionary<string, int>> GetTagsWithCountAsync(int? top)
+    {
+        var tagCountQuery = dbContext.SlipTags
+        .AsNoTracking()
+        .Where(st => st.Slip.Status == (int)SlipStatus.Public)
+        .GroupBy(st => st.Tag)
+        .Select(stg => new { Tag = stg.Key, Count = stg.Count() })
+        .OrderByDescending(stg => stg.Count);
+
+        return await (top.HasValue ? tagCountQuery.Take(top.Value) : tagCountQuery).ToDictionaryAsync(stg => stg.Tag, stg => stg.Count);
+    }
 
     public async Task AddAttachmentsAsync(int slipId, IEnumerable<AddSlipAttachmentInfo> attachmentInfos)
     {
@@ -258,4 +271,5 @@ public class SlipService(
 
     private static bool IsNeedAuthorizeSlipStatus(int slipStatus)
         => GetNeedAuthorizeSlipStatus([slipStatus]).Any();
+
 }

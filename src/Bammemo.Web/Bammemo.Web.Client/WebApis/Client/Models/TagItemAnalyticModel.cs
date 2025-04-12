@@ -9,35 +9,37 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
-    public partial class GetSlipTagsResponse : IAdditionalDataHolder, IParsable
+    public partial class TagItemAnalyticModel : IAdditionalDataHolder, IParsable
     #pragma warning restore CS1591
     {
         /// <summary>Stores additional data not described in the OpenAPI description found when deserializing. Can be used for serialization as well.</summary>
         public IDictionary<string, object> AdditionalData { get; set; }
-        /// <summary>The tags property</summary>
+        /// <summary>The count property</summary>
+        public int? Count { get; set; }
+        /// <summary>The tag property</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel>? Tags { get; set; }
+        public string? Tag { get; set; }
 #nullable restore
 #else
-        public List<global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel> Tags { get; set; }
+        public string Tag { get; set; }
 #endif
         /// <summary>
-        /// Instantiates a new <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.GetSlipTagsResponse"/> and sets the default values.
+        /// Instantiates a new <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel"/> and sets the default values.
         /// </summary>
-        public GetSlipTagsResponse()
+        public TagItemAnalyticModel()
         {
             AdditionalData = new Dictionary<string, object>();
         }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.GetSlipTagsResponse"/></returns>
+        /// <returns>A <see cref="global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::Bammemo.Web.Client.WebApis.Client.Models.GetSlipTagsResponse CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             _ = parseNode ?? throw new ArgumentNullException(nameof(parseNode));
-            return new global::Bammemo.Web.Client.WebApis.Client.Models.GetSlipTagsResponse();
+            return new global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -47,7 +49,8 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "tags", n => { Tags = n.GetCollectionOfObjectValues<global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel>(global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "count", n => { Count = n.GetIntValue(); } },
+                { "tag", n => { Tag = n.GetStringValue(); } },
             };
         }
         /// <summary>
@@ -57,7 +60,8 @@ namespace Bammemo.Web.Client.WebApis.Client.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             _ = writer ?? throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfObjectValues<global::Bammemo.Web.Client.WebApis.Client.Models.TagItemAnalyticModel>("tags", Tags);
+            writer.WriteIntValue("count", Count);
+            writer.WriteStringValue("tag", Tag);
             writer.WriteAdditionalData(AdditionalData);
         }
     }

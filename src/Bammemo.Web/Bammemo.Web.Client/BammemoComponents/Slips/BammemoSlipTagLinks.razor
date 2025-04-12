@@ -2,12 +2,12 @@
 @inject NavigationManager Navigation
 
 <div class="bammemo-slip-tag-links">
-    @if (Tags != null)
+    @if (Tags?.Any() ?? false)
     {
-        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" Wrap>
+        <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" VerticalGap="@(16/4)" Wrap>
             @foreach (var tag in Tags)
             {
-                <FluentAnchor Href="@(Navigation.GetUriWithQueryParameters("/", new Dictionary<string, object?>(){ {"tags", tag} }))"
+                <FluentAnchor Href="@($"/?tags={Uri.EscapeDataString(tag)}")"
                               Appearance="Appearance.Hypertext"
                               IconStart="@(new Icons.Regular.Size16.NumberSymbol().WithColor(Color.Neutral))">
                     @tag

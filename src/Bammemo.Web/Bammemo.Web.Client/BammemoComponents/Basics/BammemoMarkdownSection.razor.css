@@ -12,16 +12,19 @@
         box-shadow: 0 0 5px 0 var(--neutral-stroke-active);
     }
 
-    .bammemo-markdown-section-content ::deep p {
-        overflow-wrap: break-word;
+.bammemo-markdown-section-content ::deep p {
+    overflow-wrap: break-word;
+}
+
+    .bammemo-markdown-section-content ::deep p:last-of-type {
+        margin-bottom: 0;
     }
 
-.bammemo-markdown-section-content ::deep p:last-of-type {
-    margin-bottom: 0;
+::deep .bammemo-markdown-section-read-all {
+    margin-top: 16px;
 }
 
 /* Fluent UI Blazor CodeSnippet.razor.css */
-
 ::deep .snippet {
     margin-bottom: 0.5rem;
     border: calc(var(--stroke-width) * 1px) solid var(--neutral-stroke-rest);
@@ -51,7 +54,7 @@
     transition: background-color 200ms ease, transform 200ms ease-out;
 }
 
-::deep .hljs-copy-wrapper  {
+::deep .hljs-copy-wrapper {
     position: relative;
     overflow: hidden
 }
