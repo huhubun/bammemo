@@ -7,9 +7,10 @@
         <FluentStack Orientation="Orientation.Horizontal" HorizontalGap="@(16/2)" VerticalGap="@(16/4)" Wrap>
             @foreach (var tag in Tags)
             {
-                <FluentAnchor Href="@($"/?tags={Uri.EscapeDataString(tag)}")"
-                              Appearance="Appearance.Hypertext"
-                              IconStart="@(new Icons.Regular.Size16.NumberSymbol().WithColor(Color.Neutral))">
+                <FluentAnchor Style="background-color: var(--neutral-layer-2); color: var(--accent-foreground-active)"
+                              Href="@($"/?tags={Uri.EscapeDataString(tag)}")"
+                              Appearance="Appearance.Outline"
+                              IconStart="@(new Icons.Regular.Size16.NumberSymbol())">
                     @tag
                 </FluentAnchor>
             }
